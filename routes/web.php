@@ -16,6 +16,8 @@ foreach (config('tenancy.central_domains') as $domain) {
         });
 
         Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
+        Route::post('plans', [PlanController::class, 'store'])->name('plans.store');
+        Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
 
         require __DIR__.'/settings.php';
         require __DIR__.'/auth.php';
