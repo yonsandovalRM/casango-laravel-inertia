@@ -1,8 +1,10 @@
 import { CreatePlan } from '@/components/plans/create-plan';
 import { EditPlan } from '@/components/plans/edit-plan';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { DialogConfirm } from '@/components/ui/dialog-confirm';
 import AppLayout from '@/layouts/app-layout';
-import { CheckIcon, SparklesIcon } from 'lucide-react';
+import { CheckIcon, SparklesIcon, TrashIcon } from 'lucide-react';
 import { PlanResource } from '../interfaces/plan';
 
 export default function PlansIndex({ plans }: { plans: PlanResource[] }) {
@@ -43,19 +45,19 @@ export default function PlansIndex({ plans }: { plans: PlanResource[] }) {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <EditPlan plan={plan} />
-                            {/* 
-							<DialogConfirm
-								variant='destructive'
-								title='Eliminar plan'
-								description='¿Estás seguro de querer eliminar este plan?'
-								onConfirm={() => onDelete.mutate(plan._id)}
-								onCancel={() => {}}
-							>
-								<Button variant='outline'>
-									<TrashIcon className='size-4' />
-									Eliminar
-								</Button>
-							</DialogConfirm> */}
+
+                            <DialogConfirm
+                                variant="destructive"
+                                title="Eliminar plan"
+                                description="¿Estás seguro de querer eliminar este plan?"
+                                onConfirm={() => {}}
+                                onCancel={() => {}}
+                            >
+                                <Button variant="outline">
+                                    <TrashIcon className="size-4" />
+                                    Eliminar
+                                </Button>
+                            </DialogConfirm>
                         </div>
                     </Card>
                 ))}
@@ -68,6 +70,9 @@ export default function PlansIndex({ plans }: { plans: PlanResource[] }) {
             {plans?.length === 0 && (
                 <div className="flex h-full w-full flex-col items-center justify-center gap-4 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
                     <p className="text-center text-gray-500 dark:text-gray-400">No hay planes disponibles</p>
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+                        Los planes son la forma en que tus usuarios pueden acceder a tus servicios.
+                    </p>
                     <CreatePlan />
                 </div>
             )}
