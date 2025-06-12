@@ -1,4 +1,4 @@
-import { PERMISSIONS, usePermissions } from '@/hooks/usePermissions';
+import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { PlanResource } from '@/interfaces/plan';
 import { router } from '@inertiajs/react';
 import { CheckIcon, SparklesIcon, TrashIcon } from 'lucide-react';

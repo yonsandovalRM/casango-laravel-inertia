@@ -1,24 +1,32 @@
 import InputError from '@/components/input-error';
+import { SessionMessages } from '@/components/session-messages';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useSessionMessages } from '@/hooks/use-session-messages';
 import { PlanResource } from '@/interfaces/plan';
+import { MOCK_CATEGORIES } from '@/interfaces/tenant';
 import { useForm } from '@inertiajs/react';
+import { ShieldCheck } from 'lucide-react';
 
 export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
-    const { error, message, success } = useSessionMessages();
     const { data, setData, post, errors, processing } = useForm({
-        name: 'alberto',
-        subdomain: 'alberto',
-        owner_name: 'alberto',
-        owner_email: 'alberto@alberto.com',
-        owner_password: '12345678',
-        owner_password_confirmation: '12345678',
-        plan_id: 'b68e79e8-d6a1-4fd1-8e9f-5b81f1cdb4a4',
-        category: 'restaurant',
+        name: '',
+        subdomain: '',
+        owner_name: '',
+        owner_email: '',
+        owner_password: '',
+        owner_password_confirmation: '',
+        plan_id: '',
+        category: '',
     });
+
+    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setData('name', e.target.value);
+        setData('subdomain', e.target.value.toLowerCase().replace(/ /g, '-'));
+    };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -26,127 +34,164 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
     };
 
     return (
-        <div>
-            {error && <div className="text-red-500">{error}</div>}
-            {message && <div className="text-green-500">{message}</div>}
-            {success && <div className="text-green-500">{success}</div>}
+        <div className="container mx-auto px-4 py-16">
             <form onSubmit={handleSubmit}>
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <Label htmlFor="name" required>
-                            Nombre
-                        </Label>
-                        <Input id="name" type="text" name="name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
-                        <InputError message={errors.name} />
-                    </div>
-                    <div>
-                        <Label htmlFor="subdomain" required>
-                            Subdominio
-                        </Label>
-                        <Input
-                            id="subdomain"
-                            type="text"
-                            name="subdomain"
-                            value={data.subdomain}
-                            onChange={(e) => setData('subdomain', e.target.value)}
-                        />
-                        <InputError message={errors.subdomain} />
-                    </div>
-                    <div>
-                        <Label htmlFor="owner_name" required>
-                            Nombre del propietario
-                        </Label>
-                        <Input
-                            id="owner_name"
-                            type="text"
-                            name="owner_name"
-                            value={data.owner_name}
-                            onChange={(e) => setData('owner_name', e.target.value)}
-                        />
-                        <InputError message={errors.owner_name} />
-                    </div>
-                    <div>
-                        <Label htmlFor="owner_email" required>
-                            Email del propietario
-                        </Label>
-                        <Input
-                            id="owner_email"
-                            type="email"
-                            name="owner_email"
-                            value={data.owner_email}
-                            onChange={(e) => setData('owner_email', e.target.value)}
-                        />
-                        <InputError message={errors.owner_email} />
-                    </div>
-                    <div>
-                        <Label htmlFor="owner_password" required>
-                            Contraseña del propietario
-                        </Label>
-                        <Input
-                            type="password"
-                            id="owner_password"
-                            name="owner_password"
-                            placeholder="Contraseña"
-                            value={data.owner_password}
-                            onChange={(e) => setData('owner_password', e.target.value)}
-                            required
-                        />
-                        <InputError message={errors.owner_password} />
-                    </div>
-                    <div>
-                        <Label htmlFor="owner_password_confirmation" required>
-                            Confirmar contraseña
-                        </Label>
-                        <Input
-                            id="owner_password_confirmation"
-                            type="password"
-                            name="owner_password_confirmation"
-                            placeholder="Confirmar contraseña"
-                            value={data.owner_password_confirmation}
-                            onChange={(e) => setData('owner_password_confirmation', e.target.value)}
-                            required
-                        />
-                        <InputError message={errors.owner_password_confirmation} />
-                    </div>
-                    <div>
-                        <Label htmlFor="plan_id" required>
-                            Plan
-                        </Label>
-                        <Select name="plan_id" value={data.plan_id} onValueChange={(value) => setData('plan_id', value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecciona un plan" />
-                            </SelectTrigger>
-                            <SelectContent>
+                <div>
+                    <h1 className="text-2xl font-bold">Onboarding de empresa</h1>
+                    <p className="text-sm text-muted-foreground">
+                        Completa los siguientes campos para registrar tu negocio y comenzar a utilizar la plataforma.
+                    </p>
+                    <SessionMessages />
+                </div>
+                <div className="mt-8 flex flex-col gap-16 md:flex-row">
+                    <div className="w-full space-y-4 md:w-3/5">
+                        <h2 className="text-sm font-medium">Información del negocio</h2>
+                        <p className="text-xs text-muted-foreground">
+                            Estos datos serán utilizados para identificar tu negocio y crear un espacio personalizado para ti.
+                        </p>
+                        <div>
+                            <Label htmlFor="name" required>
+                                Nombre
+                            </Label>
+                            <Input id="name" type="text" name="name" value={data.name} onChange={handleChangeName} />
+                            <InputError message={errors.name} />
+                        </div>
+                        <div>
+                            <Label htmlFor="subdomain" required>
+                                Subdominio
+                            </Label>
+                            <div className="relative">
+                                <Input
+                                    id="subdomain"
+                                    type="text"
+                                    name="subdomain"
+                                    value={data.subdomain}
+                                    onChange={(e) => setData('subdomain', e.target.value)}
+                                    className="pr-[105px]"
+                                />
+                                <span className="absolute top-1/2 right-3 -translate-y-1/2 transform text-sm text-muted-foreground">
+                                    .casango.com
+                                </span>
+                            </div>
+                            <InputError message={errors.subdomain} />
+                        </div>
+                        <div>
+                            <Label htmlFor="category" required>
+                                Categoría o rubro
+                            </Label>
+                            <Select name="category" value={data.category} onValueChange={(value) => setData('category', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona una categoría" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {MOCK_CATEGORIES.map((category) => (
+                                        <SelectItem key={category.id} value={category.id}>
+                                            {category.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <InputError message={errors.category} />
+                        </div>
+                        <div>
+                            <Label htmlFor="plan_id" required>
+                                Selecciona un plan
+                            </Label>
+                            <RadioGroup
+                                defaultValue="starter"
+                                className="grid gap-3 md:grid-cols-2"
+                                onValueChange={(value) => setData('plan_id', value)}
+                            >
                                 {plans.map((plan) => (
-                                    <SelectItem key={plan.id} value={plan.id}>
-                                        {plan.name}
-                                    </SelectItem>
+                                    <Label
+                                        className="flex items-start gap-3 rounded-lg border p-3 has-[[data-state=checked]]:border-ring has-[[data-state=checked]]:bg-input/20"
+                                        key={plan.id}
+                                    >
+                                        <RadioGroupItem value={plan.id} id={plan.name} className="data-[state=checked]:border-primary" />
+                                        <div className="grid gap-1 font-normal">
+                                            <div className="font-medium">{plan.name}</div>
+                                            <div className="text-xs leading-snug text-balance text-muted-foreground">{plan.description}</div>
+                                            <div className="text-xs leading-snug text-balance text-muted-foreground">
+                                                {plan.price_monthly}
+                                                <span className="text-xs leading-snug text-balance text-muted-foreground">{plan.currency}</span>
+                                            </div>
+                                        </div>
+                                    </Label>
                                 ))}
-                            </SelectContent>
-                        </Select>
-                        <InputError message={errors.plan_id} />
+                            </RadioGroup>
+                        </div>
                     </div>
-                    <div>
-                        <Label htmlFor="category" required>
-                            Categoría
-                        </Label>
-                        <Select name="category" value={data.category} onValueChange={(value) => setData('category', value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecciona una categoría" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="restaurant">Restaurante</SelectItem>
-                                <SelectItem value="bar">Bar</SelectItem>
-                                <SelectItem value="hotel">Hotel</SelectItem>
-                                <SelectItem value="other">Otro</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError message={errors.category} />
-                    </div>
-                    <div className="col-span-2 flex justify-end">
-                        <Button type="submit" disabled={processing}>
-                            Crear
-                        </Button>
+                    <div className="w-full md:w-2/5">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Información de acceso</CardTitle>
+                                <CardDescription>Estos datos serán utilizados para acceder a la plataforma y recibir notificaciones.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="mb-4 space-y-4">
+                                <div>
+                                    <Label htmlFor="owner_name" required>
+                                        Nombre
+                                    </Label>
+                                    <Input
+                                        id="owner_name"
+                                        type="text"
+                                        name="owner_name"
+                                        value={data.owner_name}
+                                        onChange={(e) => setData('owner_name', e.target.value)}
+                                    />
+                                    <InputError message={errors.owner_name} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="owner_email" required>
+                                        Correo electrónico
+                                    </Label>
+                                    <Input
+                                        id="owner_email"
+                                        type="email"
+                                        name="owner_email"
+                                        value={data.owner_email}
+                                        onChange={(e) => setData('owner_email', e.target.value)}
+                                    />
+                                    <InputError message={errors.owner_email} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="owner_password" required>
+                                        Contraseña
+                                    </Label>
+                                    <Input
+                                        type="password"
+                                        id="owner_password"
+                                        name="owner_password"
+                                        placeholder="Contraseña"
+                                        value={data.owner_password}
+                                        onChange={(e) => setData('owner_password', e.target.value)}
+                                        required
+                                    />
+                                    <InputError message={errors.owner_password} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="owner_password_confirmation" required>
+                                        Confirmar contraseña
+                                    </Label>
+                                    <Input
+                                        id="owner_password_confirmation"
+                                        type="password"
+                                        name="owner_password_confirmation"
+                                        placeholder="Confirmar contraseña"
+                                        value={data.owner_password_confirmation}
+                                        onChange={(e) => setData('owner_password_confirmation', e.target.value)}
+                                        required
+                                    />
+                                    <InputError message={errors.owner_password_confirmation} />
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-end">
+                                <Button type="submit" disabled={processing} className="w-full">
+                                    <ShieldCheck className="mr-2 h-4 w-4" />
+                                    Crear empresa
+                                </Button>
+                            </CardFooter>
+                        </Card>
                     </div>
                 </div>
             </form>

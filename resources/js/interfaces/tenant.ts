@@ -7,3 +7,22 @@ export interface TenantResource {
     category: string;
     plan: PlanResource;
 }
+
+export const MOCK_CATEGORIES = [
+    {
+        id: 'restaurant',
+        name: 'Restaurante',
+    },
+    {
+        id: 'bar',
+        name: 'Bar',
+    },
+    {
+        id: 'hotel',
+        name: 'Hotel',
+    },
+    {
+        id: 'other',
+        name: 'Otro',
+    },
+];
