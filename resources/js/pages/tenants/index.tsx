@@ -60,10 +60,8 @@ export default function TenantsIndex({ tenants }: { tenants: TenantResource[] })
                             <>
                                 {hasPermission(PERMISSIONS.tenants.edit) && (
                                     <Button variant="outline" className="flex items-center gap-2">
-                                        <Link href="#">
-                                            <Pencil className="size-4" />
-                                            Editar
-                                        </Link>
+                                        <Pencil className="size-4" />
+                                        Editar
                                     </Button>
                                 )}
 

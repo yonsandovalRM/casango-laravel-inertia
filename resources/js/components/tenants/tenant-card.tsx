@@ -36,7 +36,7 @@ export const TenantCard = ({ tenant, actions }: { tenant: TenantResource; action
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-4">
+            <CardContent className="flex-1 space-y-4">
                 <div className="flex justify-between gap-4 text-sm">
                     <div>
                         <p className="flex items-center gap-1 text-muted-foreground">
