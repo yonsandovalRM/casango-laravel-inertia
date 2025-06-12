@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Permissions;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlanController;
 use Illuminate\Support\Facades\Route;
@@ -15,10 +16,10 @@ foreach (config('tenancy.central_domains') as $domain) {
             })->name('dashboard');
         });
 
-        Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
-        Route::post('plans', [PlanController::class, 'store'])->name('plans.store');
-        Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
-        Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
+        Route::get('plans', [PlanController::class, 'index'])->name('plans.index')->middleware('can:'.Permissions::PLANS_VIEW);
+        Route::post('plans', [PlanController::class, 'store'])->name('plans.store')->middleware('can:'.Permissions::PLANS_CREATE);
+        Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update')->middleware('can:'.Permissions::PLANS_EDIT);
+        Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy')->middleware('can:'.Permissions::PLANS_DELETE);
 
         require __DIR__.'/settings.php';
         require __DIR__.'/auth.php';

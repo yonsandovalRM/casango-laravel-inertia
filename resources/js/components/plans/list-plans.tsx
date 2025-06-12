@@ -1,3 +1,4 @@
+import { PERMISSIONS, usePermissions } from '@/hooks/usePermissions';
 import { PlanResource } from '@/interfaces/plan';
 import { router } from '@inertiajs/react';
 import { CheckIcon, SparklesIcon, TrashIcon } from 'lucide-react';
@@ -10,12 +11,14 @@ import { CreatePlan } from './create-plan';
 import { EditPlan } from './edit-plan';
 
 export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
+    const { hasPermission } = usePermissions();
+
     const handleDelete = (id: string) => {
         router.delete(route('plans.destroy', id));
     };
     return (
         <>
-            {plans?.length === 0 && (
+            {plans?.length === 0 && hasPermission(PERMISSIONS.plans.create) && (
                 <ListEmpty
                     title="No hay planes disponibles"
                     description="Los planes son la forma en que tus usuarios pueden acceder a tus servicios."
@@ -59,24 +62,25 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                             </div>
                         </CardContent>
                         <CardFooter className="grid grid-cols-2 gap-4">
-                            <EditPlan plan={plan} />
-
-                            <DialogConfirm
-                                variant="destructive"
-                                title="Eliminar plan"
-                                description="¿Estás seguro de querer eliminar este plan?"
-                                onConfirm={() => handleDelete(plan.id)}
-                                onCancel={() => {}}
-                            >
-                                <Button variant="outline">
-                                    <TrashIcon className="size-4" />
-                                    Eliminar
-                                </Button>
-                            </DialogConfirm>
+                            {hasPermission(PERMISSIONS.plans.edit) && <EditPlan plan={plan} />}
+                            {hasPermission(PERMISSIONS.plans.delete) && (
+                                <DialogConfirm
+                                    variant="destructive"
+                                    title="Eliminar plan"
+                                    description="¿Estás seguro de querer eliminar este plan?"
+                                    onConfirm={() => handleDelete(plan.id)}
+                                    onCancel={() => {}}
+                                >
+                                    <Button variant="outline">
+                                        <TrashIcon className="size-4" />
+                                        Eliminar
+                                    </Button>
+                                </DialogConfirm>
+                            )}
                         </CardFooter>
                     </Card>
                 ))}
-                {plans?.length !== 0 && (
+                {plans?.length !== 0 && hasPermission(PERMISSIONS.plans.create) && (
                     <Card className="flex flex-col items-center justify-center gap-4 border-none shadow-none">
                         <CreatePlan />
                     </Card>
