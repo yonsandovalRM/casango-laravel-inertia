@@ -21,37 +21,15 @@ class PlanController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(CreatePlanRequest $request)
     {
         $plan = Plan::create($request->validated());
-        return redirect()->route('plans.index')->with('success', 'Plan creado correctamente');
+        return redirect()->route('plans.index')->with('success', __('plan.created'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Plan $plan)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Plan $plan)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -59,7 +37,7 @@ class PlanController extends Controller
     public function update(UpdatePlanRequest $request, Plan $plan)
     {
         $plan->update($request->validated());
-        return redirect()->route('plans.index')->with('success', 'Plan actualizado correctamente');
+        return redirect()->route('plans.index')->with('success', __('plan.updated'));
     }
 
     /**
@@ -67,6 +45,7 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        //
+        $plan->delete();
+        return redirect()->route('plans.index')->with('success', __('plan.deleted'));
     }
 }
