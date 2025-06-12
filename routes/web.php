@@ -2,7 +2,7 @@
 
 use App\Enums\Permissions;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PlanController;
+use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,10 +16,12 @@ foreach (config('tenancy.central_domains') as $domain) {
             })->name('dashboard');
         });
 
-        Route::get('plans', [PlanController::class, 'index'])->name('plans.index')->middleware('can:'.Permissions::PLANS_VIEW);
-        Route::post('plans', [PlanController::class, 'store'])->name('plans.store')->middleware('can:'.Permissions::PLANS_CREATE);
-        Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update')->middleware('can:'.Permissions::PLANS_EDIT);
-        Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy')->middleware('can:'.Permissions::PLANS_DELETE);
+        // Main routes
+        require __DIR__.'/main/plans.php';
+
+        Route::get('negocios', [TenantController::class, 'index'])->name('tenants.index')->middleware('can:'.Permissions::TENANTS_VIEW);
+        Route::post('negocios', [TenantController::class, 'store'])->name('tenants.store');
+        Route::get('negocios/crear', [TenantController::class, 'create'])->name('tenants.create');
 
         require __DIR__.'/settings.php';
         require __DIR__.'/auth.php';

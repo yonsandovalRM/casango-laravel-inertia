@@ -25,6 +25,11 @@ export const PERMISSIONS = {
         delete: 'delete plans',
         view: 'view plans',
     },
+    tenants: {
+        edit: 'edit tenants',
+        delete: 'delete tenants',
+        view: 'view tenants',
+    },
 };
 
 export const ROLES = {

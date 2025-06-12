@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS } from '@/hooks/usePermissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Package } from 'lucide-react';
+import { BookOpen, Building2, Folder, LayoutGrid, Package } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -20,6 +20,12 @@ const mainNavItems: NavItem[] = [
         href: route('plans.index'),
         icon: Package,
         permission: PERMISSIONS.plans.view,
+    },
+    {
+        title: 'Negocios',
+        href: route('tenants.index'),
+        icon: Building2,
+        permission: PERMISSIONS.tenants.view,
     },
 ];
 

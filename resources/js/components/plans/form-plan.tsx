@@ -1,9 +1,9 @@
+import InputError from '@/components/input-error';
 import { PlusIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
-import { InputError } from '../ui/input-error';
 import { Label } from '../ui/label';
 import { SortableFeature } from './sortable-feature';
 
@@ -50,7 +50,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                 Nombre
                             </Label>
                             <Input id="name" name="name" value={data.name} onChange={(e) => setData('name', e.target.value)} placeholder="Nombre" />
-                            <InputError error={errors.name} />
+                            <InputError message={errors.name} />
                         </div>
                         <div>
                             <Label htmlFor="description" required>
@@ -63,7 +63,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                 onChange={(e) => setData('description', e.target.value)}
                                 placeholder="Adecuado para..."
                             />
-                            <InputError error={errors.description} />
+                            <InputError message={errors.description} />
                         </div>
                         <div>
                             <Label htmlFor="price_monthly" required>
@@ -76,7 +76,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                 value={data.price_monthly}
                                 onChange={(e) => setData('price_monthly', e.target.value)}
                             />
-                            <InputError error={errors.price_monthly} />
+                            <InputError message={errors.price_monthly} />
                         </div>
                         <div>
                             <Label htmlFor="price_annual" required>
@@ -89,14 +89,14 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                 value={data.price_annual}
                                 onChange={(e) => setData('price_annual', e.target.value)}
                             />
-                            <InputError error={errors.price_annual} />
+                            <InputError message={errors.price_annual} />
                         </div>
                         <div>
                             <Label htmlFor="currency" required>
                                 Moneda
                             </Label>
                             <Input id="currency" name="currency" value={data.currency} onChange={(e) => setData('currency', e.target.value)} />
-                            <InputError error={errors.currency} />
+                            <InputError message={errors.currency} />
                         </div>
                     </div>
                     <div>
@@ -122,7 +122,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                         Agregar
                                     </Button>
                                 </div>
-                                <InputError error={errors.features} />
+                                <InputError message={errors.features} />
                                 <SortableFeature
                                     features={data.features}
                                     handleReorderFeatures={handleReorderFeatures}
@@ -135,7 +135,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                         <div className="flex items-center gap-2">
                             <Checkbox id="is_free" name="is_free" checked={data.is_free} onCheckedChange={(checked) => setData('is_free', checked)} />
                             <Label htmlFor="is_free">Es gratuito</Label>
-                            <InputError error={errors.is_free} />
+                            <InputError message={errors.is_free} />
                         </div>
                         <div className="flex items-center gap-2">
                             <Checkbox
@@ -145,7 +145,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                 onCheckedChange={(checked) => setData('is_popular', checked)}
                             />
                             <Label htmlFor="is_popular">Es popular</Label>
-                            <InputError error={errors.is_popular} />
+                            <InputError message={errors.is_popular} />
                         </div>
                     </div>
                 </div>

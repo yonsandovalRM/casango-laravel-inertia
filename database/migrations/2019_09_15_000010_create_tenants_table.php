@@ -17,11 +17,10 @@ class CreateTenantsTable extends Migration
     {
         Schema::create('tenants', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->string('name')->nullable();
             $table->string('email')->nullable();
+            $table->string('name')->nullable();
             $table->string('category')->nullable();
-
-            /* TODO: add plan reference */
+            $table->uuid('plan_id')->nullable();
 
             $table->timestamps();
             $table->json('data')->nullable();
