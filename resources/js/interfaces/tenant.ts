@@ -1,11 +1,11 @@
-import { PlanResource } from './plan';
+import { SubscriptionResource } from './subscription';
 
 export interface TenantResource {
     id: string;
     name: string;
     email: string;
     category: string;
-    plan: PlanResource;
+    subscription: SubscriptionResource;
     domain: string;
     url: string;
     created_at: string;

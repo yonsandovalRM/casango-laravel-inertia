@@ -51,6 +51,7 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                                     </p>
                                 </div>
                             )}
+                            <p className="text-sm text-muted-foreground">{plan.trial_days} días de prueba</p>
 
                             <div className="flex-1 text-sm">
                                 {plan.features.map((feature) => (
@@ -80,11 +81,6 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                         </CardFooter>
                     </Card>
                 ))}
-                {plans?.length !== 0 && hasPermission(PERMISSIONS.plans.create) && (
-                    <Card className="flex flex-col items-center justify-center gap-4 border-none shadow-none">
-                        <CreatePlan />
-                    </Card>
-                )}
             </div>
         </>
     );

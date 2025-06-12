@@ -100,6 +100,13 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                         </div>
                     </div>
                     <div>
+                        <Label htmlFor="trial_days" required>
+                            Días de prueba
+                        </Label>
+                        <Input id="trial_days" name="trial_days" value={data.trial_days} onChange={(e) => setData('trial_days', e.target.value)} />
+                        <InputError message={errors.trial_days} />
+                    </div>
+                    <div>
                         <div>
                             <Label htmlFor="features" required>
                                 Características

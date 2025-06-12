@@ -24,7 +24,7 @@ class TenantResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'category' => $this->category,
-            'plan' => $this->plan,
+            'subscription' => new SubscriptionResource($this->subscriptions()->first())->toArray(request()),
             'data' => $this->data,
             'domain' => $domain,
             'url' => $url,

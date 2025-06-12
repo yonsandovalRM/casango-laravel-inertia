@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 export const SessionMessages = () => {
-    const { error, message, success } = useSessionMessages();
+    const { message, error, success, reset } = useSessionMessages();
 
     useEffect(() => {
         if (error) {
@@ -21,6 +21,10 @@ export const SessionMessages = () => {
             toast.dismiss();
         };
     }, [error, message, success]);
+
+    if (!error && !message && !success) {
+        return null;
+    }
 
     return (
         <div className="space-y-2 py-4">

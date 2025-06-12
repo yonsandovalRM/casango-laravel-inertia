@@ -1,12 +1,15 @@
-import { Badge } from '@/components/ui/badge';
+import { AppHeaderPage } from '@/components/app-header-page';
+import { SessionMessages } from '@/components/session-messages';
+import { TenantCard } from '@/components/tenants/tenant-card';
+import { TenantFilters } from '@/components/tenants/tenant-filters';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { DialogConfirm } from '@/components/ui/dialog-confirm';
 import { TenantResource } from '@/interfaces/tenant';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
-import { ExternalLink, Pencil, Plus, Trash } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { Pencil, Plus, Trash } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -18,76 +21,64 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/negocios',
     },
 ];
+
 export default function TenantsIndex({ tenants }: { tenants: TenantResource[] }) {
-    console.log({ tenants });
+    const [open, setOpen] = useState(false);
+
+    const handleConfirmDelete = (tenantId: string) => {
+        setOpen(false);
+        router.delete(route('tenants.destroy', { tenant: tenantId }));
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Negocios" />
-
-            <div className="p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Negocios</h1>
+            <AppHeaderPage
+                title="Negocios"
+                description="Gestiona los negocios de tu empresa"
+                actions={
                     <Button asChild>
                         <Link href={route('tenants.create')}>
                             <Plus className="size-4" />
                             Nuevo Negocio
                         </Link>
                     </Button>
-                </div>
+                }
+            />
 
-                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {tenants.map((tenant) => (
-                        <Card key={tenant.id}>
-                            <CardHeader>
-                                <CardTitle>
-                                    <div className="flex items-center justify-between gap-2">
-                                        {tenant.name}
-                                        <Badge variant="outline">{tenant.plan.name}</Badge>
-                                    </div>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <CardDescription>Suscripcion por confirmar aun</CardDescription>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-sm text-muted-foreground">{tenant.domain}</span>
-                                </div>
-                            </CardContent>
-                            <CardFooter className="grid grid-cols-3 gap-2">
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <Button variant="outline" asChild className="flex items-center gap-2">
-                                            <Link href="#">
-                                                <Pencil className="size-4" />
-                                            </Link>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Editar</TooltipContent>
-                                </Tooltip>
+            <TenantFilters />
+            <SessionMessages />
 
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <Button variant="outline" asChild className="flex items-center gap-2">
-                                            <Link href="#">
-                                                <Trash className="size-4" />
-                                            </Link>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Eliminar</TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                    <TooltipTrigger>
-                                        <Button variant="outline" asChild className="flex items-center gap-2">
-                                            <a href={tenant.url} target="_blank">
-                                                <ExternalLink className="size-4" />
-                                            </a>
-                                        </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Ir al sitio</TooltipContent>
-                                </Tooltip>
-                            </CardFooter>
-                        </Card>
-                    ))}
-                </div>
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {tenants.map((tenant) => (
+                    <TenantCard
+                        key={tenant.id}
+                        tenant={tenant}
+                        actions={
+                            <>
+                                <Button variant="outline" className="flex items-center gap-2">
+                                    <Link href="#">
+                                        <Pencil className="size-4" />
+                                    </Link>
+                                    Editar
+                                </Button>
+
+                                <DialogConfirm
+                                    variant="destructive"
+                                    title="Eliminar negocio"
+                                    description="¿Estás seguro de querer eliminar este negocio? Esta acción no se puede deshacer."
+                                    onConfirm={() => handleConfirmDelete(tenant.id)}
+                                    onCancel={() => setOpen(false)}
+                                >
+                                    <Button variant="outline" onClick={() => setOpen(true)}>
+                                        <Trash className="size-4" />
+                                        Eliminar
+                                    </Button>
+                                </DialogConfirm>
+                            </>
+                        }
+                    />
+                ))}
             </div>
         </AppLayout>
     );

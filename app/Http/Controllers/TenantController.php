@@ -29,7 +29,7 @@ class TenantController extends Controller
     */
     public function index()
     {
-        $tenants = Tenant::all();
+        $tenants = Tenant::with('subscriptions')->get();
         return Inertia::render('tenants/index', [
             'tenants' => TenantResource::collection($tenants)->toArray(request()),
         ]);
@@ -65,9 +65,13 @@ class TenantController extends Controller
     */
     public function store(CreateTenantRequest $request)
     {
+      
         $tenant_id = $request->subdomain;
         $domain = $request->subdomain.'.'.config('tenancy.central_domains')[0];
-        
+        $plan = Plan::find($request->plan_id);
+        if (!$plan) {
+            return redirect()->route('tenants.create')->with('error', __('plan.plan_not_found'));
+        }
 
         if ($this->validateDomainExists($domain)) {
             return redirect()->route('tenants.create')->with('error', __('tenant.subdomain_already_in_use'));
@@ -77,7 +81,7 @@ class TenantController extends Controller
             $tenant = Tenant::query()->create([
                 'id' => $tenant_id,
                 'name' => $request->name,
-                'plan_id' => $request->plan_id,
+                'plan_id' => $plan->id,
                 'category' => $request->category,
             ]);
 
@@ -85,8 +89,7 @@ class TenantController extends Controller
                 'domain' => $domain,
             ]);
 
-         
-
+            $this->createSubscription($tenant, $plan);
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
 
 
@@ -94,13 +97,25 @@ class TenantController extends Controller
             Log::info("Tenant created successfully", [
                 'tenant' => $tenant,
             ]);
-            return redirect()->route('tenants.create')->with('success', __('tenants.create_success'));
+            return redirect()->route('tenants.create')->with('success', __('tenant.create_success'));
         } catch (\Exception $e) {
             Log::error("Error creating tenant", [
                 'error' => $e->getMessage(),
             ]);
-            return redirect()->route('tenants.create')->with('error', __('tenants.create_error'));
+            return redirect()->route('tenants.create')->with('error', __('tenant.create_error'));
         }
+    }
+
+
+    /* 
+    * Destroy a tenant
+    * @param Tenant $tenant
+    * @return \Illuminate\Http\RedirectResponse
+    */
+    public function destroy(Tenant $tenant)
+    {
+        $tenant->delete();
+        return redirect()->route('tenants.index')->with('success', __('tenant.delete_success'));
     }
 
     /* 
@@ -125,6 +140,11 @@ class TenantController extends Controller
         });
     }
 
+    /* 
+    * Validate if a domain exists
+    * @param string $domain
+    * @return bool
+    */
     private function validateDomainExists(string $domain)
     {
         $tenant = Tenant::query()->where('id', $domain)->first();
@@ -133,6 +153,32 @@ class TenantController extends Controller
         }
         return false;
     }
+
+    /* 
+    * Create a subscription for a tenant
+    * @param Tenant $tenant
+    * @param Plan $plan
+    * @return void
+    */
+    private function createSubscription(Tenant $tenant, Plan $plan)
+    {
+          // TODO: Solo maneja suscripciones de forma mensual, se debe agregar soporte para suscripciones anuales
+        $trial_days = now()->addDays($plan->trial_days);
+        $ends_at = now()->addDays($plan->trial_days)->addMonths(1);
+
+        $tenant->subscriptions()->create([
+            'plan_id' => $plan->id,
+            'price' => $plan->price_monthly,
+            'currency' => $plan->currency,
+            'trial_ends_at' => $trial_days,
+            'ends_at' => $ends_at,
+            'payment_status' => 'pending',
+            'is_monthly' => true,
+            'is_active' => true,
+        ]);
+
+    }
+ 
 
   
 }

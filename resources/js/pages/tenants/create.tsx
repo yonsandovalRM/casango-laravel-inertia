@@ -13,14 +13,14 @@ import { ShieldCheck } from 'lucide-react';
 
 export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
     const { data, setData, post, errors, processing } = useForm({
-        name: '',
-        subdomain: '',
-        owner_name: '',
-        owner_email: '',
-        owner_password: '',
-        owner_password_confirmation: '',
-        plan_id: '',
-        category: '',
+        name: 'Fast',
+        subdomain: 'fast',
+        owner_name: 'Fast',
+        owner_email: 'fast@fast.com',
+        owner_password: '12345678',
+        owner_password_confirmation: '12345678',
+        plan_id: 'f1792f79-a96e-4dde-9cea-68c86eae4e0b',
+        category: 'bar',
     });
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +101,7 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
                             <RadioGroup
                                 defaultValue="starter"
                                 className="grid gap-3 md:grid-cols-2"
+                                value={data.plan_id}
                                 onValueChange={(value) => setData('plan_id', value)}
                             >
                                 {plans.map((plan) => (

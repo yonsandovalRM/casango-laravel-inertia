@@ -1,3 +1,5 @@
+import { AppHeaderPage } from '@/components/app-header-page';
+import { CreatePlan } from '@/components/plans/create-plan';
 import { ListPlans } from '@/components/plans/list-plans';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -19,10 +21,8 @@ export default function PlansIndex({ plans }: { plans: PlanResource[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Planes" />
-
-            <div className="px-4">
-                <ListPlans plans={plans} />
-            </div>
+            <AppHeaderPage title="Planes" description="Gestiona los planes de tu empresa" actions={<CreatePlan />} />
+            <ListPlans plans={plans} />
         </AppLayout>
     );
 }
