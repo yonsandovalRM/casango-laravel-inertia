@@ -30,9 +30,12 @@ class RolesAndPermissionsSeeder extends Seeder
  
         // or may be done by chaining
         $role = Role::create(['name' => 'owner'])
-            ->givePermissionTo(['create plans', 'edit plans', 'delete plans', 'view plans', 'edit tenants', 'delete tenants', 'view tenants']);
+            ->givePermissionTo(['create plans', 'edit plans', 'delete plans', 'view plans',  'edit tenants', 'delete tenants', 'view tenants']);
 
         $role = Role::create(['name' => 'admin']);
         $role->givePermissionTo(Permission::all());
+
+        $role = Role::create(['name' => 'user']);
+        $role->givePermissionTo(['view plans', 'view tenants']);
     }
 }

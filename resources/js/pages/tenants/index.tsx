@@ -4,6 +4,7 @@ import { TenantCard } from '@/components/tenants/tenant-card';
 import { TenantFilters } from '@/components/tenants/tenant-filters';
 import { Button } from '@/components/ui/button';
 import { DialogConfirm } from '@/components/ui/dialog-confirm';
+import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { TenantResource } from '@/interfaces/tenant';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -24,6 +25,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function TenantsIndex({ tenants }: { tenants: TenantResource[] }) {
     const [open, setOpen] = useState(false);
+    const { hasPermission } = usePermissions();
 
     const handleConfirmDelete = (tenantId: string) => {
         setOpen(false);
@@ -56,25 +58,29 @@ export default function TenantsIndex({ tenants }: { tenants: TenantResource[] })
                         tenant={tenant}
                         actions={
                             <>
-                                <Button variant="outline" className="flex items-center gap-2">
-                                    <Link href="#">
-                                        <Pencil className="size-4" />
-                                    </Link>
-                                    Editar
-                                </Button>
-
-                                <DialogConfirm
-                                    variant="destructive"
-                                    title="Eliminar negocio"
-                                    description="¿Estás seguro de querer eliminar este negocio? Esta acción no se puede deshacer."
-                                    onConfirm={() => handleConfirmDelete(tenant.id)}
-                                    onCancel={() => setOpen(false)}
-                                >
-                                    <Button variant="outline" onClick={() => setOpen(true)}>
-                                        <Trash className="size-4" />
-                                        Eliminar
+                                {hasPermission(PERMISSIONS.tenants.edit) && (
+                                    <Button variant="outline" className="flex items-center gap-2">
+                                        <Link href="#">
+                                            <Pencil className="size-4" />
+                                            Editar
+                                        </Link>
                                     </Button>
-                                </DialogConfirm>
+                                )}
+
+                                {hasPermission(PERMISSIONS.tenants.delete) && (
+                                    <DialogConfirm
+                                        variant="destructive"
+                                        title="Eliminar negocio"
+                                        description="¿Estás seguro de querer eliminar este negocio? Esta acción no se puede deshacer."
+                                        onConfirm={() => handleConfirmDelete(tenant.id)}
+                                        onCancel={() => setOpen(false)}
+                                    >
+                                        <Button variant="outline" onClick={() => setOpen(true)}>
+                                            <Trash className="size-4" />
+                                            Eliminar
+                                        </Button>
+                                    </DialogConfirm>
+                                )}
                             </>
                         }
                     />
