@@ -23,7 +23,7 @@ class UpdateTenantRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'domain' => 'required|string|max:63|regex:/^[a-z0-9-]+$/|unique:domains,domain,' . $this->tenant->domains->first()->id,
+            'subdomain' => 'required|string|max:63',
             'owner_name' => 'required|string|max:255',
             'owner_email' => 'required|email|max:255',
             'plan_id' => 'required|string|exists:plans,id',

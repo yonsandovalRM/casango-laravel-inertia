@@ -15,9 +15,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
 use Stancl\Tenancy\Jobs\CreateDatabase;
+use App\Traits\GeneratesSubdomainSuggestions;
 
 class TenantController extends Controller
 {
+    use GeneratesSubdomainSuggestions;
+
+
+
     /* 
     * Show the list of tenants
     * @return \Inertia\Response
@@ -43,6 +48,17 @@ class TenantController extends Controller
     }
 
     /* 
+    * Get suggestions for a subdomain
+    * @param Request $request
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function getSuggestions(Request $request)
+    {
+        $suggestions = $this->generateSubdomainSuggestions($request->subdomain, 5);
+        return response()->json($suggestions);
+    }
+
+    /* 
     * Store a new tenant
     * @param CreateTenantRequest $request
     * @return \Illuminate\Http\RedirectResponse
@@ -50,17 +66,20 @@ class TenantController extends Controller
     public function store(CreateTenantRequest $request)
     {
 
-   
+            if ($this->validateDomainExists($request->subdomain)) {
+            return redirect()->route('tenants.create')->with('error', __('tenant.subdomain_already_in_use'));
+        }
+
         try {
             $tenant = Tenant::query()->create([
-                'id' => $request->domain,
+                'id' => $request->subdomain,
                 'name' => $request->name,
                 'plan_id' => $request->plan_id,
                 'category' => $request->category,
             ]);
 
             $tenant->domains()->create([
-                'domain' => $request->domain,
+                'domain' => $request->subdomain,
             ]);
 
          
@@ -103,4 +122,14 @@ class TenantController extends Controller
         });
     }
 
+    private function validateDomainExists(string $domain)
+    {
+        $tenant = Tenant::query()->where('id', $domain)->first();
+        if ($tenant) {
+            return true;
+        }
+        return false;
+    }
+
+  
 }

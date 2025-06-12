@@ -3,18 +3,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useSessionMessages } from '@/hooks/use-session-messages';
 import { PlanResource } from '@/interfaces/plan';
 import { useForm } from '@inertiajs/react';
 
 export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
+    const { error, message, success } = useSessionMessages();
     const { data, setData, post, errors, processing } = useForm({
         name: 'alberto',
-        domain: 'alberto',
+        subdomain: 'alberto',
         owner_name: 'alberto',
         owner_email: 'alberto@alberto.com',
         owner_password: '12345678',
         owner_password_confirmation: '12345678',
-        plan_id: '1',
+        plan_id: 'b68e79e8-d6a1-4fd1-8e9f-5b81f1cdb4a4',
         category: 'restaurant',
     });
 
@@ -25,6 +27,9 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
 
     return (
         <div>
+            {error && <div className="text-red-500">{error}</div>}
+            {message && <div className="text-green-500">{message}</div>}
+            {success && <div className="text-green-500">{success}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -35,11 +40,17 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
                         <InputError message={errors.name} />
                     </div>
                     <div>
-                        <Label htmlFor="domain" required>
-                            Dominio
+                        <Label htmlFor="subdomain" required>
+                            Subdominio
                         </Label>
-                        <Input id="domain" type="text" name="domain" value={data.domain} onChange={(e) => setData('domain', e.target.value)} />
-                        <InputError message={errors.domain} />
+                        <Input
+                            id="subdomain"
+                            type="text"
+                            name="subdomain"
+                            value={data.subdomain}
+                            onChange={(e) => setData('subdomain', e.target.value)}
+                        />
+                        <InputError message={errors.subdomain} />
                     </div>
                     <div>
                         <Label htmlFor="owner_name" required>

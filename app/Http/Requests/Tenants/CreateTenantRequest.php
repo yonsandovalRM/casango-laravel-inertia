@@ -23,7 +23,7 @@ class CreateTenantRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'domain' => 'required|string|max:63|unique:domains,domain|regex:/^[a-z0-9-]+$/',
+            'subdomain' => 'required|string|max:63',
             'owner_name' => 'required|string|max:255',
             'owner_email' => 'required|email|max:255',
             'owner_password' => 'required|string|min:8|confirmed',
