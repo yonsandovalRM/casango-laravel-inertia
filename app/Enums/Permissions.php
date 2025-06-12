@@ -13,7 +13,11 @@ class Permissions
     public const TENANTS_DELETE = 'delete tenants';
     public const TENANTS_VIEW = 'view tenants';
 
-    // Puedes agrupar si lo deseas:
+    public const USERS_CREATE = 'create users';
+    public const USERS_EDIT = 'edit users';
+    public const USERS_DELETE = 'delete users';
+    public const USERS_VIEW = 'view users';
+
     public static function plans(): array
     {
         return [
@@ -30,6 +34,16 @@ class Permissions
             self::TENANTS_EDIT,
             self::TENANTS_DELETE,
             self::TENANTS_VIEW,
+        ];
+    }
+
+    public static function users(): array
+    {
+        return [
+            self::USERS_CREATE,
+            self::USERS_EDIT,
+            self::USERS_DELETE,
+            self::USERS_VIEW,
         ];
     }
 }

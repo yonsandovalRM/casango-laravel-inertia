@@ -18,11 +18,11 @@ foreach (config('tenancy.central_domains') as $domain) {
 
         // Main routes
         require __DIR__.'/main/plans.php';
+        require __DIR__.'/main/tenants.php';
 
-        Route::get('negocios', [TenantController::class, 'index'])->name('tenants.index')->middleware('can:'.Permissions::TENANTS_VIEW);
-        Route::post('negocios', [TenantController::class, 'store'])->name('tenants.store');
-        Route::get('negocios/crear', [TenantController::class, 'create'])->name('tenants.create');
-        Route::delete('negocios/{tenant}', [TenantController::class, 'destroy'])->name('tenants.destroy')->middleware('can:'.Permissions::TENANTS_DELETE);
+        require __DIR__.'/main/users.php';
+
+       
 
         require __DIR__.'/settings.php';
         require __DIR__.'/auth.php';

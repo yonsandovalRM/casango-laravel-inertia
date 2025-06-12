@@ -30,9 +30,16 @@ export const PERMISSIONS = {
         delete: 'delete tenants',
         view: 'view tenants',
     },
+    users: {
+        create: 'create users',
+        edit: 'edit users',
+        delete: 'delete users',
+        view: 'view users',
+    },
 };
 
 export const ROLES = {
+    owner: 'owner',
     admin: 'admin',
     user: 'user',
 };

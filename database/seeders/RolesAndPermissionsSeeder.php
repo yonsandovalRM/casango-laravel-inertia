@@ -23,6 +23,11 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'edit tenants']);
         Permission::create(['name' => 'delete tenants']);
 
+        Permission::create(['name' => 'view users']);
+        Permission::create(['name' => 'edit users']);
+        Permission::create(['name' => 'delete users']);
+        Permission::create(['name' => 'create users']);
+
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
@@ -30,12 +35,12 @@ class RolesAndPermissionsSeeder extends Seeder
  
         // or may be done by chaining
         $role = Role::create(['name' => 'owner'])
-            ->givePermissionTo(['create plans', 'edit plans', 'delete plans', 'view plans',  'edit tenants', 'delete tenants', 'view tenants']);
+            ->givePermissionTo(Permission::all());
 
         $role = Role::create(['name' => 'admin']);
         $role->givePermissionTo(Permission::all());
 
         $role = Role::create(['name' => 'user']);
-        $role->givePermissionTo(['view plans', 'view tenants']);
+        $role->givePermissionTo(['view plans', 'view tenants', 'view users']);
     }
 }
