@@ -62,7 +62,7 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                                 ))}
                             </div>
                         </CardContent>
-                        <CardFooter className="grid grid-cols-2 gap-4">
+                        <CardFooter className="flex justify-end gap-2">
                             {hasPermission(PERMISSIONS.plans.edit) && <EditPlan plan={plan} />}
                             {hasPermission(PERMISSIONS.plans.delete) && (
                                 <DialogConfirm
@@ -72,7 +72,7 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                                     onConfirm={() => handleDelete(plan.id)}
                                     onCancel={() => {}}
                                 >
-                                    <Button variant="outline">
+                                    <Button variant="soft-destructive">
                                         <TrashIcon className="size-4" />
                                         Eliminar
                                     </Button>

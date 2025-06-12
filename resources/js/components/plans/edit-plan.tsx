@@ -52,7 +52,7 @@ export const EditPlan = ({ plan }: { plan: PlanResource }) => {
             <SheetTrigger asChild>
                 <Button variant="outline" onClick={() => setOpen(true)}>
                     <PencilIcon className="size-4" />
-                    Editar plan
+                    Editar
                 </Button>
             </SheetTrigger>
             <SheetContent>

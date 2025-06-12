@@ -73,7 +73,7 @@ export default function TenantsIndex({ tenants }: { tenants: TenantResource[] })
                                         onConfirm={() => handleConfirmDelete(tenant.id)}
                                         onCancel={() => setOpen(false)}
                                     >
-                                        <Button variant="outline" onClick={() => setOpen(true)}>
+                                        <Button variant="soft-destructive" onClick={() => setOpen(true)}>
                                             <Trash className="size-4" />
                                             Eliminar
                                         </Button>
