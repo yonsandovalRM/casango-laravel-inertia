@@ -35,6 +35,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         ];
     }
 
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
+
 }
 
 

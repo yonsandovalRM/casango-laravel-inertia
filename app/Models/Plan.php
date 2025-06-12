@@ -26,6 +26,11 @@ class Plan extends Model
         'is_free' => 'boolean',
         'is_popular' => 'boolean',
     ];
+
+    public function tenants()
+    {
+        return $this->hasMany(Tenant::class);
+    }
 }
 
 

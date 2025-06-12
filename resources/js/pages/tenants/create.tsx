@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlanResource } from '@/interfaces/plan';
 import { MOCK_CATEGORIES } from '@/interfaces/tenant';
-import { useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { ShieldCheck } from 'lucide-react';
 
 export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
@@ -25,7 +25,7 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData('name', e.target.value);
-        setData('subdomain', e.target.value.toLowerCase().replace(/ /g, '-'));
+        setData('subdomain', e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''));
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,6 +35,7 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
 
     return (
         <div className="container mx-auto px-4 py-16">
+            <Head title="Crear negocio" />
             <form onSubmit={handleSubmit}>
                 <div>
                     <h1 className="text-2xl font-bold">Onboarding de empresa</h1>

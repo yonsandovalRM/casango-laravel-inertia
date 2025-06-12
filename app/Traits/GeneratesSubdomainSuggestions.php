@@ -1,4 +1,5 @@
 <?php
+// app/Traits/GeneratesSubdomainSuggestions.php
 
 namespace App\Traits;
 
@@ -15,21 +16,21 @@ trait GeneratesSubdomainSuggestions
      * @param int $count Número de sugerencias a generar
      * @return array
      */
-    public function generateSubdomainSuggestions(string $subdomain, int $count = 5): array
+    public function generateSubdomainSuggestions(string $baseSubdomain, string $mainDomain, int $count = 5): array
     {
         $suggestions = [];
         $attempts = 0;
         $maxAttempts = $count * 3; // Límite para evitar bucles infinitos
         
-        $subdomain = Str::slug($subdomain); // Normaliza el subdominio
+        $baseSubdomain = Str::slug($baseSubdomain); // Normaliza el subdominio
 
         while (count($suggestions) < $count && $attempts < $maxAttempts) {
             $attempts++;
             
-            $variation = $this->generateSubdomainVariation($subdomain, count($suggestions));
-          
+            $variation = $this->generateSubdomainVariation($baseSubdomain, count($suggestions));
+            $fullDomain = "{$variation}.{$mainDomain}";
             
-            if (!$this->subdomainExists($variation)) {
+            if (!$this->subdomainExists($fullDomain)) {
                 $suggestions[] = $variation;
             }
         }
@@ -40,9 +41,9 @@ trait GeneratesSubdomainSuggestions
     /**
      * Verifica si un subdominio ya existe
      */
-    protected function subdomainExists(string $subdomain): bool
+    protected function subdomainExists(string $fullDomain): bool
     {
-        return Tenant::where('id', $subdomain)->exists();
+        return Tenant::where('domain', $fullDomain)->exists();
     }
 
     /**

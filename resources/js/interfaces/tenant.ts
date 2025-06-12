@@ -6,6 +6,10 @@ export interface TenantResource {
     email: string;
     category: string;
     plan: PlanResource;
+    domain: string;
+    url: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export const MOCK_CATEGORIES = [

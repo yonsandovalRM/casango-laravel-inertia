@@ -54,7 +54,7 @@ class TenantController extends Controller
     */
     public function getSuggestions(Request $request)
     {
-        $suggestions = $this->generateSubdomainSuggestions($request->subdomain, 5);
+        $suggestions = $this->generateSubdomainSuggestions($request->subdomain, config('tenancy.central_domains')[0], 5);
         return response()->json($suggestions);
     }
 
@@ -65,21 +65,24 @@ class TenantController extends Controller
     */
     public function store(CreateTenantRequest $request)
     {
+        $tenant_id = $request->subdomain;
+        $domain = $request->subdomain.'.'.config('tenancy.central_domains')[0];
+        
 
-            if ($this->validateDomainExists($request->subdomain)) {
+        if ($this->validateDomainExists($domain)) {
             return redirect()->route('tenants.create')->with('error', __('tenant.subdomain_already_in_use'));
         }
 
         try {
             $tenant = Tenant::query()->create([
-                'id' => $request->subdomain,
+                'id' => $tenant_id,
                 'name' => $request->name,
                 'plan_id' => $request->plan_id,
                 'category' => $request->category,
             ]);
 
             $tenant->domains()->create([
-                'domain' => $request->subdomain,
+                'domain' => $domain,
             ]);
 
          
