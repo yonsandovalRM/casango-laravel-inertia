@@ -48,7 +48,7 @@ export const CreatePlan = () => {
                     <SheetTitle>Crear plan</SheetTitle>
                     <SheetDescription>Crea un nuevo plan para tu aplicación</SheetDescription>
                 </SheetHeader>
-                <ScrollArea className="h-[calc(100vh-200px)]">
+                <ScrollArea className="h-[calc(100vh-180px)]">
                     <form id="plan-form" onSubmit={handleSubmit}>
                         <FormPlan data={data} setData={setData} errors={errors} />
                     </form>
