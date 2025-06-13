@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Invitations\AcceptInvitationRequest;
+use App\Http\Requests\Invitations\CreateInvitationRequest;
 use App\Mail\UserInvitationMail;
 use App\Models\Invitation;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -20,12 +21,8 @@ class InvitationController extends Controller
         return Inertia::render('invitations/index', ['invitations' => $invitations]);
     }
 
-    public function store(Request $request)
+    public function store(CreateInvitationRequest $request)
     {
-        if ($this->userExists($request->email)) {
-            return redirect()->route('users.index')->with('error', __('user.already_exists'));
-        }
-
         $invitation = Invitation::updateOrCreate(
             ['email' => $request->email],
             [
@@ -49,30 +46,30 @@ class InvitationController extends Controller
 
         return Inertia::render('invitations/form', [
             'token' => $token,
-            'email' => $invitation->email,
             'name' => $invitation->name,
         ]);
     }
 
-    public function accept(Request $request, $token)
+    public function accept(AcceptInvitationRequest $request, $token)
     {
         $invitation = Invitation::where('token', $token)->firstOrFail();
 
-        $request->validate([
-            'name' => 'required',
-            'password' => 'required|confirmed|min:8',
-        ]);
-
+        
         $existing = User::where('email', $invitation->email)->first();
         if ($existing) {
-            return redirect()->route('login')->withErrors(['email' => __('user.already_exists')]);
+            return redirect()->back()->with('error', __('invitation.user_exists'));
+        
+        }
+
+        if ($invitation->expires_at < now()) {
+            return redirect()->back()->with('error', __('invitation.expired'));
         }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $invitation->email,
             'password' => Hash::make($request->password),
-            'email_verified_at' => now(),
+            'email_verified_at' => now(), 
         ]);
 
         $user->assignRole($invitation->role);
@@ -84,9 +81,5 @@ class InvitationController extends Controller
     }
 
 
-    private function userExists(string $email): bool
-    {
-        return User::where('email', $email)->exists();
-    }
 
 }

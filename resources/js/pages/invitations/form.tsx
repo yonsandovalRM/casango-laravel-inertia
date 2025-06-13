@@ -6,89 +6,20 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { AcceptInvitationFormData } from '@/interfaces/invitation';
 import AuthLayout from '@/layouts/auth-layout';
-import { usePage } from '@inertiajs/react';
-import { useEffect } from 'react';
 
-/* export default function InvitationForm({ token }: { token: string }) {
-    const { email = '', name = '' } = usePage().props;
-    const { data, setData, post, processing, errors } = useForm({
-        email: '',
-        name: '',
+export default function InvitationForm({ token, name }: { token: string; name: string }) {
+    const { data, setData, post, processing, errors, reset } = useForm<AcceptInvitationFormData>({
+        name,
         password: '',
         password_confirmation: '',
     });
 
-    useEffect(() => {
-        if (email) {
-            setData('email', email as string);
-        }
-        if (name) {
-            setData('name', name as string);
-        }
-    }, [email, name]);
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        post(route('invitations.accept', { token }));
-    };
-
-    return (
-        <div>
-            <h1>Invitación</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="name">Nombre</label>
-                    <input type="text" name="name" value={data.name} onChange={(e) => setData('name', e.target.value)} />
-                </div>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" name="email" value={data.email} onChange={(e) => setData('email', e.target.value)} />
-                </div>
-                <div>
-                    <label htmlFor="password">Contraseña</label>
-                    <input type="password" name="password" value={data.password} onChange={(e) => setData('password', e.target.value)} />
-                </div>
-                <div>
-                    <label htmlFor="password_confirmation">Confirmar contraseña</label>
-                    <input
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                    />
-                </div>
-                <button type="submit" disabled={processing}>
-                    {processing ? 'Procesando...' : 'Enviar'}
-                </button>
-            </form>
-        </div>
-    );
-}
-
- */
-
-export default function InvitationForm({ token }: { token: string }) {
-    const { email = '', name = '' } = usePage().props;
-    const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        name: '',
-        password: '',
-        password_confirmation: '',
-    });
-
-    useEffect(() => {
-        if (email) {
-            setData('email', email as string);
-        }
-        if (name) {
-            setData('name', name as string);
-        }
-    }, [email, name]);
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post(route('invitations.accept', { token }), {
-            onFinish: () => reset('name', 'email', 'password', 'password_confirmation'),
+            onFinish: () => reset('name', 'password', 'password_confirmation'),
         });
     };
 
@@ -115,23 +46,6 @@ export default function InvitationForm({ token }: { token: string }) {
                         <p className="text-sm text-muted-foreground">
                             Este nombre lo recibimos desde la invitación, si deseas cambiarlo, puedes hacerlo ahora.
                         </p>
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">¿Cuál es tu correo electrónico?</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            required
-                            tabIndex={2}
-                            autoComplete="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
-                            disabled={processing}
-                            placeholder="email@example.com"
-                            readOnly
-                        />
-                        <InputError message={errors.email} />
                     </div>
 
                     <div className="grid gap-2">

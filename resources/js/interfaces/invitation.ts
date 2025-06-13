@@ -11,3 +11,9 @@ export type InvitationFormData = {
     email: string;
     role: string;
 };
+
+export type AcceptInvitationFormData = {
+    name: string;
+    password: string;
+    password_confirmation: string;
+};

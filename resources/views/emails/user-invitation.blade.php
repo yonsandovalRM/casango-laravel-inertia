@@ -63,7 +63,7 @@
         <div class="content">
             <p>Hola {{ $name }},</p>
             
-            <p>Se te ha invitado a unirte a {{ config('app.name') }}. A continuación encontrarás los detalles de la invitación:</p>
+            <p>Has sido invitado a unirte a {{ config('app.name') }}. A continuación encontrarás los detalles de la invitación:</p>
 
             <div class="credentials">
                 <p><strong>Email:</strong> {{ $invitation->email }}</p>
