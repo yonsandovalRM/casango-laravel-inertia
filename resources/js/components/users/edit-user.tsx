@@ -1,30 +1,30 @@
-import { PlanFormData } from '@/interfaces/plan';
+import { UserFormData, UserResource } from '@/interfaces/user';
 import { useForm } from '@inertiajs/react';
-import { PlusIcon } from 'lucide-react';
-import { useState } from 'react';
+import { PencilIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { FormPlan } from './form-plan';
+import { FormUser } from './form-user';
 
-export const CreatePlan = () => {
+export const EditUser = ({ user }: { user: UserResource }) => {
     const [open, setOpen] = useState(false);
 
-    const { data, setData, post, processing, errors, clearErrors, reset } = useForm<PlanFormData>({
+    const { data, setData, put, processing, errors, clearErrors, reset } = useForm<UserFormData>({
         name: '',
-        description: '',
-        price_monthly: 0,
-        price_annual: 0,
-        currency: 'USD',
-        is_free: false,
-        is_popular: false,
-        features: [],
-        trial_days: 0,
+        email: '',
+        role: '',
     });
+
+    useEffect(() => {
+        setData('name', user.name);
+        setData('email', user.email);
+        setData('role', user.role);
+    }, [user]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route('plans.store'), {
+        put(route('users.update', user.id), {
             onSuccess: () => {
                 handleCancel();
             },
@@ -35,28 +35,26 @@ export const CreatePlan = () => {
         reset();
         clearErrors();
     };
-
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-                <Button variant="default" onClick={() => setOpen(true)}>
-                    <PlusIcon className="size-4" />
-                    Crear plan
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={() => setOpen(true)}>
+                    <PencilIcon className="size-4" />
                 </Button>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle>Crear plan</SheetTitle>
-                    <SheetDescription>Crea un nuevo plan para tu aplicación</SheetDescription>
+                    <SheetTitle>Editar usuario</SheetTitle>
+                    <SheetDescription>Edita el usuario para tu aplicación</SheetDescription>
                 </SheetHeader>
-                <ScrollArea className="h-[calc(100vh-180px)]">
-                    <form id="plan-form" onSubmit={handleSubmit}>
-                        <FormPlan data={data} setData={setData} errors={errors} />
+                <ScrollArea className="h-[calc(100vh-200px)]">
+                    <form id="user-form" onSubmit={handleSubmit}>
+                        <FormUser data={data} setData={setData} errors={errors} />
                     </form>
                 </ScrollArea>
                 <SheetFooter className="grid grid-cols-2 gap-4">
-                    <Button type="submit" variant="default" form="plan-form" disabled={processing}>
-                        {processing ? 'Creando...' : 'Crear plan'}
+                    <Button type="submit" variant="default" form="user-form" disabled={processing}>
+                        {processing ? 'Actualizando...' : 'Actualizar usuario'}
                     </Button>
                     <SheetClose asChild>
                         <Button variant="outline" onClick={handleCancel}>
