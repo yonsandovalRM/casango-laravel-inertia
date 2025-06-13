@@ -4,7 +4,7 @@ use App\Enums\Permissions;
 use App\Http\Controllers\InvitationController;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => 'invitaciones'], function () {
+Route::group(['prefix' => 'invitations'], function () {
     Route::get('/{token}', [InvitationController::class, 'form'])->name('invitations.form');
     Route::post('/{token}', [InvitationController::class, 'accept'])->name('invitations.accept');
 
