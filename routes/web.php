@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Permissions;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
@@ -11,9 +12,7 @@ foreach (config('tenancy.central_domains') as $domain) {
         Route::get('/', [HomeController::class, 'index'])->name('home');
 
         Route::middleware(['auth', 'verified'])->group(function () {
-            Route::get('dashboard', function () {
-                return Inertia::render('dashboard');
-            })->name('dashboard');
+            Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         });
 
         // Main routes
