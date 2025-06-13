@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -36,6 +37,15 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $pending = Invitation::where('email', $request->email)->first();
+        if ($pending) {
+            if ($pending->expires_at < now()) {
+                $pending->delete();
+                return redirect()->route('invitations.form', $pending->token)->with('error', __('invitation.expired'));
+            }
+            return redirect()->route('invitations.form', $pending->token)->with('error', __('invitation.pending', ['email' => $request->email]));
+        }
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

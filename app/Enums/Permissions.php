@@ -18,6 +18,9 @@ class Permissions
     public const USERS_DELETE = 'delete users';
     public const USERS_VIEW = 'view users';
 
+    public const INVITATIONS_CREATE = 'create invitations';
+    public const INVITATIONS_VIEW = 'view invitations';
+
     public static function plans(): array
     {
         return [
@@ -44,6 +47,14 @@ class Permissions
             self::USERS_EDIT,
             self::USERS_DELETE,
             self::USERS_VIEW,
+        ];
+    }
+
+    public static function invitations(): array
+    {
+        return [
+            self::INVITATIONS_CREATE,
+            self::INVITATIONS_VIEW,
         ];
     }
 }

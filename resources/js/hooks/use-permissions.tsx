@@ -36,6 +36,10 @@ export const PERMISSIONS = {
         delete: 'delete users',
         view: 'view users',
     },
+    invitations: {
+        create: 'create invitations',
+        view: 'view invitations',
+    },
 };
 
 export const ROLES = {

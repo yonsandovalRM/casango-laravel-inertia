@@ -1,16 +1,16 @@
-import { UserFormData } from '@/interfaces/user';
+import { InvitationFormData } from '@/interfaces/invitation';
 import { useForm } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { FormUser } from './form-user';
+import { FormInvitation } from './form-invitation';
 
-export const CreateUser = () => {
+export const CreateInvitation = () => {
     const [open, setOpen] = useState(false);
 
-    const { data, setData, post, processing, errors, clearErrors, reset } = useForm<UserFormData>({
+    const { data, setData, post, processing, errors, clearErrors, reset } = useForm<InvitationFormData>({
         name: '',
         email: '',
         role: '',
@@ -18,7 +18,7 @@ export const CreateUser = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route('users.store'), {
+        post(route('invitations.store'), {
             onSuccess: () => {
                 handleCancel();
             },
@@ -34,22 +34,22 @@ export const CreateUser = () => {
             <SheetTrigger asChild>
                 <Button variant="default" onClick={() => setOpen(true)}>
                     <PlusIcon className="size-4" />
-                    Crear usuario
+                    Crear invitación
                 </Button>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle>Crear usuario</SheetTitle>
-                    <SheetDescription>Crea un nuevo usuario para tu aplicación</SheetDescription>
+                    <SheetTitle>Crear invitación</SheetTitle>
+                    <SheetDescription>Crea una nueva invitación para un usuario</SheetDescription>
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-180px)]">
-                    <form id="user-form" onSubmit={handleSubmit}>
-                        <FormUser data={data} setData={setData} errors={errors} />
+                    <form id="invitation-form" onSubmit={handleSubmit}>
+                        <FormInvitation data={data} setData={setData} errors={errors} />
                     </form>
                 </ScrollArea>
                 <SheetFooter className="grid grid-cols-2 gap-4">
-                    <Button type="submit" variant="default" form="user-form" disabled={processing}>
-                        {processing ? 'Creando...' : 'Crear usuario'}
+                    <Button type="submit" variant="default" form="invitation-form" disabled={processing}>
+                        {processing ? 'Creando...' : 'Crear invitación'}
                     </Button>
                     <SheetClose asChild>
                         <Button variant="outline" onClick={handleCancel}>

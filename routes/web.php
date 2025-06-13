@@ -18,7 +18,7 @@ foreach (config('tenancy.central_domains') as $domain) {
         // Main routes
         require __DIR__.'/main/plans.php';
         require __DIR__.'/main/tenants.php';
-
+        require __DIR__.'/main/invitations.php';
         require __DIR__.'/main/users.php';
 
        

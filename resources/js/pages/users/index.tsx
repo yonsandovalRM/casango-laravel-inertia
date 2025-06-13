@@ -1,7 +1,7 @@
 import { AppHeaderPage } from '@/components/app-header-page';
+import { CreateInvitation } from '@/components/invitations/create-invitation';
 import { SessionMessages } from '@/components/session-messages';
 import { TenantFilters } from '@/components/tenants/tenant-filters';
-import { CreateUser } from '@/components/users/create-user';
 import { UserList } from '@/components/users/user-list';
 import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { UserResource } from '@/interfaces/user';
@@ -29,7 +29,7 @@ export default function UsersIndex({ users }: { users: UserResource[] }) {
             <AppHeaderPage
                 title="Usuarios"
                 description="Gestiona los usuarios de tu empresa"
-                actions={hasPermission(PERMISSIONS.users.create) && <CreateUser />}
+                actions={hasPermission(PERMISSIONS.invitations.create) && <CreateInvitation />}
             />
 
             <TenantFilters />
