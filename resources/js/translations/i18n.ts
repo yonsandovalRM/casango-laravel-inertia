@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { auth } from './auth';
+import { profile } from './profile';
 import { ui } from './ui';
 
 // the translations
@@ -11,12 +12,14 @@ const resources = {
         translation: {
             ...auth.en,
             ...ui.en,
+            ...profile.en,
         },
     },
     es: {
         translation: {
             ...auth.es,
             ...ui.es,
+            ...profile.es,
         },
     },
 };

@@ -5,26 +5,10 @@ import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
+import { withTranslation } from 'react-i18next';
 
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: '/settings/profile',
-        icon: null,
-    },
-    {
-        title: 'Password',
-        href: '/settings/password',
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: '/settings/appearance',
-        icon: null,
-    },
-];
-
-export default function SettingsLayout({ children }: PropsWithChildren) {
+export default withTranslation()(SettingsLayout);
+function SettingsLayout({ children, t }: PropsWithChildren<{ t: any }>) {
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
@@ -32,9 +16,27 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
     const currentPath = window.location.pathname;
 
+    const sidebarNavItems: NavItem[] = [
+        {
+            title: t('profile.settings.profile'),
+            href: '/settings/profile',
+            icon: null,
+        },
+        {
+            title: t('profile.settings.password'),
+            href: '/settings/password',
+            icon: null,
+        },
+        {
+            title: t('profile.settings.appearance'),
+            href: '/settings/appearance',
+            icon: null,
+        },
+    ];
+
     return (
         <div className="px-4 py-6">
-            <Heading title="Settings" description="Manage your profile and account settings" />
+            <Heading title={t('profile.settings.title')} description={t('profile.settings.description')} />
 
             <div className="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
