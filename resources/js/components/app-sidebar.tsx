@@ -6,49 +6,51 @@ import { PERMISSIONS } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Building2, Folder, LayoutGrid, Package, Users } from 'lucide-react';
+import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
-        permission: null,
-    },
-    {
-        title: 'Plans',
-        href: route('plans.index'),
-        icon: Package,
-        permission: PERMISSIONS.plans.view,
-    },
-    {
-        title: 'Negocios',
-        href: route('tenants.index'),
-        icon: Building2,
-        permission: PERMISSIONS.tenants.view,
-    },
-    {
-        title: 'Usuarios',
-        href: route('users.index'),
-        icon: Users,
-        permission: PERMISSIONS.users.view,
-    },
-];
+export default withTranslation()(AppSidebar);
+function AppSidebar({ t }: { t: any }) {
+    const mainNavItems: NavItem[] = [
+        {
+            title: t('ui.menu.dashboard'),
+            href: '/dashboard',
+            icon: LayoutGrid,
+            permission: null,
+        },
+        {
+            title: t('ui.menu.plans'),
+            href: route('plans.index'),
+            icon: Package,
+            permission: PERMISSIONS.plans.view,
+        },
+        {
+            title: t('ui.menu.business'),
+            href: route('tenants.index'),
+            icon: Building2,
+            permission: PERMISSIONS.tenants.view,
+        },
+        {
+            title: t('ui.menu.users'),
+            href: route('users.index'),
+            icon: Users,
+            permission: PERMISSIONS.users.view,
+        },
+    ];
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
-    },
-];
+    const footerNavItems: NavItem[] = [
+        {
+            title: t('ui.menu.repository'),
+            href: 'https://github.com/laravel/react-starter-kit',
+            icon: Folder,
+        },
+        {
+            title: t('ui.menu.documentation'),
+            href: 'https://laravel.com/docs/starter-kits#react',
+            icon: BookOpen,
+        },
+    ];
 
-export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
