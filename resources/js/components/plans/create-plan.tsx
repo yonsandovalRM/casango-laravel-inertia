@@ -2,12 +2,14 @@ import { PlanFormData } from '@/interfaces/plan';
 import { useForm } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { FormPlan } from './form-plan';
+import FormPlan from './form-plan';
 
-export const CreatePlan = () => {
+export default withTranslation()(CreatePlan);
+function CreatePlan({ t }: { t: any }) {
     const [open, setOpen] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm<PlanFormData>({
@@ -41,13 +43,13 @@ export const CreatePlan = () => {
             <SheetTrigger asChild>
                 <Button variant="default" onClick={() => setOpen(true)}>
                     <PlusIcon className="size-4" />
-                    Crear plan
+                    {t('plans.create')}
                 </Button>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle>Crear plan</SheetTitle>
-                    <SheetDescription>Crea un nuevo plan para tu aplicación</SheetDescription>
+                    <SheetTitle>{t('plans.create_title')}</SheetTitle>
+                    <SheetDescription>{t('plans.create_description')}</SheetDescription>
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-180px)]">
                     <form id="plan-form" onSubmit={handleSubmit}>
@@ -56,15 +58,15 @@ export const CreatePlan = () => {
                 </ScrollArea>
                 <SheetFooter className="grid grid-cols-2 gap-4">
                     <Button type="submit" variant="default" form="plan-form" disabled={processing}>
-                        {processing ? 'Creando...' : 'Crear plan'}
+                        {processing ? t('plans.creating') : t('plans.create')}
                     </Button>
                     <SheetClose asChild>
                         <Button variant="outline" onClick={handleCancel}>
-                            Cancelar
+                            {t('plans.cancel')}
                         </Button>
                     </SheetClose>
                 </SheetFooter>
             </SheetContent>
         </Sheet>
     );
-};
+}

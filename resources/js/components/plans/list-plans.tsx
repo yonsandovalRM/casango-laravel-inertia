@@ -2,15 +2,17 @@ import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { PlanResource } from '@/interfaces/plan';
 import { router } from '@inertiajs/react';
 import { CheckIcon, SparklesIcon, TrashIcon } from 'lucide-react';
+import { withTranslation } from 'react-i18next';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { DialogConfirm } from '../ui/dialog-confirm';
 import { ListEmpty } from '../ui/list-empty';
-import { CreatePlan } from './create-plan';
+import CreatePlan from './create-plan';
 import { EditPlan } from './edit-plan';
 
-export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
+export default withTranslation()(ListPlans);
+function ListPlans({ plans, t }: { plans: PlanResource[]; t: any }) {
     const { hasPermission } = usePermissions();
 
     const handleDelete = (id: string) => {
@@ -19,11 +21,7 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
     return (
         <>
             {plans?.length === 0 && hasPermission(PERMISSIONS.plans.create) && (
-                <ListEmpty
-                    title="No hay planes disponibles"
-                    description="Los planes son la forma en que tus usuarios pueden acceder a tus servicios."
-                    action={<CreatePlan />}
-                />
+                <ListEmpty title={t('plans.list.list_empty.title')} description={t('plans.list.list_empty.description')} action={<CreatePlan />} />
             )}
 
             <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
@@ -35,23 +33,25 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                                 {plan.is_popular && (
                                     <Badge variant="outline">
                                         <SparklesIcon className="size-4" />
-                                        Popular
+                                        {t('plans.list.card.popular')}
                                     </Badge>
                                 )}
                             </div>
                             <p className="text-sm text-muted-foreground">{plan.description}</p>
                             {plan.is_free ? (
-                                <p className="text-md font-bold text-green-600 dark:text-green-400">Gratis</p>
+                                <p className="text-md font-bold text-green-600 dark:text-green-400">{t('plans.list.card.free')}</p>
                             ) : (
                                 <div className="flex items-center gap-2">
                                     <p className="text-sm">{plan.currency}</p>
                                     <p className="text-md font-bold">
                                         {plan.price_monthly}
-                                        <span className="text-sm">/mes</span>
+                                        <span className="text-sm">/{t('plans.list.card.monthly')}</span>
                                     </p>
                                 </div>
                             )}
-                            <p className="text-sm text-muted-foreground">{plan.trial_days} días de prueba</p>
+                            <p className="text-sm text-muted-foreground">
+                                {plan.trial_days} {t('plans.list.card.trial_days')}
+                            </p>
 
                             <div className="flex-1 text-sm">
                                 {plan.features.map((feature) => (
@@ -67,14 +67,14 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
                             {hasPermission(PERMISSIONS.plans.delete) && (
                                 <DialogConfirm
                                     variant="destructive"
-                                    title="Eliminar plan"
-                                    description="¿Estás seguro de querer eliminar este plan?"
+                                    title={t('plans.list.dialog.title')}
+                                    description={t('plans.list.dialog.description')}
                                     onConfirm={() => handleDelete(plan.id)}
                                     onCancel={() => {}}
                                 >
                                     <Button variant="soft-destructive">
                                         <TrashIcon className="size-4" />
-                                        Eliminar
+                                        {t('plans.list.dialog.action')}
                                     </Button>
                                 </DialogConfirm>
                             )}
@@ -84,4 +84,4 @@ export const ListPlans = ({ plans }: { plans: PlanResource[] }) => {
             </div>
         </>
     );
-};
+}

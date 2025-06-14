@@ -2,12 +2,14 @@ import { PlanFormData, PlanResource } from '@/interfaces/plan';
 import { useForm } from '@inertiajs/react';
 import { PencilIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
-import { FormPlan } from './form-plan';
+import FormPlan from './form-plan';
 
-export const EditPlan = ({ plan }: { plan: PlanResource }) => {
+export default withTranslation()(EditPlan);
+function EditPlan({ plan, t }: { plan: PlanResource; t: any }) {
     const [open, setOpen] = useState(false);
 
     const { data, setData, put, processing, errors, clearErrors, reset } = useForm<PlanFormData>({
@@ -52,13 +54,13 @@ export const EditPlan = ({ plan }: { plan: PlanResource }) => {
             <SheetTrigger asChild>
                 <Button variant="outline" onClick={() => setOpen(true)}>
                     <PencilIcon className="size-4" />
-                    Editar
+                    {t('plans.edit.action')}
                 </Button>
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle>Editar plan</SheetTitle>
-                    <SheetDescription>Edita el plan para tu aplicación</SheetDescription>
+                    <SheetTitle>{t('plans.edit.title')}</SheetTitle>
+                    <SheetDescription>{t('plans.edit.description')}</SheetDescription>
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-200px)]">
                     <form id="plan-form" onSubmit={handleSubmit}>
@@ -67,15 +69,15 @@ export const EditPlan = ({ plan }: { plan: PlanResource }) => {
                 </ScrollArea>
                 <SheetFooter className="grid grid-cols-2 gap-4">
                     <Button type="submit" variant="default" form="plan-form" disabled={processing}>
-                        {processing ? 'Actualizando...' : 'Actualizar plan'}
+                        {processing ? t('plans.edit.updating') : t('plans.edit.action')}
                     </Button>
                     <SheetClose asChild>
                         <Button variant="outline" onClick={handleCancel}>
-                            Cancelar
+                            {t('plans.edit.cancel')}
                         </Button>
                     </SheetClose>
                 </SheetFooter>
             </SheetContent>
         </Sheet>
     );
-};
+}

@@ -1,6 +1,7 @@
 import InputError from '@/components/input-error';
 import { PlusIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { withTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
@@ -13,7 +14,8 @@ type FormPlanProps = {
     errors: any;
 };
 
-export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
+export default withTranslation()(FormPlan);
+function FormPlan({ data, setData, errors, t }: FormPlanProps & { t: any }) {
     const [tempFeature, setTempFeature] = useState('');
 
     useEffect(() => {
@@ -47,27 +49,33 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                     <div className="space-y-6 pb-4">
                         <div>
                             <Label htmlFor="name" required>
-                                Nombre
+                                {t('plans.form.name')}
                             </Label>
-                            <Input id="name" name="name" value={data.name} onChange={(e) => setData('name', e.target.value)} placeholder="Nombre" />
+                            <Input
+                                id="name"
+                                name="name"
+                                value={data.name}
+                                onChange={(e) => setData('name', e.target.value)}
+                                placeholder={t('plans.form.name')}
+                            />
                             <InputError message={errors.name} />
                         </div>
                         <div>
                             <Label htmlFor="description" required>
-                                Descripción
+                                {t('plans.form.description')}
                             </Label>
                             <Input
                                 id="description"
                                 name="description"
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
-                                placeholder="Adecuado para..."
+                                placeholder={t('plans.form.description_placeholder')}
                             />
                             <InputError message={errors.description} />
                         </div>
                         <div>
                             <Label htmlFor="price_monthly" required>
-                                Precio mensual
+                                {t('plans.form.price_monthly')}
                             </Label>
                             <Input
                                 id="price_monthly"
@@ -80,7 +88,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                         </div>
                         <div>
                             <Label htmlFor="price_annual" required>
-                                Precio anual
+                                {t('plans.form.price_annual')}
                             </Label>
                             <Input
                                 id="price_annual"
@@ -93,7 +101,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                         </div>
                         <div>
                             <Label htmlFor="currency" required>
-                                Moneda
+                                {t('plans.form.currency')}
                             </Label>
                             <Input id="currency" name="currency" value={data.currency} onChange={(e) => setData('currency', e.target.value)} />
                             <InputError message={errors.currency} />
@@ -101,7 +109,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                     </div>
                     <div>
                         <Label htmlFor="trial_days" required>
-                            Días de prueba
+                            {t('plans.form.trial_days')}
                         </Label>
                         <Input id="trial_days" name="trial_days" value={data.trial_days} onChange={(e) => setData('trial_days', e.target.value)} />
                         <InputError message={errors.trial_days} />
@@ -109,7 +117,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                     <div>
                         <div>
                             <Label htmlFor="features" required>
-                                Características
+                                {t('plans.form.features')}
                             </Label>
                             <div className="space-y-2">
                                 <div className="grid grid-cols-3 gap-2">
@@ -121,12 +129,12 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                             value={tempFeature}
                                             onChange={(e) => setTempFeature(e.target.value)}
                                             onKeyDown={handleKeyDownTempFeature}
-                                            placeholder="Característica..."
+                                            placeholder={t('plans.form.feature_placeholder')}
                                         />
                                     </div>
                                     <Button type="button" variant="outline" onClick={handleAddFeature}>
                                         <PlusIcon className="size-4" />
-                                        Agregar
+                                        {t('plans.form.add_feature')}
                                     </Button>
                                 </div>
                                 <InputError message={errors.features} />
@@ -141,7 +149,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <Checkbox id="is_free" name="is_free" checked={data.is_free} onCheckedChange={(checked) => setData('is_free', checked)} />
-                            <Label htmlFor="is_free">Es gratuito</Label>
+                            <Label htmlFor="is_free">{t('plans.form.is_free')}</Label>
                             <InputError message={errors.is_free} />
                         </div>
                         <div className="flex items-center gap-2">
@@ -151,7 +159,7 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
                                 checked={data.is_popular}
                                 onCheckedChange={(checked) => setData('is_popular', checked)}
                             />
-                            <Label htmlFor="is_popular">Es popular</Label>
+                            <Label htmlFor="is_popular">{t('plans.form.is_popular')}</Label>
                             <InputError message={errors.is_popular} />
                         </div>
                     </div>
@@ -159,4 +167,4 @@ export const FormPlan = ({ data, setData, errors }: FormPlanProps) => {
             </div>
         </div>
     );
-};
+}

@@ -1,0 +1,101 @@
+export const plans = {
+    en: {
+        plans: {
+            title: 'Plans',
+            description: 'Manage your plans',
+            create: 'Create plan',
+            create_title: 'Create plan',
+            create_description: 'Create a new plan for your application',
+            creating: 'Creating...',
+            cancel: 'Cancel',
+
+            list: {
+                list_empty: {
+                    title: 'No plans available',
+                    description: 'Plans are the way your users can access your services.',
+                },
+                title: 'Plans',
+                description: 'Manage your plans',
+                card: {
+                    popular: 'Popular',
+                    free: 'Free',
+                    monthly: 'month',
+                    trial_days: 'days ',
+                },
+                dialog: {
+                    action: 'Delete',
+                    title: 'Are you sure you want to delete this plan?',
+                    description: 'Once the plan is deleted, all users with this plan will be deleted.',
+                },
+            },
+            edit: {
+                action: 'Edit',
+                title: 'Edit plan',
+                description: 'Edit the plan for your application',
+                updating: 'Updating...',
+                cancel: 'Cancel',
+            },
+            form: {
+                name: 'Name',
+                description: 'Description',
+                description_placeholder: 'Description',
+                price_monthly: 'Price monthly',
+                price_annual: 'Price annual',
+                currency: 'Currency',
+                trial_days: 'Trial days',
+                features: 'Features',
+                feature_placeholder: 'Feature...',
+                add_feature: 'Add feature',
+            },
+        },
+    },
+    es: {
+        plans: {
+            title: 'Planes',
+            description: 'Gestiona tus planes',
+            create: 'Crear plan',
+            create_title: 'Crear plan',
+            create_description: 'Crea un nuevo plan para tu aplicación',
+            creating: 'Creando...',
+            cancel: 'Cancelar',
+            list: {
+                list_empty: {
+                    title: 'No hay planes disponibles',
+                    description: 'Los planes son la forma en que tus usuarios pueden acceder a tus servicios.',
+                },
+                title: 'Planes',
+                description: 'Gestiona tus planes',
+                card: {
+                    popular: 'Popular',
+                    free: 'Gratis',
+                    monthly: 'mes',
+                    trial_days: 'días de prueba',
+                },
+                dialog: {
+                    action: 'Eliminar',
+                    title: '¿Estás seguro de querer eliminar este plan?',
+                    description: 'Una vez que el plan sea eliminado, todos los usuarios que tengan este plan serán eliminados.',
+                },
+            },
+            edit: {
+                action: 'Editar',
+                title: 'Editar plan',
+                description: 'Edita el plan para tu aplicación',
+                updating: 'Actualizando...',
+                cancel: 'Cancelar',
+            },
+            form: {
+                name: 'Nombre',
+                description: 'Descripción',
+                description_placeholder: 'Descripción',
+                price_monthly: 'Precio mensual',
+                price_annual: 'Precio anual',
+                currency: 'Moneda',
+                trial_days: 'Días de prueba',
+                features: 'Características',
+                feature_placeholder: 'Característica...',
+                add_feature: 'Agregar característica',
+            },
+        },
+    },
+};
