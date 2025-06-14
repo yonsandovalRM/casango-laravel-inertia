@@ -9,7 +9,7 @@ import { Card, CardContent, CardFooter } from '../ui/card';
 import { DialogConfirm } from '../ui/dialog-confirm';
 import { ListEmpty } from '../ui/list-empty';
 import CreatePlan from './create-plan';
-import { EditPlan } from './edit-plan';
+import EditPlan from './edit-plan';
 
 export default withTranslation()(ListPlans);
 function ListPlans({ plans, t }: { plans: PlanResource[]; t: any }) {
