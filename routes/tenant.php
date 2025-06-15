@@ -33,6 +33,8 @@ Route::middleware([
 
     require __DIR__.'/auth.php';
     require __DIR__.'/settings.php';
+    require __DIR__.'/common/invitations.php';
+    require __DIR__.'/common/users.php';
 
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

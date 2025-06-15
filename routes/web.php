@@ -18,10 +18,12 @@ foreach (config('tenancy.central_domains') as $domain) {
         // Main routes
         require __DIR__.'/main/plans.php';
         require __DIR__.'/main/tenants.php';
-        require __DIR__.'/main/invitations.php';
-        require __DIR__.'/main/users.php';
 
-       
+        require __DIR__.'/common/invitations.php';
+        require __DIR__.'/common/users.php';
+
+
+
 
         require __DIR__.'/settings.php';
         require __DIR__.'/auth.php';
