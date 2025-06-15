@@ -17,7 +17,13 @@ class CompanySchedule extends Model
         'close_time',
         'break_start_time',
         'break_end_time',
+        'is_open',
         'has_break',
+    ];
+
+    protected $casts = [
+        'is_open' => 'boolean',
+        'has_break' => 'boolean',
     ];
 
     public function company()
