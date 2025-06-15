@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\TenantResource;
+use App\Models\Company;
 use App\Models\Plan;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
@@ -81,6 +82,7 @@ class TenantController extends Controller
             $tenant = Tenant::query()->create([
                 'id' => $tenant_id,
                 'name' => $request->name,
+                'email' => $request->owner_email,
                 'plan_id' => $plan->id,
                 'category' => $request->category,
             ]);
@@ -91,6 +93,7 @@ class TenantController extends Controller
 
             $this->createSubscription($tenant, $plan);
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
+            $this->createCompany($tenant);
 
 
             
@@ -176,6 +179,32 @@ class TenantController extends Controller
             'is_monthly' => true,
             'is_active' => true,
         ]);
+
+    }
+
+    private function createCompany(Tenant $tenant)
+    {
+        $tenant->run(function () use ($tenant) {
+            $company = Company::create([
+                'name' => $tenant->name,
+                'email' => $tenant->email,
+                
+            ]);
+            $this->createCompanySchedule($company);
+        });
+    }
+
+    private function createCompanySchedule(Company $company)
+    {
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($days as $day) {
+            $company->schedules()->create([
+                'day_of_week' => $day,
+                'open_time' => '09:00',
+                'close_time' => '18:00',
+                'is_open' => $day === 'sunday' ? false : true,
+            ]);
+        }
 
     }
  

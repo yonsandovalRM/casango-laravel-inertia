@@ -40,10 +40,16 @@ export const PERMISSIONS = {
         create: 'create invitations',
         view: 'view invitations',
     },
+    company: {
+        view: 'view company',
+        edit: 'edit company',
+    },
 };
 
 export const ROLES = {
     owner: 'owner',
     admin: 'admin',
     user: 'user',
+    client: 'client',
+    employee: 'employee',
 };

@@ -36,6 +36,12 @@ function AppSidebar({ t }: { t: any }) {
             icon: Users,
             permission: PERMISSIONS.users.view,
         },
+        {
+            title: t('ui.menu.company'),
+            href: route('company.index'),
+            icon: Building2,
+            permission: PERMISSIONS.company.view,
+        },
     ];
 
     const footerNavItems: NavItem[] = [

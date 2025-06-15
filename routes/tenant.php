@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TenantHomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,6 +27,9 @@ Route::middleware([
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
     Route::get('/', [TenantHomeController::class, 'index'])->name('home');
+
+    Route::get('company', [CompanyController::class, 'index'])->name('company.index');
+    Route::put('company', [CompanyController::class, 'update'])->name('company.update');
 
     require __DIR__.'/auth.php';
     require __DIR__.'/settings.php';
