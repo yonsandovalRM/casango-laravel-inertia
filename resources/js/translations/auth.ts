@@ -15,6 +15,7 @@ export const auth = {
                 password_placeholder: 'Password',
             },
             register: {
+                log_in: 'Log in',
                 title: 'Create an account',
                 description: 'Enter your details below to create your account',
                 name: 'Name',
@@ -22,7 +23,6 @@ export const auth = {
                 password: 'Password',
                 password_confirmation: 'Confirm password',
                 create_account: 'Create account',
-                log_in: 'Log in',
                 already_have_account: 'Already have an account?',
                 name_placeholder: 'Full name',
                 email_placeholder: 'email@example.com',
@@ -52,6 +52,7 @@ export const auth = {
                 password_confirmation_placeholder: 'Confirmar contraseña',
             },
             register: {
+                log_in: 'Iniciar sesión',
                 title: 'Crear una cuenta',
                 description: 'Ingresa tus detalles a continuación para crear tu cuenta',
                 name: 'Nombre',

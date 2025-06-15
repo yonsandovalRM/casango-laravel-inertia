@@ -34,4 +34,17 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', __('user.updated'));
     }
 
+    public function restore(User $user)
+    {
+        $user->restore();
+        return redirect()->route('users.index')->with('success', __('user.restored'));
+    }
+
+    public function forceDelete(User $user)
+    {
+        $user->forceDelete();
+        return redirect()->route('users.index')->with('success', __('user.deleted'));
+    }
+
+    
 }

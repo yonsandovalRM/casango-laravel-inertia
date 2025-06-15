@@ -5,6 +5,7 @@ import { company } from './company';
 import { plans } from './plans';
 import { profile } from './profile';
 import { ui } from './ui';
+import { users } from './users';
 // the translations
 // (tip move them in a JSON file and import them,
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
@@ -16,6 +17,7 @@ const resources = {
             ...profile.en,
             ...plans.en,
             ...company.en,
+            ...users.en,
         },
     },
     es: {
@@ -25,6 +27,7 @@ const resources = {
             ...profile.es,
             ...plans.es,
             ...company.es,
+            ...users.es,
         },
     },
 };

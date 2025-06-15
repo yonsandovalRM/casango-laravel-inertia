@@ -14,11 +14,12 @@ use Illuminate\Notifications\Notifiable;
 use App\Traits\HasUuid;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
 
-    use HasFactory, Notifiable, HasUuid, HasRoles;
+    use HasFactory, Notifiable, HasUuid, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
