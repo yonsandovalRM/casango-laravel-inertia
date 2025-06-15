@@ -1,5 +1,6 @@
 import BusinessHours from '@/components/company/business-hours';
 import InputError from '@/components/input-error';
+import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,7 +9,7 @@ import { CompanyFormData, CompanyResource, Schedule } from '@/interfaces/company
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
-import { Building2, Camera, Save, X } from 'lucide-react';
+import { AlertCircle, Building2, Camera, Save, X } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 
@@ -119,11 +120,20 @@ function CompanyIndex({ company, t }: Props) {
             }
             return schedule;
         });
-        setData('schedules', updatedSchedules);
+
+        // cuando has_break es false deben ser null los campos break_start_time y break_end_time
+        const schedules = updatedSchedules.map((schedule) => {
+            if (!schedule.has_break) {
+                return { ...schedule, break_start_time: '', break_end_time: '' };
+            }
+            return schedule;
+        });
+        setData('schedules', schedules);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+
         post(route('company.update', { _method: 'PUT' }));
     };
 
@@ -226,6 +236,16 @@ function CompanyIndex({ company, t }: Props) {
                             </CardHeader>
 
                             <CardContent>
+                                {Object.keys(errors).length > 0 && (
+                                    <Alert variant="destructive" className="mb-4">
+                                        <AlertCircle className="h-4 w-4" />
+                                        <div className="flex flex-col gap-2">
+                                            {Object.values(errors).map((error) => (
+                                                <p key={error}>{error}</p>
+                                            ))}
+                                        </div>
+                                    </Alert>
+                                )}
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     {/* Company Name */}
                                     <div className="md:col-span-2">
