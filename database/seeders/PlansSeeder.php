@@ -51,4 +51,3 @@ class PlansSeeder extends Seeder
         ]);
     }
 }
-

@@ -25,11 +25,11 @@ class StoreServicesRequest extends FormRequest
             'name' => 'required|string|max:255|unique:services,name',
             'description' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
-            'category' => 'nullable|string|max:255',
+            'category' => 'required|string|max:255',
             'price' => 'nullable|numeric',
-            'duration' => 'nullable|integer',
+            'duration' => 'required|integer',
             'preparation_time' => 'nullable|integer',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'required|boolean',
         ];
     }
 }
