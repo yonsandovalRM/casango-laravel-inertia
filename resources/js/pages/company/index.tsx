@@ -9,7 +9,7 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { Building2, Camera, Save, X } from 'lucide-react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withTranslation } from 'react-i18next';
 
 interface Props {
@@ -57,8 +57,15 @@ function CompanyIndex({ company, t }: Props) {
         language: company?.language || '',
         logo: company?.logo ? new File([], company.logo as string) : null,
         cover_image: company?.cover_image ? new File([], company.cover_image as string) : null,
-        schedules: company?.schedules || initialSchedules,
+        schedules: initialSchedules,
     });
+
+    useEffect(() => {
+        return () => {
+            if (logoPreview) URL.revokeObjectURL(logoPreview);
+            if (coverPreview) URL.revokeObjectURL(coverPreview);
+        };
+    }, [logoPreview, coverPreview]);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -67,28 +74,38 @@ function CompanyIndex({ company, t }: Props) {
         },
     ];
 
-    const handleImageUpload = (type: 'logo' | 'cover', file: File) => {
+    const handleImageUpload = (type: 'logo' | 'cover', file: File | null) => {
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (type === 'logo') {
-                    setLogoPreview(e.target?.result as string);
-                    setData('logo', file);
-                } else {
-                    setCoverPreview(e.target?.result as string);
-                    setData('cover_image', file);
-                }
-            };
-            reader.readAsDataURL(file);
+            const previewUrl = URL.createObjectURL(file);
+            if (type === 'logo') {
+                setLogoPreview(previewUrl);
+                setData('logo', file);
+            } else {
+                setCoverPreview(previewUrl);
+                setData('cover_image', file);
+            }
+        } else {
+            // Limpiar la previsualización y los datos
+            if (type === 'logo') {
+                if (logoPreview) URL.revokeObjectURL(logoPreview);
+                setLogoPreview(null);
+                setData('logo', null);
+            } else {
+                if (coverPreview) URL.revokeObjectURL(coverPreview);
+                setCoverPreview(null);
+                setData('cover_image', null);
+            }
         }
     };
 
     const removeImage = (type: 'logo' | 'cover') => {
         if (type === 'logo') {
+            if (logoPreview) URL.revokeObjectURL(logoPreview); // Solo si usas URL.createObjectURL
             setLogoPreview(null);
             setData('logo', null);
             if (logoInputRef.current) logoInputRef.current.value = '';
         } else {
+            if (coverPreview) URL.revokeObjectURL(coverPreview); // Solo si usas URL.createObjectURL
             setCoverPreview(null);
             setData('cover_image', null);
             if (coverInputRef.current) coverInputRef.current.value = '';
@@ -121,8 +138,11 @@ function CompanyIndex({ company, t }: Props) {
                     {/* Cover Image Section */}
                     <div className="overflow-hidden rounded-2xl border border-border bg-card">
                         <div className="relative h-48 sm:h-64">
-                            {coverPreview && <img src={coverPreview} alt="Cover" className="h-full w-full object-cover" />}
-                            <div className="absolute inset-0 bg-muted"></div>
+                            {coverPreview ? (
+                                <img src={coverPreview} alt="Cover" className="h-full w-full object-cover" />
+                            ) : (
+                                <div className="absolute inset-0 bg-muted"></div>
+                            )}
 
                             {/* Cover Upload Controls */}
                             <div className="absolute top-4 right-4 flex gap-2">
@@ -191,16 +211,16 @@ function CompanyIndex({ company, t }: Props) {
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => e.target.files?.[0] && handleImageUpload('logo', e.target.files[0])}
+                        onChange={(e) => handleImageUpload('logo', e.target.files?.[0] || null)}
                     />
                     <input
                         ref={coverInputRef}
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => e.target.files?.[0] && handleImageUpload('cover', e.target.files[0])}
+                        onChange={(e) => handleImageUpload('cover', e.target.files?.[0] || null)}
                     />
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                         {/* Company Information */}
                         <Card>
                             <CardHeader>

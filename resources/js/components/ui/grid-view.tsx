@@ -21,8 +21,10 @@ const lightTheme = themeQuartz.withPart(colorSchemeLight).withParams({
 
 export const GridView = ({ rowData, columnDefs }: { rowData: any[]; columnDefs: any[] }) => {
     const [isDark, setIsDark] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
+        setIsMounted(true);
         const htmlElement = document.documentElement;
         
         // Función para verificar si tiene la clase dark
@@ -52,7 +54,9 @@ export const GridView = ({ rowData, columnDefs }: { rowData: any[]; columnDefs: 
         return () => {
             observer.disconnect();
         };
-    }, []);
+    }, [isMounted]);
+
+    if (!isMounted) return null;
 
     return (
         <div className="h-[calc(100vh-240px)] w-full ">

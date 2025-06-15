@@ -58,6 +58,7 @@ function BusinessHours({ t, data, handleScheduleChange }: Props) {
                                                     type="time"
                                                     value={schedule.open_time}
                                                     onChange={(e) => handleScheduleChange(day, 'open_time', e.target.value)}
+                                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                                                 />
                                             </div>
                                             <div>
@@ -68,6 +69,7 @@ function BusinessHours({ t, data, handleScheduleChange }: Props) {
                                                     type="time"
                                                     value={schedule.close_time}
                                                     onChange={(e) => handleScheduleChange(day, 'close_time', e.target.value)}
+                                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                                                 />
                                             </div>
                                         </div>
@@ -94,6 +96,7 @@ function BusinessHours({ t, data, handleScheduleChange }: Props) {
                                                     type="time"
                                                     value={schedule.break_start_time || ''}
                                                     onChange={(e) => handleScheduleChange(day, 'break_start_time', e.target.value)}
+                                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                                                 />
                                             </div>
                                             <div>
@@ -104,6 +107,7 @@ function BusinessHours({ t, data, handleScheduleChange }: Props) {
                                                     type="time"
                                                     value={schedule.break_end_time || ''}
                                                     onChange={(e) => handleScheduleChange(day, 'break_end_time', e.target.value)}
+                                                    className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                                                 />
                                             </div>
                                         </>
