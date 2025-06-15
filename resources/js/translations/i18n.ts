@@ -1,10 +1,10 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { auth } from './auth';
+import { company } from './company';
 import { plans } from './plans';
 import { profile } from './profile';
 import { ui } from './ui';
-
 // the translations
 // (tip move them in a JSON file and import them,
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
@@ -15,6 +15,7 @@ const resources = {
             ...ui.en,
             ...profile.en,
             ...plans.en,
+            ...company.en,
         },
     },
     es: {
@@ -23,6 +24,7 @@ const resources = {
             ...ui.es,
             ...profile.es,
             ...plans.es,
+            ...company.es,
         },
     },
 };
