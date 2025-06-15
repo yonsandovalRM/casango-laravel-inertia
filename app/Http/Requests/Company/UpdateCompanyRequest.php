@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Company;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -41,6 +41,7 @@ class UpdateCompanyRequest extends FormRequest
             'schedules.*.break_start_time' => 'nullable|string',
             'schedules.*.break_end_time' => 'nullable|string',
             'schedules.*.is_open' => 'nullable|boolean',
+            'schedules.*.has_break' => 'nullable|boolean',
         ];
     }
 }

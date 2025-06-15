@@ -1,7 +1,7 @@
+import BusinessHours from '@/components/company/business-hours';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { CompanyFormData, CompanyResource, Schedule } from '@/interfaces/company';
@@ -17,7 +17,7 @@ interface Props {
     t: any;
 }
 
-const DAYS_OF_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+export const DAYS_OF_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 export default withTranslation()(CompanyIndex);
 
@@ -107,9 +107,7 @@ function CompanyIndex({ company, t }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('company.update'), {
-            forceFormData: true,
-        });
+        post(route('company.update', { _method: 'PUT' }));
     };
 
     return (
@@ -202,241 +200,141 @@ function CompanyIndex({ company, t }: Props) {
                         className="hidden"
                         onChange={(e) => e.target.files?.[0] && handleImageUpload('cover', e.target.files[0])}
                     />
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {/* Company Information */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>{t('company.information')}</CardTitle>
+                            </CardHeader>
 
-                    {/* Company Information */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('company.information')}</CardTitle>
-                        </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    {/* Company Name */}
+                                    <div className="md:col-span-2">
+                                        <Label required>{t('company.form.name')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.name}
+                                            onChange={(e) => setData('name', e.target.value)}
+                                            placeholder={t('company.form.name_placeholder')}
+                                        />
+                                        <InputError message={errors.name} />
+                                    </div>
 
-                        <CardContent>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                {/* Company Name */}
-                                <div className="md:col-span-2">
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.name')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.name}
-                                        onChange={(e) => setData('name', e.target.value)}
-                                        placeholder={t('company.form.name_placeholder')}
-                                    />
-                                    <InputError message={errors.name} />
+                                    {/* Email */}
+                                    <div>
+                                        <Label required>{t('company.form.email')}</Label>
+                                        <Input
+                                            type="email"
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            placeholder={t('company.form.email_placeholder')}
+                                        />
+                                        <InputError message={errors.email} />
+                                    </div>
+
+                                    {/* Phone */}
+                                    <div>
+                                        <Label required>{t('company.form.phone')}</Label>
+                                        <Input
+                                            type="tel"
+                                            value={data.phone}
+                                            onChange={(e) => setData('phone', e.target.value)}
+                                            placeholder={t('company.form.phone_placeholder')}
+                                        />
+                                        <InputError message={errors.phone} />
+                                    </div>
+
+                                    {/* Phone 2 */}
+                                    <div>
+                                        <Label required>{t('company.form.phone2')}</Label>
+                                        <Input
+                                            type="tel"
+                                            value={data.phone2}
+                                            onChange={(e) => setData('phone2', e.target.value)}
+                                            placeholder={t('company.form.phone2_placeholder')}
+                                        />
+                                        <InputError message={errors.phone2} />
+                                    </div>
+
+                                    {/* Address */}
+                                    <div className="md:col-span-2">
+                                        <Label required>{t('company.form.address')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.address}
+                                            onChange={(e) => setData('address', e.target.value)}
+                                            placeholder={t('company.form.address_placeholder')}
+                                        />
+                                        <InputError message={errors.address} />
+                                    </div>
+
+                                    {/* City */}
+                                    <div>
+                                        <Label required>{t('company.form.city')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.city}
+                                            onChange={(e) => setData('city', e.target.value)}
+                                            placeholder={t('company.form.city_placeholder')}
+                                        />
+                                        <InputError message={errors.city} />
+                                    </div>
+
+                                    {/* Country */}
+                                    <div>
+                                        <Label required>{t('company.form.country')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.country}
+                                            onChange={(e) => setData('country', e.target.value)}
+                                            placeholder={t('company.form.country_placeholder')}
+                                        />
+                                        <InputError message={errors.country} />
+                                    </div>
+
+                                    {/* Currency */}
+                                    <div>
+                                        <Label required>{t('company.form.currency')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.currency}
+                                            onChange={(e) => setData('currency', e.target.value)}
+                                            placeholder={t('company.form.currency_placeholder')}
+                                        />
+                                        <InputError message={errors.currency} />
+                                    </div>
+
+                                    {/* Timezone */}
+                                    <div>
+                                        <Label required>{t('company.form.timezone')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.timezone}
+                                            onChange={(e) => setData('timezone', e.target.value)}
+                                            placeholder={t('company.form.timezone_placeholder')}
+                                        />
+                                        <InputError message={errors.timezone} />
+                                    </div>
+
+                                    {/* Language */}
+                                    <div>
+                                        <Label required>{t('company.form.language')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.language}
+                                            onChange={(e) => setData('language', e.target.value)}
+                                            placeholder={t('company.form.language_placeholder')}
+                                        />
+                                        <InputError message={errors.language} />
+                                    </div>
                                 </div>
+                            </CardContent>
+                        </Card>
 
-                                {/* Email */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.email')}
-                                    </Label>
-                                    <Input
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        placeholder={t('company.form.email_placeholder')}
-                                    />
-                                    <InputError message={errors.email} />
-                                </div>
-
-                                {/* Phone */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.phone')}
-                                    </Label>
-                                    <Input
-                                        type="tel"
-                                        value={data.phone}
-                                        onChange={(e) => setData('phone', e.target.value)}
-                                        placeholder={t('company.form.phone_placeholder')}
-                                    />
-                                    <InputError message={errors.phone} />
-                                </div>
-
-                                {/* Phone 2 */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.phone2')}
-                                    </Label>
-                                    <Input
-                                        type="tel"
-                                        value={data.phone2}
-                                        onChange={(e) => setData('phone2', e.target.value)}
-                                        placeholder={t('company.form.phone2_placeholder')}
-                                    />
-                                    <InputError message={errors.phone2} />
-                                </div>
-
-                                {/* Address */}
-                                <div className="md:col-span-2">
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.address')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.address}
-                                        onChange={(e) => setData('address', e.target.value)}
-                                        placeholder={t('company.form.address_placeholder')}
-                                    />
-                                    <InputError message={errors.address} />
-                                </div>
-
-                                {/* City */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.city')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.city}
-                                        onChange={(e) => setData('city', e.target.value)}
-                                        placeholder={t('company.form.city_placeholder')}
-                                    />
-                                    <InputError message={errors.city} />
-                                </div>
-
-                                {/* Country */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.country')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.country}
-                                        onChange={(e) => setData('country', e.target.value)}
-                                        placeholder={t('company.form.country_placeholder')}
-                                    />
-                                    <InputError message={errors.country} />
-                                </div>
-
-                                {/* Currency */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.currency')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.currency}
-                                        onChange={(e) => setData('currency', e.target.value)}
-                                        placeholder={t('company.form.currency_placeholder')}
-                                    />
-                                    <InputError message={errors.currency} />
-                                </div>
-
-                                {/* Timezone */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.timezone')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.timezone}
-                                        onChange={(e) => setData('timezone', e.target.value)}
-                                        placeholder={t('company.form.timezone_placeholder')}
-                                    />
-                                    <InputError message={errors.timezone} />
-                                </div>
-
-                                {/* Language */}
-                                <div>
-                                    <Label className="mb-2 block text-sm font-semibold text-muted-foreground" required>
-                                        {t('company.form.language')}
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        value={data.language}
-                                        onChange={(e) => setData('language', e.target.value)}
-                                        placeholder={t('company.form.language_placeholder')}
-                                    />
-                                    <InputError message={errors.language} />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Business Hours */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>{t('company.business_hours')}</CardTitle>
-                        </CardHeader>
-
-                        <CardContent>
-                            <div className="space-y-4">
-                                {DAYS_OF_WEEK.map((day) => {
-                                    const schedule = data.schedules.find((s) => s.day_of_week === day) || {
-                                        day_of_week: day,
-                                        open_time: '09:00',
-                                        close_time: '18:00',
-                                        break_start_time: '12:00',
-                                        break_end_time: '13:00',
-                                        is_open: true,
-                                        has_break: false,
-                                    };
-
-                                    return (
-                                        <div key={day} className="rounded-xl border border-border p-4 transition-shadow duration-200 hover:shadow-md">
-                                            <div className="mb-3 flex items-center justify-between">
-                                                <h4 className="font-semibold text-foreground capitalize">{t(`company.days.${day}`)}</h4>
-                                                <Label className="flex items-center gap-2">
-                                                    <Checkbox
-                                                        checked={schedule.is_open}
-                                                        onCheckedChange={(checked) => handleScheduleChange(day, 'is_open', checked)}
-                                                    />
-                                                    <span className="text-sm text-muted-foreground">{t('company.form.open')}</span>
-                                                </Label>
-                                            </div>
-
-                                            {schedule.is_open && (
-                                                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                                                    <div>
-                                                        <Label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                                            {t('company.form.open_time')}
-                                                        </Label>
-                                                        <Input
-                                                            type="time"
-                                                            value={schedule.open_time}
-                                                            onChange={(e) => handleScheduleChange(day, 'open_time', e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <Label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                                            {t('company.form.close_time')}
-                                                        </Label>
-                                                        <Input
-                                                            type="time"
-                                                            value={schedule.close_time}
-                                                            onChange={(e) => handleScheduleChange(day, 'close_time', e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <Label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                                            {t('company.form.break_start')}
-                                                        </Label>
-                                                        <Input
-                                                            type="time"
-                                                            value={schedule.break_start_time || ''}
-                                                            onChange={(e) => handleScheduleChange(day, 'break_start_time', e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <Label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                                            {t('company.form.break_end')}
-                                                        </Label>
-                                                        <Input
-                                                            type="time"
-                                                            value={schedule.break_end_time || ''}
-                                                            onChange={(e) => handleScheduleChange(day, 'break_end_time', e.target.value)}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </CardContent>
-                    </Card>
-
+                        {/* Business Hours */}
+                        <BusinessHours data={data} handleScheduleChange={handleScheduleChange} />
+                    </div>
                     {/* Save Button */}
                     <div className="flex justify-end">
                         <Button type="submit" disabled={processing}>
