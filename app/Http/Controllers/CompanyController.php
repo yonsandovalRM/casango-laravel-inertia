@@ -13,7 +13,7 @@ class CompanyController extends Controller
     public function getCompany(): JsonResponse
     {
         $company = Company::with('schedules')->first();
-        return response()->json(CompanyResource::make($company));
+        return response()->json(CompanyResource::make($company)->toArray(request()));
     }
 
     /**
@@ -23,7 +23,7 @@ class CompanyController extends Controller
     {
         $company = Company::with('schedules')->first();
         return Inertia::render('company/index', [
-            'company' => CompanyResource::make($company),
+            'company' => CompanyResource::make($company)->toArray(request()),
         ]);
     }
 

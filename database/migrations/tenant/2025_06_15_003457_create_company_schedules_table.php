@@ -20,6 +20,7 @@ return new class extends Migration
             $table->time('break_start_time')->nullable();
             $table->time('break_end_time')->nullable();
             $table->boolean('is_open')->default(true);
+            $table->boolean('has_break')->default(false);
             $table->foreign('company_id')->references('id')->on('companies');
             $table->timestamps();
         });

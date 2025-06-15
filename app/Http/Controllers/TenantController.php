@@ -203,6 +203,7 @@ class TenantController extends Controller
                 'open_time' => '09:00',
                 'close_time' => '18:00',
                 'is_open' => $day === 'sunday' ? false : true,
+                'has_break' => false,
             ]);
         }
 

@@ -17,6 +17,7 @@ class CompanySchedule extends Model
         'close_time',
         'break_start_time',
         'break_end_time',
+        'has_break',
     ];
 
     public function company()
@@ -24,8 +25,8 @@ class CompanySchedule extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function getDayOfWeekAttribute($value)
+   /*  public function getDayOfWeekAttribute($value)
     {
         return __('company.day_of_week.' . $value);
-    }
+    } */
 }
