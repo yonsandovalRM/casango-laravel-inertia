@@ -52,17 +52,46 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                 ] : null,
             ],
-            'flash' => [
-                'error' => session('error'),
-                'message' => session('message'),
-                'success' => session('success'),
-            ],
-
+            'flash' => $this->getFlashMessages(),
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * Get flash messages with unique IDs to prevent re-showing
+     */
+    private function getFlashMessages(): array
+    {
+        $messages = [];
+        
+        if ($error = session('error')) {
+            $messages['error'] = [
+                'id' => uniqid('error_'),
+                'message' => $error,
+                'type' => 'error'
+            ];
+        }
+
+        if ($message = session('message')) {
+            $messages['message'] = [
+                'id' => uniqid('message_'),
+                'message' => $message,
+                'type' => 'info'
+            ];
+        }
+
+        if ($success = session('success')) {
+            $messages['success'] = [
+                'id' => uniqid('success_'),
+                'message' => $success,
+                'type' => 'success'
+            ];
+        }
+
+        return $messages;
     }
 }

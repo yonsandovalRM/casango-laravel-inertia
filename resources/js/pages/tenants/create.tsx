@@ -1,5 +1,4 @@
 import InputError from '@/components/input-error';
-import { SessionMessages } from '@/components/session-messages';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -42,7 +41,6 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
                     <p className="text-sm text-muted-foreground">
                         Completa los siguientes campos para registrar tu negocio y comenzar a utilizar la plataforma.
                     </p>
-                    <SessionMessages />
                 </div>
                 <div className="mt-8 flex flex-col gap-16 md:flex-row">
                     <div className="w-full space-y-4 md:w-3/5">

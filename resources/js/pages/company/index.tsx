@@ -130,10 +130,8 @@ function CompanyIndex({ company, t }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('company.title')} />
-
             <div>
                 {/* Header */}
-
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Cover Image Section */}
                     <div className="overflow-hidden rounded-2xl border border-border bg-card">

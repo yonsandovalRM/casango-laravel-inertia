@@ -1,6 +1,5 @@
 import { AppHeaderPage } from '@/components/app-header-page';
 import { CreateInvitation } from '@/components/invitations/create-invitation';
-import { SessionMessages } from '@/components/session-messages';
 import { TenantFilters } from '@/components/tenants/tenant-filters';
 import { UserList } from '@/components/users/user-list';
 import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
@@ -33,7 +32,6 @@ export default function UsersIndex({ users }: { users: UserResource[] }) {
             />
 
             <TenantFilters />
-            <SessionMessages />
 
             <div className="mt-4">
                 <UserList users={users} />

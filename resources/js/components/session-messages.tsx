@@ -1,53 +1,18 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useSessionMessages } from '@/hooks/use-session-messages';
-import { AlertTriangle, CheckIcon, InfoIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 export const SessionMessages = () => {
-    const { message, error, success, reset } = useSessionMessages();
+    useSessionMessages(); // El hook maneja todo internamente
 
     useEffect(() => {
-        if (error) {
-            toast.error(error);
-        }
-        if (message) {
-            toast.info(message);
-        }
-        if (success) {
-            toast.success(success);
-        }
+        // Cleanup al desmontar el componente
         return () => {
             toast.dismiss();
         };
-    }, [error, message, success]);
+    }, []);
 
-    if (!error && !message && !success) {
-        return null;
-    }
-
-    return (
-        <div className="space-y-2 py-4">
-            {error && (
-                <Alert variant="destructive">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
-            )}
-
-            {message && (
-                <Alert variant="default">
-                    <InfoIcon className="h-4 w-4" />
-                    <AlertDescription>{message}</AlertDescription>
-                </Alert>
-            )}
-
-            {success && (
-                <Alert variant="default">
-                    <CheckIcon className="h-4 w-4" />
-                    <AlertDescription>{success}</AlertDescription>
-                </Alert>
-            )}
-        </div>
-    );
+    // Este componente no renderiza nada visible
+    // Solo actúa como un gestor de efectos para los mensajes
+    return null;
 };

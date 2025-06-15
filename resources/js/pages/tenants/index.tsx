@@ -1,5 +1,4 @@
 import { AppHeaderPage } from '@/components/app-header-page';
-import { SessionMessages } from '@/components/session-messages';
 import { TenantCard } from '@/components/tenants/tenant-card';
 import { TenantFilters } from '@/components/tenants/tenant-filters';
 import { Button } from '@/components/ui/button';
@@ -49,7 +48,6 @@ export default function TenantsIndex({ tenants }: { tenants: TenantResource[] })
             />
 
             <TenantFilters />
-            <SessionMessages />
 
             <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {tenants.map((tenant) => (
