@@ -44,6 +44,12 @@ export const PERMISSIONS = {
         view: 'view company',
         edit: 'edit company',
     },
+    services: {
+        create: 'create services',
+        edit: 'edit services',
+        delete: 'delete services',
+        view: 'view services',
+    },
 };
 
 export const ROLES = {
@@ -51,5 +57,5 @@ export const ROLES = {
     admin: 'admin',
     user: 'user',
     client: 'client',
-    employee: 'employee',
+    professional: 'professional',
 };

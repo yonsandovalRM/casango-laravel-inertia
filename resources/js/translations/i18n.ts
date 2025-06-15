@@ -4,6 +4,7 @@ import { auth } from './auth';
 import { company } from './company';
 import { plans } from './plans';
 import { profile } from './profile';
+import { services } from './services';
 import { ui } from './ui';
 import { users } from './users';
 // the translations
@@ -18,6 +19,7 @@ const resources = {
             ...plans.en,
             ...company.en,
             ...users.en,
+            ...services.en,
         },
     },
     es: {
@@ -28,6 +30,7 @@ const resources = {
             ...plans.es,
             ...company.es,
             ...users.es,
+            ...services.es,
         },
     },
 };

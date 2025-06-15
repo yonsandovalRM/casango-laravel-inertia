@@ -21,6 +21,11 @@ class Permissions
     public const INVITATIONS_CREATE = 'create invitations';
     public const INVITATIONS_VIEW = 'view invitations';
 
+    public const SERVICES_CREATE = 'create services';
+    public const SERVICES_EDIT = 'edit services';
+    public const SERVICES_DELETE = 'delete services';
+    public const SERVICES_VIEW = 'view services';
+
     public static function plans(): array
     {
         return [
@@ -55,6 +60,16 @@ class Permissions
         return [
             self::INVITATIONS_CREATE,
             self::INVITATIONS_VIEW,
+        ];
+    }
+
+    public static function services(): array
+    {
+        return [
+            self::SERVICES_CREATE,
+            self::SERVICES_EDIT,
+            self::SERVICES_DELETE,
+            self::SERVICES_VIEW,
         ];
     }
 }

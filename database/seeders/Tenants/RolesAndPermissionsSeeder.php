@@ -13,7 +13,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-   
+
         Permission::create(['name' => 'view users']);
         Permission::create(['name' => 'edit users']);
         Permission::create(['name' => 'delete users']);
@@ -25,11 +25,16 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'view company']);
         Permission::create(['name' => 'edit company']);
 
+        Permission::create(['name' => 'view services']);
+        Permission::create(['name' => 'edit services']);
+        Permission::create(['name' => 'delete services']);
+        Permission::create(['name' => 'create services']);
+
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
 
- 
+
         $role = Role::create(['name' => 'owner'])
             ->givePermissionTo(Permission::all());
 
@@ -39,7 +44,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $role = Role::create(['name' => 'client']);
         $role->givePermissionTo(['view company']);
 
-        $role = Role::create(['name' => 'employee']);
-        $role->givePermissionTo(['view company']);
+        $role = Role::create(['name' => 'professional']);
+        $role->givePermissionTo(['view company', 'view services']);
     }
 }

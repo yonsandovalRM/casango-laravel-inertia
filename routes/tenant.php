@@ -31,10 +31,11 @@ Route::middleware([
     Route::get('company', [CompanyController::class, 'index'])->name('company.index');
     Route::put('company', [CompanyController::class, 'update'])->name('company.update');
 
-    require __DIR__.'/auth.php';
-    require __DIR__.'/settings.php';
-    require __DIR__.'/common/invitations.php';
-    require __DIR__.'/common/users.php';
+    require __DIR__ . '/auth.php';
+    require __DIR__ . '/settings.php';
+    require __DIR__ . '/common/invitations.php';
+    require __DIR__ . '/common/users.php';
+    require __DIR__ . '/tenants/services.php';
 
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
