@@ -25,4 +25,9 @@ class Company extends Model
         'timezone',
         'language',
     ];
+
+    public function schedules()
+    {
+        return $this->hasMany(CompanySchedule::class);
+    }
 }

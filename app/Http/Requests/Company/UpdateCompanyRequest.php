@@ -34,6 +34,13 @@ class UpdateCompanyRequest extends FormRequest
             'currency' => 'nullable|string|max:255',
             'timezone' => 'nullable|string|max:255',
             'language' => 'nullable|string|max:255',
+            'schedules' => 'nullable|array',
+            'schedules.*.day_of_week' => 'required|string',
+            'schedules.*.open_time' => 'required|string',
+            'schedules.*.close_time' => 'required|string',
+            'schedules.*.break_start_time' => 'nullable|string',
+            'schedules.*.break_end_time' => 'nullable|string',
+            'schedules.*.is_open' => 'nullable|boolean',
         ];
     }
 }
