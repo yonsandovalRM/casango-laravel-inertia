@@ -26,6 +26,11 @@ class Permissions
     public const SERVICES_DELETE = 'delete services';
     public const SERVICES_VIEW = 'view services';
 
+    public const CATEGORIES_CREATE = 'create categories';
+    public const CATEGORIES_EDIT = 'edit categories';
+    public const CATEGORIES_DELETE = 'delete categories';
+    public const CATEGORIES_VIEW = 'view categories';
+
     public static function plans(): array
     {
         return [
@@ -70,6 +75,16 @@ class Permissions
             self::SERVICES_EDIT,
             self::SERVICES_DELETE,
             self::SERVICES_VIEW,
+        ];
+    }
+
+    public static function categories(): array
+    {
+        return [
+            self::CATEGORIES_CREATE,
+            self::CATEGORIES_EDIT,
+            self::CATEGORIES_DELETE,
+            self::CATEGORIES_VIEW,
         ];
     }
 }

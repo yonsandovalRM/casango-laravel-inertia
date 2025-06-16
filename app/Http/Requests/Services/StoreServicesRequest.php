@@ -25,7 +25,7 @@ class StoreServicesRequest extends FormRequest
             'name' => 'required|string|max:255|unique:services,name',
             'description' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
-            'category' => 'required|string|max:255',
+            'category_id' => 'required|uuid|exists:categories,id',
             'price' => 'nullable|numeric',
             'duration' => 'required|integer',
             'preparation_time' => 'nullable|integer',

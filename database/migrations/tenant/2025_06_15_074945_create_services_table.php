@@ -16,12 +16,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('notes')->nullable();
-            $table->string('category')->nullable();
+            $table->uuid('category_id')->nullable();
             $table->decimal('price', 10, 2)->nullable();
             $table->integer('duration')->nullable();
             $table->integer('preparation_time')->nullable();
             $table->integer('post_service_time')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
         });

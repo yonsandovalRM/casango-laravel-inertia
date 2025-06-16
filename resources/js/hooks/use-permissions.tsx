@@ -50,6 +50,12 @@ export const PERMISSIONS = {
         delete: 'delete services',
         view: 'view services',
     },
+    categories: {
+        create: 'create categories',
+        edit: 'edit categories',
+        delete: 'delete categories',
+        view: 'view categories',
+    },
 };
 
 export const ROLES = {

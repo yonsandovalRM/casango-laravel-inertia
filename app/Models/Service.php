@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\HasUuid;
 
-class Services extends Model
+class Service extends Model
 {
 
     use HasFactory, SoftDeletes, HasUuid;
@@ -32,4 +32,9 @@ class Services extends Model
         'post_service_time' => 'integer',
         'is_active' => 'boolean',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

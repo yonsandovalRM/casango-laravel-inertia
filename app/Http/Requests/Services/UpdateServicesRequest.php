@@ -26,7 +26,7 @@ class UpdateServicesRequest extends FormRequest
             'name' => 'required|string|max:255|unique:services,name,' . $service->id,
             'description' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
-            'category' => 'nullable|string|max:255',
+            'category_id' => 'nullable|uuid|exists:categories,id',
             'price' => 'nullable|numeric',
             'duration' => 'nullable|integer',
             'preparation_time' => 'nullable|integer',

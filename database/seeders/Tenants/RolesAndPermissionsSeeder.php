@@ -30,6 +30,12 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete services']);
         Permission::create(['name' => 'create services']);
 
+        Permission::create(['name' => 'view categories']);
+        Permission::create(['name' => 'edit categories']);
+        Permission::create(['name' => 'delete categories']);
+        Permission::create(['name' => 'create categories']);
+
+
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
