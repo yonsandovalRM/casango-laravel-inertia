@@ -29,7 +29,7 @@ class ServicesController extends Controller
     public function store(StoreServicesRequest $request)
     {
         $service = Services::create($request->validated());
-        return redirect()->route('services.index')->with('success', __('services.created'));
+        return redirect()->route('services.index')->with('success', __('service.created'));
     }
 
 
@@ -40,7 +40,8 @@ class ServicesController extends Controller
      */
     public function update(UpdateServicesRequest $request, Services $services)
     {
-        //
+        $services->update($request->validated());
+        return redirect()->route('services.index')->with('success', __('service.updated'));
     }
 
     /**
@@ -48,6 +49,7 @@ class ServicesController extends Controller
      */
     public function destroy(Services $services)
     {
-        //
+        $services->delete();
+        return redirect()->route('services.index')->with('success', __('service.deleted'));
     }
 }

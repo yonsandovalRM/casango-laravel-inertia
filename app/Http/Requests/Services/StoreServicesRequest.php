@@ -29,6 +29,7 @@ class StoreServicesRequest extends FormRequest
             'price' => 'nullable|numeric',
             'duration' => 'required|integer',
             'preparation_time' => 'nullable|integer',
+            'post_service_time' => 'nullable|integer',
             'is_active' => 'required|boolean',
         ];
     }

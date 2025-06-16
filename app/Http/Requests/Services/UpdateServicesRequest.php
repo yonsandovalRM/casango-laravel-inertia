@@ -21,14 +21,16 @@ class UpdateServicesRequest extends FormRequest
      */
     public function rules(): array
     {
+        $service = $this->route('services');
         return [
-            'name' => 'required|string|max:255|unique:services,name,' . $this->id,
+            'name' => 'required|string|max:255|unique:services,name,' . $service->id,
             'description' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
             'category' => 'nullable|string|max:255',
             'price' => 'nullable|numeric',
             'duration' => 'nullable|integer',
             'preparation_time' => 'nullable|integer',
+            'post_service_time' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
         ];
     }
