@@ -33,7 +33,7 @@ class UpdateCompanyRequest extends FormRequest
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'currency' => 'nullable|string|max:255',
             'timezone' => 'nullable|string|max:255',
-            'language' => 'nullable|string|max:255',
+            'locale' => 'nullable|string|max:255',
             'schedules' => 'nullable|array',
             'schedules.*.day_of_week' => 'required|string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
             'schedules.*.open_time' => [
@@ -69,7 +69,7 @@ class UpdateCompanyRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $schedules = $this->input('schedules', []);
-            
+
             foreach ($schedules as $index => $schedule) {
                 // Si has_break es false, no debería haber tiempos de descanso
                 if (isset($schedule['has_break']) && $schedule['has_break'] === false) {
@@ -80,7 +80,7 @@ class UpdateCompanyRequest extends FormRequest
                         );
                     }
                 }
-                
+
                 // Si has_break es true, deben existir ambos horarios de descanso
                 if (isset($schedule['has_break']) && $schedule['has_break'] === true) {
                     if (empty($schedule['break_start_time']) || empty($schedule['break_end_time'])) {
@@ -90,15 +90,17 @@ class UpdateCompanyRequest extends FormRequest
                         );
                     }
                 }
-                
+
                 // Validar que el descanso esté dentro del horario laboral
-                if (!empty($schedule['break_start_time']) && !empty($schedule['break_end_time']) && 
-                    !empty($schedule['open_time']) && !empty($schedule['close_time'])) {
+                if (
+                    !empty($schedule['break_start_time']) && !empty($schedule['break_end_time']) &&
+                    !empty($schedule['open_time']) && !empty($schedule['close_time'])
+                ) {
                     $open = strtotime($schedule['open_time']);
                     $close = strtotime($schedule['close_time']);
                     $breakStart = strtotime($schedule['break_start_time']);
                     $breakEnd = strtotime($schedule['break_end_time']);
-                    
+
                     if ($breakStart < $open || $breakEnd > $close) {
                         $validator->errors()->add(
                             "schedules.$index.break_start_time",

@@ -22,9 +22,9 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('logo')->nullable();
             $table->string('cover_image')->nullable();
-            $table->string('currency')->nullable();
-            $table->string('timezone')->nullable();
-            $table->string('language')->nullable();
+            $table->string('currency')->default('CLP');
+            $table->string('timezone')->default('America/Santiago');
+            $table->string('locale')->default('es-CL');
             $table->timestamps();
         });
     }

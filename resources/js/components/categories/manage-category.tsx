@@ -5,6 +5,7 @@ import { AppHeaderPage } from '../app-header-page';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { EmptyState } from '../ui/empty-state';
 import { useCategory } from './category-context';
 import { FormCategory } from './form-category';
 
@@ -22,10 +23,19 @@ export function ManageCategory({ categories, t }: { categories: CategoryResource
 
     return (
         <div>
-            <AppHeaderPage title={t('categories.title')} actions={<Button onClick={handleCreate}>{t('categories.manage.create')}</Button>} />
+            <AppHeaderPage
+                title={t('categories.title')}
+                description={t('categories.description')}
+                actions={<Button onClick={handleCreate}>{t('categories.manage.create')}</Button>}
+            />
             <div className="flex flex-col gap-4">
-                <h1>{t('categories.title')}</h1>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {categories.length === 0 && (
+                        <EmptyState
+                            action={<Button onClick={handleCreate}>{t('categories.manage.create')}</Button>}
+                            text={t('categories.manage.no_categories')}
+                        />
+                    )}
                     {categories.map((category) => (
                         <Card key={category.id} className="group transition-all duration-200 hover:shadow-lg">
                             <CardHeader className="pb-3">

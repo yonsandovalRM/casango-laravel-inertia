@@ -11,7 +11,7 @@ export interface CompanyResource {
     cover_image: string | File | null;
     currency: string;
     timezone: string;
-    language: string;
+    locale: string;
     schedules: Schedule[];
 }
 
@@ -26,7 +26,7 @@ export type CompanyFormData = {
     country: string;
     currency: string;
     timezone: string;
-    language: string;
+    locale: string;
     logo: File | null;
     cover_image: File | null;
     schedules: ScheduleFormData[];

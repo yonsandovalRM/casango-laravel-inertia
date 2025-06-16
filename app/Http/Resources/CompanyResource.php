@@ -27,7 +27,7 @@ class CompanyResource extends JsonResource
             'cover_image' => $this->cover_image,
             'currency' => $this->currency,
             'timezone' => $this->timezone,
-            'language' => $this->language,
+            'locale' => $this->locale,
             'schedules' => CompanyScheduleResource::collection($this->whenLoaded('schedules'))->toArray(request()),
         ];
     }

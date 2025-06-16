@@ -2,12 +2,14 @@ export const services = {
     en: {
         services: {
             title: 'Services',
+            description: 'Services are the offerings of your business.',
             active: 'Active',
             inactive: 'Inactive',
             manage: {
                 create: 'Create Service',
                 edit: 'Edit Service',
                 delete: 'Delete Service',
+                no_services: 'No services available',
             },
             form: {
                 create: 'Create Service',
@@ -33,12 +35,14 @@ export const services = {
     es: {
         services: {
             title: 'Servicios',
+            description: 'Los servicios son las ofertas de tu negocio.',
             active: 'Activo',
             inactive: 'Inactivo',
             manage: {
                 create: 'Crear Servicio',
                 edit: 'Editar Servicio',
                 delete: 'Eliminar Servicio',
+                no_services: 'No hay servicios disponibles',
             },
             form: {
                 create: 'Crear Servicio',

@@ -7,6 +7,7 @@ import { AppHeaderPage } from '../app-header-page';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { EmptyState } from '../ui/empty-state';
 import { FormService } from './form-service';
 import { useService } from './service-context';
 
@@ -28,10 +29,19 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
 
     return (
         <div>
-            <AppHeaderPage title={t('services.title')} actions={<Button onClick={handleCreate}>{t('services.manage.create')}</Button>} />
+            <AppHeaderPage
+                title={t('services.title')}
+                description={t('services.description')}
+                actions={<Button onClick={handleCreate}>{t('services.manage.create')}</Button>}
+            />
             <div className="flex flex-col gap-4">
-                <h1>{t('services.title')}</h1>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {services.length === 0 && (
+                        <EmptyState
+                            action={<Button onClick={handleCreate}>{t('services.manage.create')}</Button>}
+                            text={t('services.manage.no_services')}
+                        />
+                    )}
                     {services.map((service) => (
                         <Card key={service.id} className="group transition-all duration-200 hover:shadow-lg">
                             <CardHeader className="pb-3">

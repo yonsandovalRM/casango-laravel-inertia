@@ -23,7 +23,7 @@ class Company extends Model
         'cover_image',
         'currency',
         'timezone',
-        'language',
+        'locale',
     ];
 
     public function schedules()

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CompanyFormData, CompanyResource, Schedule } from '@/interfaces/company';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -19,6 +20,31 @@ interface Props {
 }
 
 export const DAYS_OF_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+export const LOCALES = [
+    {
+        label: 'Español',
+        value: 'es-CL',
+    },
+    {
+        label: 'English',
+        value: 'en-US',
+    },
+];
+export const CURRENCIES = ['CLP', 'USD'];
+export const TIMEZONES = [
+    'America/Santiago',
+    'America/New_York',
+    'America/Los_Angeles',
+    'America/Chicago',
+    'America/Denver',
+    'America/Phoenix',
+    'America/Mexico_City',
+    'America/Bogota',
+    'America/Caracas',
+    'America/Sao_Paulo',
+    'America/Buenos_Aires',
+    'America/Lima',
+];
 
 export default withTranslation()(CompanyIndex);
 
@@ -55,7 +81,7 @@ function CompanyIndex({ company, t }: Props) {
         country: company?.country || '',
         currency: company?.currency || '',
         timezone: company?.timezone || '',
-        language: company?.language || '',
+        locale: company?.locale || '',
         logo: company?.logo ? new File([], company.logo as string) : null,
         cover_image: company?.cover_image ? new File([], company.cover_image as string) : null,
         schedules: initialSchedules,
@@ -307,18 +333,6 @@ function CompanyIndex({ company, t }: Props) {
                                         <InputError message={errors.address} />
                                     </div>
 
-                                    {/* City */}
-                                    <div>
-                                        <Label required>{t('company.form.city')}</Label>
-                                        <Input
-                                            type="text"
-                                            value={data.city}
-                                            onChange={(e) => setData('city', e.target.value)}
-                                            placeholder={t('company.form.city_placeholder')}
-                                        />
-                                        <InputError message={errors.city} />
-                                    </div>
-
                                     {/* Country */}
                                     <div>
                                         <Label required>{t('company.form.country')}</Label>
@@ -331,40 +345,70 @@ function CompanyIndex({ company, t }: Props) {
                                         <InputError message={errors.country} />
                                     </div>
 
+                                    {/* City */}
+                                    <div>
+                                        <Label required>{t('company.form.city')}</Label>
+                                        <Input
+                                            type="text"
+                                            value={data.city}
+                                            onChange={(e) => setData('city', e.target.value)}
+                                            placeholder={t('company.form.city_placeholder')}
+                                        />
+                                        <InputError message={errors.city} />
+                                    </div>
+
                                     {/* Currency */}
                                     <div>
                                         <Label required>{t('company.form.currency')}</Label>
-                                        <Input
-                                            type="text"
-                                            value={data.currency}
-                                            onChange={(e) => setData('currency', e.target.value)}
-                                            placeholder={t('company.form.currency_placeholder')}
-                                        />
+                                        <Select value={data.currency} onValueChange={(value) => setData('currency', value)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('company.form.currency_placeholder')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {CURRENCIES.map((currency) => (
+                                                    <SelectItem key={currency} value={currency}>
+                                                        {currency}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <InputError message={errors.currency} />
                                     </div>
 
                                     {/* Timezone */}
                                     <div>
                                         <Label required>{t('company.form.timezone')}</Label>
-                                        <Input
-                                            type="text"
-                                            value={data.timezone}
-                                            onChange={(e) => setData('timezone', e.target.value)}
-                                            placeholder={t('company.form.timezone_placeholder')}
-                                        />
+                                        <Select value={data.timezone} onValueChange={(value) => setData('timezone', value)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('company.form.timezone_placeholder')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {TIMEZONES.map((timezone) => (
+                                                    <SelectItem key={timezone} value={timezone}>
+                                                        {timezone}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <InputError message={errors.timezone} />
                                     </div>
 
-                                    {/* Language */}
+                                    {/* Locale */}
                                     <div>
-                                        <Label required>{t('company.form.language')}</Label>
-                                        <Input
-                                            type="text"
-                                            value={data.language}
-                                            onChange={(e) => setData('language', e.target.value)}
-                                            placeholder={t('company.form.language_placeholder')}
-                                        />
-                                        <InputError message={errors.language} />
+                                        <Label required>{t('company.form.locale')}</Label>
+                                        <Select value={data.locale} onValueChange={(value) => setData('locale', value)}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('company.form.locale_placeholder')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {LOCALES.map((locale) => (
+                                                    <SelectItem key={locale.value} value={locale.value}>
+                                                        {locale.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.locale} />
                                     </div>
                                 </div>
                             </CardContent>
