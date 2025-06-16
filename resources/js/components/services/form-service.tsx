@@ -1,3 +1,4 @@
+import { CategoryResource } from '@/interfaces/category';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import InputError from '../input-error';
@@ -6,10 +7,11 @@ import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '../ui/sheet';
 import { useService } from './service-context';
 
-export function FormService() {
+export function FormService({ categories }: { categories: CategoryResource[] }) {
     const { t } = useTranslation();
     const { open, handleSubmit, handleCancel, data, setData, errors, processing, service } = useService();
 
@@ -42,8 +44,19 @@ export function FormService() {
                                     </div>
                                     <div>
                                         <Label required>{t('services.form.category')}</Label>
-                                        <Input value={data.category} onChange={(e) => setData({ ...data, category: e.target.value })} />
-                                        <InputError message={errors.category} />
+                                        <Select value={data.category_id} onValueChange={(value) => setData({ ...data, category_id: value })}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('services.form.category')} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {categories.map((category) => (
+                                                    <SelectItem key={category.id} value={category.id}>
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <InputError message={errors.category_id} />
                                     </div>
                                     <div>
                                         <Label>{t('services.form.price')}</Label>

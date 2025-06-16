@@ -1,4 +1,6 @@
+import { CategoryResource } from '@/interfaces/category';
 import { ServiceResource } from '@/interfaces/service';
+import { formatCurrency } from '@/lib/utils';
 import { TFunction } from 'i18next';
 import { Clock, DollarSign, Edit, Trash2 } from 'lucide-react';
 import { AppHeaderPage } from '../app-header-page';
@@ -8,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { FormService } from './form-service';
 import { useService } from './service-context';
 
-export function ManageService({ services, t }: { services: ServiceResource[]; t: TFunction }) {
+export function ManageService({ services, categories, t }: { services: ServiceResource[]; categories: CategoryResource[]; t: TFunction }) {
     const { setService, setOpen, onDelete } = useService();
 
     const handleDelete = (serviceId: string) => {
@@ -22,7 +24,6 @@ export function ManageService({ services, t }: { services: ServiceResource[]; t:
         setService(service);
         setOpen(true);
     };
-    const formatPrice = (price: number) => `$${price.toFixed(2)}`;
     const formatDuration = (minutes: number) => `${minutes}min`;
 
     return (
@@ -66,7 +67,7 @@ export function ManageService({ services, t }: { services: ServiceResource[]; t:
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
                                         <Badge variant={service.is_active ? 'default' : 'secondary'} className="text-xs">
-                                            {service.category}
+                                            {service.category.name}
                                         </Badge>
                                         <Badge variant={service.is_active ? 'default' : 'outline'} className="text-xs">
                                             {service.is_active ? 'Activo' : 'Inactivo'}
@@ -76,7 +77,7 @@ export function ManageService({ services, t }: { services: ServiceResource[]; t:
                                     <div className="flex items-center justify-between text-sm">
                                         <div className="flex items-center gap-1 text-muted-foreground">
                                             <DollarSign className="h-4 w-4" />
-                                            <span className="font-medium text-foreground">{formatPrice(service.price)}</span>
+                                            <span className="font-medium text-foreground">{formatCurrency(service.price)}</span>
                                         </div>
                                         <div className="flex items-center gap-1 text-muted-foreground">
                                             <Clock className="h-4 w-4" />
@@ -98,7 +99,7 @@ export function ManageService({ services, t }: { services: ServiceResource[]; t:
                     ))}
                 </div>
             </div>
-            <FormService />
+            <FormService categories={categories} />
         </div>
     );
 }

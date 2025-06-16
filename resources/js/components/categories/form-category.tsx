@@ -23,7 +23,7 @@ export function FormCategory() {
                     </SheetDescription>
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-180px)]">
-                    <form id="service-form" onSubmit={handleSubmit}>
+                    <form id="category-form" onSubmit={handleSubmit}>
                         <div className="grid flex-1 auto-rows-min gap-6 px-4">
                             <div className="flex flex-col gap-4">
                                 <div className="space-y-6 pb-4">

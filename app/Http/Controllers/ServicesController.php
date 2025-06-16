@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Services\StoreServicesRequest;
 use App\Http\Requests\Services\UpdateServicesRequest;
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ServiceResource;
+use App\Models\Category;
 use App\Models\Service;
 use Inertia\Inertia;
 
@@ -15,9 +17,12 @@ class ServicesController extends Controller
      */
     public function index()
     {
+        $categories = Category::where('is_active', true)->get();
         $services = Service::where('is_active', true)->with('category')->get();
+
         return Inertia::render('services/index', [
-            'services' => ServiceResource::collection($services)->toArray(request())
+            'services' => ServiceResource::collection($services)->toArray(request()),
+            'categories' => CategoryResource::collection($categories)->toArray(request())
         ]);
     }
 

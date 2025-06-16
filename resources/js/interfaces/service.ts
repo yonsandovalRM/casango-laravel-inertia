@@ -1,9 +1,11 @@
+import { CategoryResource } from './category';
+
 export interface ServiceResource {
     id: string;
     name: string;
     description: string;
     notes: string;
-    category: string;
+    category: CategoryResource;
     price: number;
     duration: number;
     preparation_time: number;
@@ -15,7 +17,7 @@ export type ServiceFormData = {
     name: string;
     description: string;
     notes: string;
-    category: string;
+    category_id: string;
     price: number;
     duration: number;
     preparation_time: number;

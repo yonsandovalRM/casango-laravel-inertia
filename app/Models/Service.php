@@ -16,7 +16,7 @@ class Service extends Model
         'name',
         'description',
         'notes',
-        'category',
+        'category_id',
         'price',
         'duration',
         'preparation_time',
