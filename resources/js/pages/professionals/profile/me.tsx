@@ -5,11 +5,18 @@ import { ProfessionalRequests } from '@/components/professionals/profile/profess
 import { ProfessionalSchedule } from '@/components/professionals/profile/professional-schedule';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfessionalResource } from '@/interfaces/professional';
+import { CompanyScheduleObject, ProfessionalScheduleResource } from '@/interfaces/schedules';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
-export default function ProfessionalProfileMe({ professional }: { professional: ProfessionalResource }) {
+interface ProfessionalProfileMeProps {
+    professional: ProfessionalResource;
+    professional_schedules: ProfessionalScheduleResource[];
+    company_schedules: CompanyScheduleObject;
+}
+
+export default function ProfessionalProfileMe({ professional, professional_schedules, company_schedules }: ProfessionalProfileMeProps) {
     const { t } = useTranslation();
     return (
         <AppLayout breadcrumbs={[{ title: 'Perfil profesional', href: '/professional/profile' }]}>
@@ -25,7 +32,11 @@ export default function ProfessionalProfileMe({ professional }: { professional: 
                             <TabsTrigger value="requests">{t('professional.profile.requests')}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="schedule">
-                            <ProfessionalSchedule />
+                            <ProfessionalSchedule
+                                isFullTime={professional.is_full_time}
+                                professional_schedules={professional_schedules}
+                                company_schedules={company_schedules}
+                            />
                         </TabsContent>
                         <TabsContent value="exceptions">
                             <ProfessionalExceptions />

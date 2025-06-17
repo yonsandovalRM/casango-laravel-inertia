@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Professionals\UpdateProfessionalRequest;
+use App\Http\Resources\CompanyScheduleResource;
 use App\Http\Resources\ProfessionalResource;
+use App\Http\Resources\ProfessionalScheduleResource;
+use App\Models\Company;
+use App\Models\CompanySchedule;
 use App\Models\Professional;
+use App\Models\ProfessionalSchedule;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,8 +18,13 @@ class ProfessionalController extends Controller
     public function me()
     {
         $professional = Professional::with('user')->where('user_id', Auth::user()->id)->firstOrFail();
+        $professional_schedules = ProfessionalSchedule::all();
+        $company = Company::with('schedules')->first();
+
         return Inertia::render('professionals/profile/me', [
             'professional' => new ProfessionalResource($professional)->toArray(request()),
+            'professional_schedules' => ProfessionalScheduleResource::collection($professional_schedules)->toArray(request()),
+            'company_schedules' => $company->getDailySchedulesArray(),
         ]);
     }
     /**
@@ -23,15 +33,24 @@ class ProfessionalController extends Controller
     public function index()
     {
         $professionals = Professional::with('user')->get();
+
         return Inertia::render('professionals/index', [
             'professionals' => ProfessionalResource::collection($professionals)->toArray(request()),
+
         ]);
     }
 
     public function updateMe(UpdateProfessionalRequest $request)
     {
         $professional = Professional::where('user_id', Auth::user()->id)->firstOrFail();
+
         $professional->update($request->validated());
+
+        if ($request->input('is_full_time')) {
+            $professional->schedules()->delete();
+            return;
+        }
+
         return redirect()->route('professional.me')->with('success', __('professional.updated'));
     }
 

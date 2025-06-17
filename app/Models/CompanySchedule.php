@@ -26,13 +26,10 @@ class CompanySchedule extends Model
         'has_break' => 'boolean',
     ];
 
+    protected $appends = ['formatted_schedule'];
+
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
-
-   /*  public function getDayOfWeekAttribute($value)
-    {
-        return __('company.day_of_week.' . $value);
-    } */
 }
