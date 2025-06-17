@@ -37,6 +37,7 @@ Route::middleware([
     require __DIR__ . '/common/users.php';
     require __DIR__ . '/tenants/services.php';
     require __DIR__ . '/tenants/categories.php';
+    require __DIR__ . '/tenants/professionals.php';
 
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

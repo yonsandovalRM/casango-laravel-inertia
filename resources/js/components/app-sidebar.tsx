@@ -2,7 +2,7 @@ import { NavFooter } from '@/components/nav-footer';
 import NavMain from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { PERMISSIONS } from '@/hooks/use-permissions';
+import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Building2, Folder, LayoutGrid, Package, Tags, Users } from 'lucide-react';
@@ -30,6 +30,12 @@ function AppSidebar({ t }: { t: any }) {
             icon: Building2,
             permission: PERMISSIONS.tenants.view,
         },
+        {
+            title: t('ui.menu.professional_profile'),
+            href: route('professional.me'),
+            icon: Users,
+            permission: ROLES.professional,
+        },
     ];
 
     const adminNavItems: NavItem[] = [
@@ -40,11 +46,18 @@ function AppSidebar({ t }: { t: any }) {
             permission: PERMISSIONS.company.view,
         },
         {
+            title: t('ui.menu.professionals'),
+            href: route('professionals.index'),
+            icon: Users,
+            permission: PERMISSIONS.professionals.view,
+        },
+        {
             title: t('ui.menu.users'),
             href: route('users.index'),
             icon: Users,
             permission: PERMISSIONS.users.view,
         },
+
         {
             title: t('ui.menu.services'),
             href: route('services.index'),

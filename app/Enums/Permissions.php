@@ -31,6 +31,14 @@ class Permissions
     public const CATEGORIES_DELETE = 'delete categories';
     public const CATEGORIES_VIEW = 'view categories';
 
+    public const PROFESSIONAL_PROFILE_VIEW = 'view professional profile';
+    public const PROFESSIONAL_PROFILE_EDIT = 'edit professional profile';
+    public const PROFESSIONAL_PROFILE_DELETE = 'delete professional profile';
+
+    public const PROFESSIONALS_VIEW = 'view professionals';
+    public const PROFESSIONALS_EDIT = 'edit professionals';
+    public const PROFESSIONALS_DELETE = 'delete professionals';
+
     public static function plans(): array
     {
         return [
@@ -85,6 +93,24 @@ class Permissions
             self::CATEGORIES_EDIT,
             self::CATEGORIES_DELETE,
             self::CATEGORIES_VIEW,
+        ];
+    }
+
+    public static function professionalProfile(): array
+    {
+        return [
+            self::PROFESSIONAL_PROFILE_VIEW,
+            self::PROFESSIONAL_PROFILE_EDIT,
+            self::PROFESSIONAL_PROFILE_DELETE,
+        ];
+    }
+
+    public static function professionals(): array
+    {
+        return [
+            self::PROFESSIONALS_VIEW,
+            self::PROFESSIONALS_EDIT,
+            self::PROFESSIONALS_DELETE,
         ];
     }
 }

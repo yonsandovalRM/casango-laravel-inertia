@@ -36,7 +36,6 @@ class InvitationController extends Controller
         Mail::to($invitation->email)->queue(new UserInvitationMail($invitation));
 
         return back()->with('success', __('invitation.sent'));
-    
     }
 
 
@@ -54,11 +53,10 @@ class InvitationController extends Controller
     {
         $invitation = Invitation::where('token', $token)->firstOrFail();
 
-        
+
         $existing = User::where('email', $invitation->email)->first();
         if ($existing) {
             return redirect()->back()->with('error', __('invitation.user_exists'));
-        
         }
 
         if ($invitation->expires_at < now()) {
@@ -69,8 +67,16 @@ class InvitationController extends Controller
             'name' => $request->name,
             'email' => $invitation->email,
             'password' => Hash::make($request->password),
-            'email_verified_at' => now(), 
+            'email_verified_at' => now(),
         ]);
+
+        if ($invitation->role === 'professional') {
+            $user->professional()->create([
+                'bio' => $request->bio ?? null,
+                'title' => $request->title ?? 'Sr.',
+                'is_full_time' => $request->is_full_time ?? false,
+            ]);
+        }
 
         $user->assignRole($invitation->role);
         $invitation->delete();
@@ -79,7 +85,4 @@ class InvitationController extends Controller
 
         return redirect()->route('dashboard');
     }
-
-
-
 }

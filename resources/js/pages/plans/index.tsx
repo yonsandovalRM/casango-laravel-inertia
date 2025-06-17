@@ -31,7 +31,9 @@ function PlansIndex({ plans, t }: { plans: PlanResource[]; t: any }) {
                 description={t('plans.description')}
                 actions={hasPermission(PERMISSIONS.plans.create) ? <CreatePlan /> : null}
             />
-            <ListPlans plans={plans} />
+            <div className="p-4">
+                <ListPlans plans={plans} />
+            </div>
         </AppLayout>
     );
 }

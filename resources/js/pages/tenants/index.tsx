@@ -46,41 +46,42 @@ export default function TenantsIndex({ tenants }: { tenants: TenantResource[] })
                     </Button>
                 }
             />
+            <div className="p-4">
+                <TenantFilters />
 
-            <TenantFilters />
-
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {tenants.map((tenant) => (
-                    <TenantCard
-                        key={tenant.id}
-                        tenant={tenant}
-                        actions={
-                            <>
-                                {hasPermission(PERMISSIONS.tenants.edit) && (
-                                    <Button variant="outline" className="flex items-center gap-2">
-                                        <Pencil className="size-4" />
-                                        Editar
-                                    </Button>
-                                )}
-
-                                {hasPermission(PERMISSIONS.tenants.delete) && (
-                                    <DialogConfirm
-                                        variant="destructive"
-                                        title="Eliminar negocio"
-                                        description="¿Estás seguro de querer eliminar este negocio? Esta acción no se puede deshacer."
-                                        onConfirm={() => handleConfirmDelete(tenant.id)}
-                                        onCancel={() => setOpen(false)}
-                                    >
-                                        <Button variant="soft-destructive" onClick={() => setOpen(true)}>
-                                            <Trash className="size-4" />
-                                            Eliminar
+                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {tenants.map((tenant) => (
+                        <TenantCard
+                            key={tenant.id}
+                            tenant={tenant}
+                            actions={
+                                <>
+                                    {hasPermission(PERMISSIONS.tenants.edit) && (
+                                        <Button variant="outline" className="flex items-center gap-2">
+                                            <Pencil className="size-4" />
+                                            Editar
                                         </Button>
-                                    </DialogConfirm>
-                                )}
-                            </>
-                        }
-                    />
-                ))}
+                                    )}
+
+                                    {hasPermission(PERMISSIONS.tenants.delete) && (
+                                        <DialogConfirm
+                                            variant="destructive"
+                                            title="Eliminar negocio"
+                                            description="¿Estás seguro de querer eliminar este negocio? Esta acción no se puede deshacer."
+                                            onConfirm={() => handleConfirmDelete(tenant.id)}
+                                            onCancel={() => setOpen(false)}
+                                        >
+                                            <Button variant="soft-destructive" onClick={() => setOpen(true)}>
+                                                <Trash className="size-4" />
+                                                Eliminar
+                                            </Button>
+                                        </DialogConfirm>
+                                    )}
+                                </>
+                            }
+                        />
+                    ))}
+                </div>
             </div>
         </AppLayout>
     );

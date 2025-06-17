@@ -7,7 +7,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardFooter } from '../ui/card';
 import { DialogConfirm } from '../ui/dialog-confirm';
-import { ListEmpty } from '../ui/list-empty';
+import { EmptyState } from '../ui/empty-state';
 import CreatePlan from './create-plan';
 import EditPlan from './edit-plan';
 
@@ -21,10 +21,10 @@ function ListPlans({ plans, t }: { plans: PlanResource[]; t: any }) {
     return (
         <>
             {plans?.length === 0 && hasPermission(PERMISSIONS.plans.create) && (
-                <ListEmpty title={t('plans.list.list_empty.title')} description={t('plans.list.list_empty.description')} action={<CreatePlan />} />
+                <EmptyState text={t('plans.list.list_empty.title')} action={<CreatePlan />} />
             )}
 
-            <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
                 {plans?.map((plan) => (
                     <Card key={plan.id} className="flex flex-col gap-4">
                         <CardContent className="mb-4 flex flex-1 flex-col gap-2">

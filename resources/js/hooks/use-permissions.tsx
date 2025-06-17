@@ -56,6 +56,15 @@ export const PERMISSIONS = {
         delete: 'delete categories',
         view: 'view categories',
     },
+    professional_profile: {
+        edit: 'edit professional profile',
+        view: 'view professional profile',
+    },
+    professionals: {
+        view: 'view professionals',
+        edit: 'edit professionals',
+        delete: 'delete professionals',
+    },
 };
 
 export const ROLES = {
