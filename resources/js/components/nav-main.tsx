@@ -5,13 +5,13 @@ import { Link, usePage } from '@inertiajs/react';
 import { withTranslation } from 'react-i18next';
 
 export default withTranslation()(NavMain);
-function NavMain({ items = [], t }: { items: NavItem[]; t: any }) {
+function NavMain({ items = [], t, navTitle }: { items: NavItem[]; t: any; navTitle: string }) {
     const page = usePage();
     const { hasPermission } = usePermissions();
 
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>{t('ui.menu.platform')}</SidebarGroupLabel>
+            <SidebarGroupLabel>{navTitle}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
                     if (item.permission && !hasPermission(item.permission)) {

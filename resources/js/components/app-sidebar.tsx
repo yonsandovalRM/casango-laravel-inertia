@@ -30,17 +30,20 @@ function AppSidebar({ t }: { t: any }) {
             icon: Building2,
             permission: PERMISSIONS.tenants.view,
         },
-        {
-            title: t('ui.menu.users'),
-            href: route('users.index'),
-            icon: Users,
-            permission: PERMISSIONS.users.view,
-        },
+    ];
+
+    const adminNavItems: NavItem[] = [
         {
             title: t('ui.menu.company'),
             href: route('company.index'),
             icon: Building2,
             permission: PERMISSIONS.company.view,
+        },
+        {
+            title: t('ui.menu.users'),
+            href: route('users.index'),
+            icon: Users,
+            permission: PERMISSIONS.users.view,
         },
         {
             title: t('ui.menu.services'),
@@ -55,7 +58,6 @@ function AppSidebar({ t }: { t: any }) {
             permission: PERMISSIONS.categories.view,
         },
     ];
-
     const footerNavItems: NavItem[] = [
         {
             title: t('ui.menu.repository'),
@@ -84,8 +86,13 @@ function AppSidebar({ t }: { t: any }) {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={mainNavItems} navTitle={t('ui.menu.platform')} />
             </SidebarContent>
+            {adminNavItems.length > 0 && (
+                <SidebarContent>
+                    <NavMain items={adminNavItems} navTitle={t('ui.menu.admin')} />
+                </SidebarContent>
+            )}
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
