@@ -18,13 +18,16 @@ export default function Dashboard({ stats }: { stats: any }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <ChartAreaInteractive />
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-                <ChartAreaGradient />
+            <div className="p-4">
+                <ChartAreaInteractive />
 
-                <ChartBarLabelCustom />
+                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <ChartAreaGradient />
 
-                <ChartRadialShape />
+                    <ChartBarLabelCustom />
+
+                    <ChartRadialShape />
+                </div>
             </div>
         </AppLayout>
     );

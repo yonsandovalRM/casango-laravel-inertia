@@ -16,6 +16,7 @@ function CategoriesIndex({ t, categories }: CategoriesIndexProps) {
     return (
         <AppLayout breadcrumbs={[{ title: t('categories.title'), href: '/categories' }]}>
             <Head title={t('categories.title')} />
+
             <CategoryProvider>
                 <ManageCategory categories={categories} t={t} />
             </CategoryProvider>

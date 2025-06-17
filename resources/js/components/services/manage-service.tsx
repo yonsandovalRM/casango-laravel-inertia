@@ -34,7 +34,7 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
                 description={t('services.description')}
                 actions={<Button onClick={handleCreate}>{t('services.manage.create')}</Button>}
             />
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 p-4">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {services.length === 0 && (
                         <EmptyState

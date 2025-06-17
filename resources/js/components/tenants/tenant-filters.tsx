@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 
 export const TenantFilters = () => {
     return (
-        <div className="mt-4 flex items-center justify-between">
+        <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <Input type="text" placeholder="Buscar" />
                 <Button variant="outline">

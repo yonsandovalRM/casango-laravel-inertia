@@ -11,6 +11,6 @@ interface AppLayoutProps {
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (
     <AppLayoutTemplate breadcrumbs={breadcrumbs} {...props}>
         <SessionMessages />
-        <div className="p-4">{children}</div>
+        {children}
     </AppLayoutTemplate>
 );
