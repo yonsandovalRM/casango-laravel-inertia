@@ -127,12 +127,12 @@ function CompanyIndex({ company, t }: Props) {
 
     const removeImage = (type: 'logo' | 'cover') => {
         if (type === 'logo') {
-            if (logoPreview) URL.revokeObjectURL(logoPreview); // Solo si usas URL.createObjectURL
+            if (logoPreview) URL.revokeObjectURL(logoPreview);
             setLogoPreview(null);
             setData('logo', null);
             if (logoInputRef.current) logoInputRef.current.value = '';
         } else {
-            if (coverPreview) URL.revokeObjectURL(coverPreview); // Solo si usas URL.createObjectURL
+            if (coverPreview) URL.revokeObjectURL(coverPreview);
             setCoverPreview(null);
             setData('cover_image', null);
             if (coverInputRef.current) coverInputRef.current.value = '';
