@@ -44,13 +44,15 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
                     )}
                     {services.map((service) => (
                         <Card key={service.id} className="group transition-all duration-200 hover:shadow-lg">
-                            <CardHeader className="pb-3">
+                            <CardHeader>
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <CardTitle className="text-lg font-semibold text-foreground transition-colors">{service.name}</CardTitle>
-                                        <CardDescription className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                                            {service.description}
-                                        </CardDescription>
+                                        {service.description && (
+                                            <CardDescription className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                                                {service.description}
+                                            </CardDescription>
+                                        )}
                                     </div>
                                     <div className="ml-2 flex items-center gap-1">
                                         <Button
