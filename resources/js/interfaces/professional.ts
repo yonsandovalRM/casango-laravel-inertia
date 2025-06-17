@@ -8,3 +8,10 @@ export interface ProfessionalResource {
     is_full_time: boolean;
     user: UserResource;
 }
+
+export type ProfessionalFormData = {
+    photo: string;
+    bio: string;
+    title: string;
+    is_full_time: boolean;
+};

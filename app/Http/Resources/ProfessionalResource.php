@@ -21,7 +21,7 @@ class ProfessionalResource extends JsonResource
             'bio' => $this->bio,
             'title' => $this->title,
             'is_full_time' => $this->is_full_time,
-            'user' => new UserResource($this->user)->only('id', 'name', 'email')->toArray(request()),
+            'user' => new UserResource($this->user)->only('id', 'name', 'email'),
         ];
     }
 }

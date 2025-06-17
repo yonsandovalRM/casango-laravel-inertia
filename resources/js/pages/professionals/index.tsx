@@ -1,6 +1,8 @@
-import { AppHeaderPage } from '@/components/app-header-page';
+import { ManageProfessional } from '@/components/professionals/manage-service';
+import { ProfessionalProvider } from '@/components/professionals/professional-context';
 import { ProfessionalResource } from '@/interfaces/professional';
 import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
 export default function ProfessionalsIndex({ professionals }: { professionals: ProfessionalResource[] }) {
@@ -8,7 +10,11 @@ export default function ProfessionalsIndex({ professionals }: { professionals: P
 
     return (
         <AppLayout breadcrumbs={[{ title: t('professionals.title'), href: '/professionals' }]}>
-            <AppHeaderPage title={t('professionals.title')} description={t('professionals.description')} />
+            <Head title={t('professionals.title')} />
+
+            <ProfessionalProvider>
+                <ManageProfessional professionals={professionals} t={t} />
+            </ProfessionalProvider>
         </AppLayout>
     );
 }

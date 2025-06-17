@@ -4,6 +4,7 @@ import { auth } from './auth';
 import { categories } from './categories';
 import { company } from './company';
 import { plans } from './plans';
+import { professionals } from './professionals';
 import { profile } from './profile';
 import { services } from './services';
 import { ui } from './ui';
@@ -22,6 +23,7 @@ const resources = {
             ...users.en,
             ...services.en,
             ...categories.en,
+            ...professionals.en,
         },
     },
     es: {
@@ -34,6 +36,7 @@ const resources = {
             ...users.es,
             ...services.es,
             ...categories.es,
+            ...professionals.es,
         },
     },
 };

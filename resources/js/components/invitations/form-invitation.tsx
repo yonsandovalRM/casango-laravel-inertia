@@ -47,6 +47,7 @@ export const FormInvitation = ({ data, setData, errors }: FormInvitationProps) =
                                     <SelectItem value="admin">Administrador</SelectItem>
                                     <SelectItem value="owner">Propietario</SelectItem>
                                     <SelectItem value="member">Miembro</SelectItem>
+                                    <SelectItem value="professional">Profesional</SelectItem>
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.role} />

@@ -28,6 +28,12 @@ class ProfessionalController extends Controller
         ]);
     }
 
+    public function updateMe(UpdateProfessionalRequest $request)
+    {
+        $professional = Professional::where('user_id', Auth::user()->id)->firstOrFail();
+        $professional->update($request->validated());
+        return redirect()->route('professional.me')->with('success', __('professional.updated'));
+    }
 
 
 
