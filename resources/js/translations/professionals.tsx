@@ -1,5 +1,23 @@
 export const professionals = {
     en: {
+        professionals: {
+            title: 'Professionals',
+            description: 'Manage your professionals',
+            manage: {
+                create: 'Create Professional',
+                edit: 'Edit Professional',
+                delete: 'Delete Professional',
+                no_professionals: 'No professionals found',
+            },
+            form: {
+                bio: 'Bio',
+                title: 'Title',
+                is_full_time: 'Full time',
+                create: 'Create',
+                create_description: 'Create a new professional',
+                cancel: 'Cancel',
+            },
+        },
         professional: {
             profile: {
                 title: 'Professional Profile',
@@ -24,6 +42,24 @@ export const professionals = {
         },
     },
     es: {
+        professionals: {
+            title: 'Profesionales',
+            description: 'Gestiona tus profesionales',
+            manage: {
+                create: 'Crear profesional',
+                edit: 'Editar profesional',
+                delete: 'Eliminar profesional',
+                no_professionals: 'No se encontraron profesionales',
+            },
+            form: {
+                bio: 'Biografía',
+                title: 'Título',
+                is_full_time: 'Trabaja a tiempo completo',
+                create: 'Crear',
+                create_description: 'Crea un nuevo profesional',
+                cancel: 'Cancelar',
+            },
+        },
         professional: {
             profile: {
                 title: 'Perfil profesional',
