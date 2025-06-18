@@ -9,6 +9,6 @@ class TenantHomeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('tenant-pages/home');
+        return Inertia::render('home-tenants');
     }
 }
