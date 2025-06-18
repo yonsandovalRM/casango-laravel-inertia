@@ -4,7 +4,7 @@ namespace App\Http\Requests\ProfessionalSchedules;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProfessionalSchedulesRequest extends FormRequest
+class UpdateProfessionalScheduleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

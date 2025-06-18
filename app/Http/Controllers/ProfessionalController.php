@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Professionals\UpdateProfessionalRequest;
+use App\Http\Requests\ProfessionalSchedules\UpdateProfessionalScheduleRequest;
 use App\Http\Resources\CompanyScheduleResource;
 use App\Http\Resources\ProfessionalResource;
 use App\Http\Resources\ProfessionalScheduleResource;
@@ -12,6 +13,7 @@ use App\Models\Professional;
 use App\Models\ProfessionalSchedule;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProfessionalController extends Controller
 {
@@ -51,6 +53,17 @@ class ProfessionalController extends Controller
             return;
         }
 
+        return redirect()->route('professional.me')->with('success', __('professional.updated'));
+    }
+
+    public function updateSchedule(UpdateProfessionalScheduleRequest $request)
+    {
+        $professional = Professional::where('user_id', Auth::user()->id)->firstOrFail();
+
+        $professional->schedules()->delete();
+        foreach ($request->validated()['schedules'] as $schedule) {
+            $professional->schedules()->create($schedule);
+        }
         return redirect()->route('professional.me')->with('success', __('professional.updated'));
     }
 
