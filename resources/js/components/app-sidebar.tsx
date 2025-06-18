@@ -2,7 +2,7 @@ import { NavFooter } from '@/components/nav-footer';
 import NavMain from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { PERMISSIONS } from '@/hooks/use-permissions';
+import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Building2, Folder, LayoutGrid, Package, Tags, Users } from 'lucide-react';
@@ -34,7 +34,7 @@ function AppSidebar({ t }: { t: any }) {
             title: t('ui.menu.professional_profile'),
             href: route('professional.me'),
             icon: Users,
-            permission: PERMISSIONS.professional_profile.view,
+            permission: ROLES.professional,
         },
     ];
 

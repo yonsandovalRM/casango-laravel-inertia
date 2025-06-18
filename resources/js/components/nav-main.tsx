@@ -7,14 +7,14 @@ import { withTranslation } from 'react-i18next';
 export default withTranslation()(NavMain);
 function NavMain({ items = [], t, navTitle }: { items: NavItem[]; t: any; navTitle: string }) {
     const page = usePage();
-    const { hasPermission } = usePermissions();
+    const { hasPermission, hasRole } = usePermissions();
 
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>{navTitle}</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
-                    if (item.permission && !hasPermission(item.permission)) {
+                    if (item.permission && !hasPermission(item.permission) && !hasRole(item.permission)) {
                         return null;
                     }
                     return (

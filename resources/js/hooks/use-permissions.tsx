@@ -4,12 +4,13 @@ import { usePage } from '@inertiajs/react';
 export const usePermissions = () => {
     const { auth } = usePage<SharedData>().props;
     const permissions = auth?.user?.permissions || [];
-    console.log(permissions);
+    const roles = auth?.user?.roles || [];
+
     const hasPermission = (permission: string) => {
         return permissions?.includes(permission);
     };
     const hasRole = (role: string) => {
-        return auth?.user?.roles?.includes(role);
+        return roles?.includes(role);
     };
 
     return {
