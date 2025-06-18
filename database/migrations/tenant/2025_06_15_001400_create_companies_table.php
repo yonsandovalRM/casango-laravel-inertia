@@ -14,12 +14,9 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('tagline')->nullable();
+            $table->text('description')->nullable();
             $table->string('email');
-            $table->string('phone')->nullable();
-            $table->string('phone2')->nullable();
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->string('country')->nullable();
             $table->string('logo')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('currency')->default('CLP');

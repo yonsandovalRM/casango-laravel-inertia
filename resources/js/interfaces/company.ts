@@ -2,28 +2,27 @@ export interface CompanyResource {
     id: string;
     name: string;
     email: string;
-    phone: string;
-    phone2: string;
-    address: string;
-    city: string;
-    country: string;
+    tagline: string;
+    description: string;
     logo: string | File | null;
     cover_image: string | File | null;
     currency: string;
     timezone: string;
     locale: string;
     schedules: Schedule[];
+    schedule: {
+        weekdays: string;
+        saturday: string;
+        sunday: string;
+    };
 }
 
 export type CompanyFormData = {
     id: string;
     name: string;
     email: string;
-    phone: string;
-    phone2: string;
-    address: string;
-    city: string;
-    country: string;
+    tagline: string;
+    description: string;
     currency: string;
     timezone: string;
     locale: string;

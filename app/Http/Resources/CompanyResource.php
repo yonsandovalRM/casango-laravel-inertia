@@ -18,17 +18,15 @@ class CompanyResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'phone' => $this->phone,
-            'phone2' => $this->phone2,
-            'address' => $this->address,
-            'city' => $this->city,
-            'country' => $this->country,
+            'tagline' => $this->tagline,
+            'description' => $this->description,
             'logo' => $this->logo,
             'cover_image' => $this->cover_image,
             'currency' => $this->currency,
             'timezone' => $this->timezone,
             'locale' => $this->locale,
             'schedules' => CompanyScheduleResource::collection($this->whenLoaded('schedules'))->toArray(request()),
+            'schedule' => $this->getDailySchedulesArray(),
         ];
     }
 }

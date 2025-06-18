@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { useAppearance } from '@/hooks/use-appearance';
+import { CompanyResource } from '@/interfaces/company';
 import { router } from '@inertiajs/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, MoonIcon, SunIcon, X } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Esta data vendría de tu API/base de datos según el subdominio
 const companyData = {
@@ -9,45 +12,47 @@ const companyData = {
     logo: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=50&h=50&fit=crop&crop=center',
 };
 
-const Header = () => {
+const Header = ({ company }: { company: CompanyResource }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { appearance, updateAppearance } = useAppearance();
+    const { t } = useTranslation();
 
     return (
-        <header className="fixed top-0 z-50 w-full border-b border-gray-800 bg-gray-950/80 backdrop-blur-lg">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <header className="fixed top-0 z-50 w-full bg-background shadow-lg">
+            <div className="container mx-auto">
                 <div className="flex h-16 items-center justify-between">
                     {/* Logo */}
                     <div className="flex-shrink-0">
                         <div className="flex items-center">
-                            <img src={companyData.logo} alt={`${companyData.name} Logo`} className="h-10 w-10 rounded-lg" />
-                            <span className="ml-3 text-xl font-bold text-white">{companyData.name}</span>
+                            <span className="text-xl font-bold text-foreground">{company.name}</span>
                         </div>
                     </div>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden space-x-8 md:flex">
-                        <a href="#inicio" className="text-gray-300 transition-colors hover:text-white">
+                        <a href="#inicio" className="text-foreground transition-colors">
                             Inicio
                         </a>
-                        <a href="#servicios" className="text-gray-300 transition-colors hover:text-white">
+                        <a href="#servicios" className="text-foreground transition-colors">
                             Servicios
                         </a>
-                        <a href="#profesionales" className="text-gray-300 transition-colors hover:text-white">
+                        <a href="#profesionales" className="text-foreground transition-colors">
                             Profesionales
                         </a>
-                        <a href="#contacto" className="text-gray-300 transition-colors hover:text-white">
+                        <a href="#contacto" className="text-foreground transition-colors">
                             Contacto
                         </a>
                     </nav>
 
                     {/* CTA Buttons */}
                     <div className="hidden items-center space-x-4 md:flex">
-                        <Button variant="ghost" className="text-gray-300 hover:text-white" onClick={() => router.visit(route('login'))}>
+                        <Button variant="ghost" onClick={() => updateAppearance(appearance === 'light' ? 'dark' : 'light')}>
+                            {appearance === 'light' ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
+                        </Button>
+                        <Button variant="ghost" className="text-foreground" onClick={() => router.visit(route('login'))}>
                             Iniciar Sesión
                         </Button>
-                        <Button className="bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:from-violet-700 hover:to-blue-700">
-                            Reservar Cita
-                        </Button>
+                        <Button>Reservar Cita</Button>
                     </div>
 
                     {/* Mobile menu button */}
@@ -75,10 +80,10 @@ const Header = () => {
                                 Contacto
                             </a>
                             <div className="space-y-2 pt-2">
-                                <Button variant="ghost" className="w-full text-gray-300">
+                                <Button variant="ghost" className="w-full text-foreground">
                                     Iniciar Sesión
                                 </Button>
-                                <Button className="w-full bg-gradient-to-r from-violet-600 to-blue-600">Reservar Cita</Button>
+                                <Button className="w-full">Reservar Cita</Button>
                             </div>
                         </div>
                     </div>

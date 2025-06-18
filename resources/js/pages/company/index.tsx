@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { CompanyFormData, CompanyResource, Schedule } from '@/interfaces/company';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -74,11 +75,8 @@ function CompanyIndex({ company, t }: Props) {
         id: company?.id || '',
         name: company?.name || '',
         email: company?.email || '',
-        phone: company?.phone || '',
-        phone2: company?.phone2 || '',
-        address: company?.address || '',
-        city: company?.city || '',
-        country: company?.country || '',
+        tagline: company?.tagline || '',
+        description: company?.description || '',
         currency: company?.currency || '',
         timezone: company?.timezone || '',
         locale: company?.locale || '',
@@ -286,7 +284,7 @@ function CompanyIndex({ company, t }: Props) {
                                     </div>
 
                                     {/* Email */}
-                                    <div>
+                                    <div className="md:col-span-2">
                                         <Label required>{t('company.form.email')}</Label>
                                         <Input
                                             type="email"
@@ -297,69 +295,32 @@ function CompanyIndex({ company, t }: Props) {
                                         <InputError message={errors.email} />
                                     </div>
 
-                                    {/* Phone */}
-                                    <div>
-                                        <Label required>{t('company.form.phone')}</Label>
-                                        <Input
-                                            type="tel"
-                                            value={data.phone}
-                                            onChange={(e) => setData('phone', e.target.value)}
-                                            placeholder={t('company.form.phone_placeholder')}
-                                        />
-                                        <InputError message={errors.phone} />
-                                    </div>
-
-                                    {/* Phone 2 */}
-                                    <div>
-                                        <Label required>{t('company.form.phone2')}</Label>
-                                        <Input
-                                            type="tel"
-                                            value={data.phone2}
-                                            onChange={(e) => setData('phone2', e.target.value)}
-                                            placeholder={t('company.form.phone2_placeholder')}
-                                        />
-                                        <InputError message={errors.phone2} />
-                                    </div>
-
-                                    {/* Address */}
+                                    {/* Description */}
                                     <div className="md:col-span-2">
-                                        <Label required>{t('company.form.address')}</Label>
-                                        <Input
-                                            type="text"
-                                            value={data.address}
-                                            onChange={(e) => setData('address', e.target.value)}
-                                            placeholder={t('company.form.address_placeholder')}
+                                        <Label>{t('company.form.description')}</Label>
+                                        <Textarea
+                                            value={data.description}
+                                            onChange={(e) => setData('description', e.target.value)}
+                                            placeholder={t('company.form.description_placeholder')}
                                         />
-                                        <InputError message={errors.address} />
+                                        <InputError message={errors.description} />
                                     </div>
 
-                                    {/* Country */}
-                                    <div>
-                                        <Label required>{t('company.form.country')}</Label>
+                                    {/* Tagline */}
+                                    <div className="md:col-span-2">
+                                        <Label>{t('company.form.tagline')}</Label>
                                         <Input
                                             type="text"
-                                            value={data.country}
-                                            onChange={(e) => setData('country', e.target.value)}
-                                            placeholder={t('company.form.country_placeholder')}
+                                            value={data.tagline}
+                                            onChange={(e) => setData('tagline', e.target.value)}
+                                            placeholder={t('company.form.tagline_placeholder')}
                                         />
-                                        <InputError message={errors.country} />
-                                    </div>
-
-                                    {/* City */}
-                                    <div>
-                                        <Label required>{t('company.form.city')}</Label>
-                                        <Input
-                                            type="text"
-                                            value={data.city}
-                                            onChange={(e) => setData('city', e.target.value)}
-                                            placeholder={t('company.form.city_placeholder')}
-                                        />
-                                        <InputError message={errors.city} />
+                                        <InputError message={errors.tagline} />
                                     </div>
 
                                     {/* Currency */}
                                     <div>
-                                        <Label required>{t('company.form.currency')}</Label>
+                                        <Label>{t('company.form.currency')}</Label>
                                         <Select value={data.currency} onValueChange={(value) => setData('currency', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('company.form.currency_placeholder')} />
@@ -377,7 +338,7 @@ function CompanyIndex({ company, t }: Props) {
 
                                     {/* Timezone */}
                                     <div>
-                                        <Label required>{t('company.form.timezone')}</Label>
+                                        <Label>{t('company.form.timezone')}</Label>
                                         <Select value={data.timezone} onValueChange={(value) => setData('timezone', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('company.form.timezone_placeholder')} />
@@ -395,7 +356,7 @@ function CompanyIndex({ company, t }: Props) {
 
                                     {/* Locale */}
                                     <div>
-                                        <Label required>{t('company.form.locale')}</Label>
+                                        <Label>{t('company.form.locale')}</Label>
                                         <Select value={data.locale} onValueChange={(value) => setData('locale', value)}>
                                             <SelectTrigger>
                                                 <SelectValue placeholder={t('company.form.locale_placeholder')} />

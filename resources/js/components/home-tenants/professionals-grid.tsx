@@ -62,11 +62,11 @@ const professionals = [
 
 const ProfessionalsGrid = () => {
     return (
-        <section id="profesionales" className="bg-gray-900/50 px-4 py-16 sm:px-6 lg:px-8">
+        <section id="profesionales" className="bg-background px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-12 text-center">
-                    <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">Nuestros Profesionales</h2>
-                    <p className="mx-auto max-w-2xl text-xl text-gray-400">
+                    <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">Nuestros Profesionales</h2>
+                    <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
                         Contamos con un equipo de especialistas altamente calificados, comprometidos con brindarte la mejor atención profesional.
                     </p>
                 </div>
@@ -75,34 +75,27 @@ const ProfessionalsGrid = () => {
                     {professionals.map((professional) => (
                         <div
                             key={professional.id}
-                            className="rounded-xl border border-gray-700 bg-gray-800/50 p-6 backdrop-blur-sm transition-all duration-300 hover:border-violet-500/50 hover:shadow-2xl hover:shadow-violet-500/10"
+                            className="rounded-xl border border-border bg-background/80 p-6 backdrop-blur-sm transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-violet-500/10"
                         >
                             <div className="mb-4 text-center">
                                 <img src={professional.image} alt={professional.name} className="mx-auto mb-3 h-20 w-20 rounded-full object-cover" />
                                 <div
                                     className={`mb-2 inline-block h-3 w-3 rounded-full ${professional.available ? 'bg-green-400' : 'bg-red-400'}`}
                                 ></div>
-                                <h3 className="text-lg font-semibold text-white">{professional.name}</h3>
-                                <p className="font-medium text-violet-400">{professional.specialty}</p>
+                                <h3 className="text-lg font-semibold text-foreground">{professional.name}</h3>
+                                <p className="font-medium text-blue-500 dark:text-blue-400">{professional.specialty}</p>
                             </div>
 
-                            <p className="mb-4 text-center text-sm leading-relaxed text-gray-300">{professional.description}</p>
+                            <p className="mb-4 text-center text-sm leading-relaxed text-muted-foreground">{professional.description}</p>
 
-                            <div className="mb-4 space-y-3">
-                                <div className="flex items-center text-sm text-gray-400">
-                                    <MapPin className="mr-2 h-4 w-4" />
+                            <div className="mb-4 flex items-center justify-center gap-2 space-y-3">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                    <MapPin className="h-4 w-4" />
                                     <span>{professional.branch}</span>
                                 </div>
                             </div>
 
-                            <Button
-                                className={`w-full ${
-                                    professional.available
-                                        ? 'bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-700 hover:to-blue-700'
-                                        : 'cursor-not-allowed bg-gray-600'
-                                } text-white`}
-                                disabled={!professional.available}
-                            >
+                            <Button disabled={!professional.available} className="w-full">
                                 <Calendar className="mr-2 h-4 w-4" />
                                 {professional.available ? 'Reservar Cita' : 'No disponible'}
                             </Button>

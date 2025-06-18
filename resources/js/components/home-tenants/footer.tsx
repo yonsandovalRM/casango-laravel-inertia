@@ -26,8 +26,8 @@ const companyData = {
 
 const Footer = () => {
     return (
-        <footer className="border-t border-gray-800 bg-gray-900 py-12">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <footer className="border-t border-border bg-background py-12">
+            <div className="container mx-auto">
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                     {/* Company Info */}
                     <div>
@@ -35,18 +35,15 @@ const Footer = () => {
                             <img src={companyData.logo} alt={`${companyData.name} Logo`} className="h-10 w-10 rounded-lg" />
                             <span className="ml-3 text-xl font-bold text-white">{companyData.name}</span>
                         </div>
-                        <p className="mb-4 text-gray-400">{companyData.description}</p>
+                        <p className="mb-4 text-muted-foreground">{companyData.description}</p>
                         <div className="flex space-x-4">
-                            <a href={companyData.socialMedia.facebook} className="text-gray-400 transition-colors hover:text-white">
+                            <a href={companyData.socialMedia.facebook} className="text-muted-foreground transition-colors">
                                 Facebook
                             </a>
-                            <a href={companyData.socialMedia.instagram} className="text-gray-400 transition-colors hover:text-white">
+                            <a href={companyData.socialMedia.instagram} className="text-muted-foreground transition-colors">
                                 Instagram
                             </a>
-                            <a
-                                href={`https://wa.me/${companyData.socialMedia.whatsapp}`}
-                                className="text-gray-400 transition-colors hover:text-white"
-                            >
+                            <a href={`https://wa.me/${companyData.socialMedia.whatsapp}`} className="text-muted-foreground transition-colors">
                                 WhatsApp
                             </a>
                         </div>
@@ -54,22 +51,22 @@ const Footer = () => {
 
                     {/* Branches */}
                     <div className="md:col-span-2">
-                        <h3 className="mb-4 font-semibold text-white">Nuestras Sucursales</h3>
+                        <h3 className="mb-4 font-semibold text-foreground">Nuestras Sucursales</h3>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             {companyData.branches.map((branch, index) => (
                                 <div key={index} className="space-y-2">
                                     <h4 className="font-medium text-white">{branch.name}</h4>
-                                    <p className="text-sm text-gray-400">{branch.address}</p>
-                                    <p className="text-sm text-gray-400">{branch.phone}</p>
-                                    <p className="text-sm text-gray-400">{branch.email}</p>
+                                    <p className="text-sm text-muted-foreground">{branch.address}</p>
+                                    <p className="text-sm text-muted-foreground">{branch.phone}</p>
+                                    <p className="text-sm text-muted-foreground">{branch.email}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-8 border-t border-gray-800 pt-8 text-center">
-                    <p className="text-gray-400">© 2024 {companyData.name}. Todos los derechos reservados.</p>
+                <div className="mt-8 border-t border-border pt-8 text-center">
+                    <p className="text-muted-foreground">© 2024 {companyData.name}. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>
