@@ -34,6 +34,8 @@ class Permissions
     public const PROFESSIONAL_PROFILE_VIEW = 'view professional profile';
     public const PROFESSIONAL_PROFILE_EDIT = 'edit professional profile';
     public const PROFESSIONAL_PROFILE_DELETE = 'delete professional profile';
+    public const PROFESSIONAL_EXCEPTIONS_CREATE = 'create professional exceptions';
+    public const PROFESSIONAL_EXCEPTIONS_DELETE = 'delete professional exceptions';
 
     public const PROFESSIONALS_VIEW = 'view professionals';
     public const PROFESSIONALS_EDIT = 'edit professionals';
@@ -111,6 +113,8 @@ class Permissions
             self::PROFESSIONALS_VIEW,
             self::PROFESSIONALS_EDIT,
             self::PROFESSIONALS_DELETE,
+            self::PROFESSIONAL_EXCEPTIONS_CREATE,
+            self::PROFESSIONAL_EXCEPTIONS_DELETE,
         ];
     }
 }

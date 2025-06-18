@@ -22,6 +22,7 @@ class ProfessionalResource extends JsonResource
             'title' => $this->title,
             'is_full_time' => $this->is_full_time,
             'user' => new UserResource($this->user)->only('id', 'name', 'email'),
+            'exceptions' => ExceptionResource::collection($this->exceptions)->toArray(request()),
         ];
     }
 }

@@ -19,7 +19,7 @@ class ProfessionalController extends Controller
 {
     public function me()
     {
-        $professional = Professional::with('user')->where('user_id', Auth::user()->id)->firstOrFail();
+        $professional = Professional::with('user', 'exceptions')->where('user_id', Auth::user()->id)->firstOrFail();
         $professional_schedules = ProfessionalSchedule::all();
         $company = Company::with('schedules')->first();
 

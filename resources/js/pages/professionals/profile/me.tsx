@@ -39,7 +39,7 @@ export default function ProfessionalProfileMe({ professional, professional_sched
                             />
                         </TabsContent>
                         <TabsContent value="exceptions">
-                            <ProfessionalExceptions />
+                            <ProfessionalExceptions exceptions={professional.exceptions} />
                         </TabsContent>
                         <TabsContent value="requests">
                             <ProfessionalRequests />

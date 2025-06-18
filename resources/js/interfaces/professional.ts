@@ -7,6 +7,7 @@ export interface ProfessionalResource {
     title: string;
     is_full_time: boolean;
     user: UserResource;
+    exceptions: ExceptionResource[];
 }
 
 export type ProfessionalFormData = {
@@ -15,3 +16,11 @@ export type ProfessionalFormData = {
     title: string;
     is_full_time: boolean;
 };
+
+export interface ExceptionResource {
+    id: string;
+    date: string;
+    start_time: string;
+    end_time: string;
+    reason: string;
+}

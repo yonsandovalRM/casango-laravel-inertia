@@ -29,4 +29,9 @@ class Professional extends Model
     {
         return $this->hasMany(ProfessionalSchedule::class);
     }
+
+    public function exceptions(): HasMany
+    {
+        return $this->hasMany(Exception::class);
+    }
 }
