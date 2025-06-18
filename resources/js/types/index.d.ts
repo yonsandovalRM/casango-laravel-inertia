@@ -30,11 +30,17 @@ export interface SharedData {
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
     flash: {
-        message: string;
-        error: string;
-        success: string;
+        message: FlashProps;
+        error: FlashProps;
+        success: FlashProps;
     };
     [key: string]: unknown;
+}
+
+export interface FlashProps {
+    id: string;
+    message: string;
+    type: 'success' | 'error' | 'info' | 'warning';
 }
 
 export interface User {

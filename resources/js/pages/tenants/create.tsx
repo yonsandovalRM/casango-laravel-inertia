@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,10 +8,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlanResource } from '@/interfaces/plan';
 import { MOCK_CATEGORIES } from '@/interfaces/tenant';
-import { Head, useForm } from '@inertiajs/react';
-import { ShieldCheck } from 'lucide-react';
+import { SharedData } from '@/types';
+import { Head, useForm, usePage } from '@inertiajs/react';
+import { AlertTriangleIcon, ShieldCheck } from 'lucide-react';
 
 export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
+    const { flash } = usePage<SharedData>().props;
     const { data, setData, post, errors, processing } = useForm({
         name: 'Fast',
         subdomain: 'fast',
@@ -42,6 +45,19 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
                         Completa los siguientes campos para registrar tu negocio y comenzar a utilizar la plataforma.
                     </p>
                 </div>
+                {flash.error && (
+                    <Alert variant="destructive" className="mt-4">
+                        <AlertTriangleIcon className="mr-2 h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{flash.error.message}</AlertDescription>
+                    </Alert>
+                )}
+                {flash.success && (
+                    <Alert variant="success" className="mt-4">
+                        <AlertTitle>Success</AlertTitle>
+                        <AlertDescription>{flash.success.message}</AlertDescription>
+                    </Alert>
+                )}
                 <div className="mt-8 flex flex-col gap-16 md:flex-row">
                     <div className="w-full space-y-4 md:w-3/5">
                         <h2 className="text-sm font-medium">Información del negocio</h2>
@@ -119,6 +135,7 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
                                     </Label>
                                 ))}
                             </RadioGroup>
+                            <InputError message={errors.plan_id} />
                         </div>
                     </div>
                     <div className="w-full md:w-2/5">

@@ -48,6 +48,14 @@ class TenantController extends Controller
         ]);
     }
 
+    public function created(Request $request)
+    {
+        $tenant = Tenant::find($request->tenant);
+        return Inertia::render('tenants/created', [
+            'tenant' => TenantResource::make($tenant)->toArray(request()),
+        ]);
+    }
+
     /* 
     * Get suggestions for a subdomain
     * @param Request $request
@@ -66,9 +74,9 @@ class TenantController extends Controller
     */
     public function store(CreateTenantRequest $request)
     {
-      
+
         $tenant_id = $request->subdomain;
-        $domain = $request->subdomain.'.'.config('tenancy.central_domains')[0];
+        $domain = $request->subdomain . '.' . config('tenancy.central_domains')[0];
         $plan = Plan::find($request->plan_id);
         if (!$plan) {
             return redirect()->route('tenants.create')->with('error', __('plan.plan_not_found'));
@@ -96,11 +104,11 @@ class TenantController extends Controller
             $this->createCompany($tenant);
 
 
-            
+
             Log::info("Tenant created successfully", [
                 'tenant' => $tenant,
             ]);
-            return redirect()->route('tenants.create')->with('success', __('tenant.create_success'));
+            return redirect()->route('tenants.created', ['tenant' => $tenant])->with('success', __('tenant.create_success'));
         } catch (\Exception $e) {
             Log::error("Error creating tenant", [
                 'error' => $e->getMessage(),
@@ -165,7 +173,7 @@ class TenantController extends Controller
     */
     private function createSubscription(Tenant $tenant, Plan $plan)
     {
-          // TODO: Solo maneja suscripciones de forma mensual, se debe agregar soporte para suscripciones anuales
+        // TODO: Solo maneja suscripciones de forma mensual, se debe agregar soporte para suscripciones anuales
         $trial_days = now()->addDays($plan->trial_days);
         $ends_at = now()->addDays($plan->trial_days)->addMonths(1);
 
@@ -179,7 +187,6 @@ class TenantController extends Controller
             'is_monthly' => true,
             'is_active' => true,
         ]);
-
     }
 
     private function createCompany(Tenant $tenant)
@@ -188,7 +195,7 @@ class TenantController extends Controller
             $company = Company::create([
                 'name' => $tenant->name,
                 'email' => $tenant->email,
-                
+
             ]);
             $this->createCompanySchedule($company);
         });
@@ -206,9 +213,5 @@ class TenantController extends Controller
                 'has_break' => false,
             ]);
         }
-
     }
- 
-
-  
 }
