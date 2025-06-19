@@ -19,7 +19,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
         photo: professional?.photo ? new File([], professional.photo as string) : null,
         bio: professional.bio,
         title: professional.title,
-        is_full_time: professional.is_full_time,
+        is_company_schedule: professional.is_company_schedule,
     });
 
     useEffect(() => {
@@ -166,12 +166,12 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
 
                                     <div className="flex items-center gap-2">
                                         <Checkbox
-                                            id="is_full_time"
-                                            name="is_full_time"
-                                            checked={data.is_full_time}
-                                            onCheckedChange={(checked) => setData('is_full_time', checked as boolean)}
+                                            id="is_company_schedule"
+                                            name="is_company_schedule"
+                                            checked={data.is_company_schedule}
+                                            onCheckedChange={(checked) => setData('is_company_schedule', checked as boolean)}
                                         />
-                                        <Label htmlFor="is_full_time">Trabajo a tiempo completo</Label>
+                                        <Label htmlFor="is_company_schedule">Trabajo a tiempo completo</Label>
                                     </div>
                                     <div>
                                         <Button type="submit" disabled={processing}>
@@ -207,7 +207,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                             <div className="flex flex-col gap-4">
                                 <div className="text-sm text-muted-foreground">{professional.bio}</div>
                                 <div className="text-sm text-muted-foreground">
-                                    {professional.is_full_time ? 'Trabajo a tiempo completo' : 'Trabajo a tiempo parcial'}
+                                    {professional.is_company_schedule ? 'Trabajo a tiempo completo' : 'Trabajo a tiempo parcial'}
                                 </div>
                             </div>
                         </div>

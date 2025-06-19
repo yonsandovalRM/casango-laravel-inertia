@@ -43,12 +43,12 @@ export function FormProfessional({ professionals }: { professionals: Professiona
 
                                     <div className="flex items-center gap-2">
                                         <Checkbox
-                                            id="is_full_time"
-                                            checked={data.is_full_time}
-                                            onCheckedChange={(checked) => setData({ ...data, is_full_time: checked as boolean })}
+                                            id="is_company_schedule"
+                                            checked={data.is_company_schedule}
+                                            onCheckedChange={(checked) => setData({ ...data, is_company_schedule: checked as boolean })}
                                         />
-                                        <Label htmlFor="is_full_time">{t('professionals.form.is_full_time')}</Label>
-                                        <InputError message={errors.is_full_time} />
+                                        <Label htmlFor="is_company_schedule">{t('professionals.form.is_company_schedule')}</Label>
+                                        <InputError message={errors.is_company_schedule} />
                                     </div>
                                 </div>
                             </div>

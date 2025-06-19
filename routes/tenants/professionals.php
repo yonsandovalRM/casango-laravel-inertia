@@ -18,4 +18,6 @@ Route::group(['prefix' => 'professionals'], function () {
     Route::get('/', [ProfessionalController::class, 'index'])->name('professionals.index')->middleware('can:' . Permissions::PROFESSIONALS_VIEW);
     Route::put('/{professional}', [ProfessionalController::class, 'update'])->name('professionals.update')->middleware('can:' . Permissions::PROFESSIONALS_EDIT);
     Route::delete('/{professional}', [ProfessionalController::class, 'destroy'])->name('professionals.destroy')->middleware('can:' . Permissions::PROFESSIONALS_DELETE);
+    Route::get('/{professional}/assign-services', [ProfessionalController::class, 'showAssignServices'])->name('professionals.assign-services.show')->middleware('can:' . Permissions::PROFESSIONALS_EDIT);
+    Route::post('/{professional}/assign-services', [ProfessionalController::class, 'assignServices'])->name('professionals.assign-services.assign')->middleware('can:' . Permissions::PROFESSIONALS_EDIT);
 });

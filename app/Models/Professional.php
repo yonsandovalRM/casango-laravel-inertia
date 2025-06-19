@@ -6,6 +6,7 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Professional extends Model
@@ -17,7 +18,7 @@ class Professional extends Model
         'photo',
         'bio',
         'title',
-        'is_full_time',
+        'is_company_schedule',
     ];
 
     public function user(): BelongsTo
@@ -33,5 +34,12 @@ class Professional extends Model
     public function exceptions(): HasMany
     {
         return $this->hasMany(Exception::class);
+    }
+
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class)
+            ->withPivot('duration', 'price')
+            ->withTimestamps();
     }
 }

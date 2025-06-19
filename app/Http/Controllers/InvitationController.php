@@ -74,7 +74,7 @@ class InvitationController extends Controller
             $user->professional()->create([
                 'bio' => $request->bio ?? null,
                 'title' => $request->title ?? 'Sr.',
-                'is_full_time' => $request->is_full_time ?? false,
+                'is_company_schedule' => $request->is_company_schedule ?? false,
             ]);
         }
 

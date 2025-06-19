@@ -5,16 +5,17 @@ export interface ProfessionalResource {
     photo: string;
     bio: string;
     title: string;
-    is_full_time: boolean;
+    is_company_schedule: boolean;
     user: UserResource;
     exceptions: ExceptionResource[];
+    services_ids: string[];
 }
 
 export type ProfessionalFormData = {
     photo: string;
     bio: string;
     title: string;
-    is_full_time: boolean;
+    is_company_schedule: boolean;
 };
 
 export interface ExceptionResource {
@@ -24,3 +25,7 @@ export interface ExceptionResource {
     end_time: string;
     reason: string;
 }
+
+export type ProfessionalServicesFormData = {
+    services: string[];
+};

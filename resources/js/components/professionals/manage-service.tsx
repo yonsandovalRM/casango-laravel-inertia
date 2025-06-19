@@ -1,15 +1,21 @@
 import { ProfessionalResource } from '@/interfaces/professional';
+import { router } from '@inertiajs/react';
 import { TFunction } from 'i18next';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Plus, Trash2 } from 'lucide-react';
 import { AppHeaderPage } from '../app-header-page';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { EmptyState } from '../ui/empty-state';
 import { FormProfessional } from './form-professional';
 import { useProfessional } from './professional-context';
 
-export function ManageProfessional({ professionals, t }: { professionals: ProfessionalResource[]; t: TFunction }) {
+interface ManageProfessionalProps {
+    professionals: ProfessionalResource[];
+    t: TFunction;
+}
+
+export function ManageProfessional({ professionals, t }: ManageProfessionalProps) {
     const { setProfessional, setOpen, onDelete } = useProfessional();
 
     const handleDelete = (professionalId: string) => {
@@ -22,6 +28,10 @@ export function ManageProfessional({ professionals, t }: { professionals: Profes
     const handleEdit = (professional: ProfessionalResource) => {
         setProfessional(professional);
         setOpen(true);
+    };
+
+    const handleAssignServices = (professional: ProfessionalResource) => {
+        router.visit(route('professionals.assign-services.show', professional.id));
     };
 
     return (
@@ -45,7 +55,7 @@ export function ManageProfessional({ professionals, t }: { professionals: Profes
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
                                         <CardTitle className="text-lg font-semibold text-foreground transition-colors">
-                                            {professional.title}
+                                            {professional.title} {professional.user.name}
                                         </CardTitle>
                                         {professional.bio && (
                                             <CardDescription className="mt-1 line-clamp-2 text-sm text-muted-foreground">
@@ -77,12 +87,20 @@ export function ManageProfessional({ professionals, t }: { professionals: Profes
                             <CardContent className="pt-0">
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between">
-                                        <Badge variant={professional.is_full_time ? 'default' : 'secondary'} className="text-xs">
-                                            {professional.is_full_time ? 'Activo' : 'Inactivo'}
+                                        <Badge variant={professional.is_company_schedule ? 'default' : 'secondary'} className="text-xs">
+                                            {professional.is_company_schedule
+                                                ? t('professionals.manage.company_schedule')
+                                                : t('professionals.manage.custom_schedule')}
                                         </Badge>
                                     </div>
                                 </div>
                             </CardContent>
+                            <CardFooter>
+                                <Button variant="outline" size="sm" className="w-full" onClick={() => handleAssignServices(professional)}>
+                                    <Plus className="h-4 w-4" />
+                                    {t('professionals.manage.assign_services')}
+                                </Button>
+                            </CardFooter>
                         </Card>
                     ))}
                 </div>

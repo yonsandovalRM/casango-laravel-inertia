@@ -7,13 +7,16 @@ use App\Http\Requests\ProfessionalSchedules\UpdateProfessionalScheduleRequest;
 use App\Http\Resources\CompanyScheduleResource;
 use App\Http\Resources\ProfessionalResource;
 use App\Http\Resources\ProfessionalScheduleResource;
+use App\Http\Resources\ServiceResource;
 use App\Models\Company;
 use App\Models\CompanySchedule;
 use App\Models\Professional;
 use App\Models\ProfessionalSchedule;
+use App\Models\Service;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class ProfessionalController extends Controller
 {
@@ -42,13 +45,22 @@ class ProfessionalController extends Controller
         ]);
     }
 
+    public function showAssignServices(Professional $professional)
+    {
+        $services = Service::all();
+        return Inertia::render('professionals/assign-services', [
+            'professional' => ProfessionalResource::make($professional)->toArray(request()),
+            'services' => ServiceResource::collection($services)->toArray(request()),
+        ]);
+    }
+
     public function updateMe(UpdateProfessionalRequest $request)
     {
         $professional = Professional::where('user_id', Auth::user()->id)->firstOrFail();
 
         $professional->update($request->validated());
 
-        if ($request->input('is_full_time')) {
+        if ($request->input('is_company_schedule')) {
             $professional->schedules()->delete();
             return;
         }
@@ -85,5 +97,11 @@ class ProfessionalController extends Controller
     {
         $professional->delete();
         return redirect()->route('professionals.index')->with('success', __('professional.deleted'));
+    }
+
+    public function assignServices(Professional $professional, Request $request)
+    {
+        $professional->services()->sync($request->services);
+        return redirect()->route('professionals.show', $professional)->with('success', __('professional.updated'));
     }
 }

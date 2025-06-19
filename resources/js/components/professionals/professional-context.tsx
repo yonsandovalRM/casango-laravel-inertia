@@ -56,7 +56,7 @@ export const ProfessionalProvider = ({ children }: { children: React.ReactNode }
         photo: '',
         bio: '',
         title: '',
-        is_full_time: false,
+        is_company_schedule: false,
     });
     useEffect(() => {
         if (professional) {
@@ -64,7 +64,7 @@ export const ProfessionalProvider = ({ children }: { children: React.ReactNode }
                 photo: professional.photo || '',
                 bio: professional.bio || '',
                 title: professional.title || '',
-                is_full_time: professional.is_full_time || false,
+                is_company_schedule: professional.is_company_schedule || false,
             });
         }
     }, [professional, open]);

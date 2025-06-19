@@ -1,7 +1,6 @@
 import { AppHeaderPage } from '@/components/app-header-page';
 import { ManageProfile } from '@/components/professionals/profile/manage-profile';
 import { ProfessionalExceptions } from '@/components/professionals/profile/professional-exceptions';
-import { ProfessionalRequests } from '@/components/professionals/profile/professional-requests';
 import { ProfessionalSchedule } from '@/components/professionals/profile/professional-schedule';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProfessionalResource } from '@/interfaces/professional';
@@ -29,20 +28,16 @@ export default function ProfessionalProfileMe({ professional, professional_sched
                         <TabsList className="w-full">
                             <TabsTrigger value="schedule">{t('professional.profile.schedule')}</TabsTrigger>
                             <TabsTrigger value="exceptions">{t('professional.profile.exceptions')}</TabsTrigger>
-                            <TabsTrigger value="requests">{t('professional.profile.requests')}</TabsTrigger>
                         </TabsList>
                         <TabsContent value="schedule">
                             <ProfessionalSchedule
-                                isFullTime={professional.is_full_time}
+                                isFullTime={professional.is_company_schedule}
                                 professional_schedules={professional_schedules}
                                 company_schedules={company_schedules}
                             />
                         </TabsContent>
                         <TabsContent value="exceptions">
                             <ProfessionalExceptions exceptions={professional.exceptions} />
-                        </TabsContent>
-                        <TabsContent value="requests">
-                            <ProfessionalRequests />
                         </TabsContent>
                     </Tabs>
                 </div>
