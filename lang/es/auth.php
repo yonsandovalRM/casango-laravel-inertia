@@ -16,5 +16,7 @@ return [
     'failed' => 'Estas credenciales no coinciden con nuestros registros.',
     'password' => 'La contraseña proporcionada es incorrecta.',
     'throttle' => 'Demasiados intentos de inicio de sesión. Por favor, inténtalo de nuevo en :seconds segundos.',
-
+    'forgot_password' => [
+        'reset_link_sent' => 'Se enviará un enlace de restablecimiento si la cuenta existe.',
+    ],
 ];

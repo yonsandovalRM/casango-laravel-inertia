@@ -1,6 +1,32 @@
 export const auth = {
     en: {
         auth: {
+            verify_email: {
+                title: 'Verify email',
+                description: 'Please verify your email address by clicking on the link we just emailed to you.',
+                verification_link_sent: 'A new verification link has been sent to the email address you provided during registration.',
+                resend_verification_email: 'Resend verification email',
+                log_out: 'Log out',
+            },
+            reset_password: {
+                title: 'Reset password',
+                description: 'Please enter your new password below',
+                email: 'Email address',
+                password: 'Password',
+                password_confirmation: 'Confirm password',
+                submit: 'Submit',
+                password_placeholder: 'Password',
+                password_confirmation_placeholder: 'Confirm password',
+            },
+            forgot_password: {
+                title: 'Forgot password',
+                description: 'Enter your email to receive a password reset link',
+                email: 'Email address',
+                email_placeholder: 'email@example.com',
+                submit: 'Submit',
+                or: 'Or, return to',
+                login: 'Log in',
+            },
             login: {
                 title: 'Log in to your account',
                 description: 'Enter your email and password below to log in',
@@ -33,6 +59,33 @@ export const auth = {
     },
     es: {
         auth: {
+            verify_email: {
+                title: 'Verificar correo electrónico',
+                description: 'Por favor, verifica tu correo electrónico haciendo clic en el enlace que te acabamos de enviar.',
+                verification_link_sent:
+                    'Se ha enviado un nuevo enlace de verificación a la dirección de correo electrónico que proporcionaste durante el registro.',
+                resend_verification_email: 'Reenviar correo electrónico de verificación',
+                log_out: 'Cerrar sesión',
+            },
+            reset_password: {
+                title: 'Restablecer contraseña',
+                description: 'Por favor, ingresa tu nueva contraseña a continuación',
+                email: 'Correo electrónico',
+                password: 'Contraseña',
+                password_confirmation: 'Confirmar contraseña',
+                submit: 'Enviar',
+                password_placeholder: 'Contraseña',
+                password_confirmation_placeholder: 'Confirmar contraseña',
+            },
+            forgot_password: {
+                title: 'Recuperar contraseña',
+                description: 'Ingresa tu correo electrónico para recibir un enlace de recuperación de contraseña',
+                email: 'Correo electrónico',
+                email_placeholder: 'email@ejemplo.com',
+                submit: 'Enviar',
+                or: 'O, regresar a',
+                login: 'Iniciar sesión',
+            },
             login: {
                 title: 'Iniciar sesión en tu cuenta',
                 description: 'Ingresa tu correo electrónico y contraseña para iniciar sesión',

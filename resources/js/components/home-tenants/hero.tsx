@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { CompanyResource } from '@/interfaces/company';
-import { Calendar, Clock, MapPin, Phone } from 'lucide-react';
+import { ArrowUpRight, Calendar, Clock, MapPin, Phone } from 'lucide-react';
 
 const branches = [
     {
@@ -43,10 +43,12 @@ const Hero = ({ company }: { company: CompanyResource }) => {
                         </div>
 
                         <h2 className="mb-4 text-2xl font-bold sm:text-3xl">
-                            <span className="text-foreground">{company.tagline}</span>
+                            <span className="text-foreground">{company.tagline || 'Agrega un slogan para tu empresa.'}</span>
                         </h2>
 
-                        <p className="mb-8 text-xl leading-relaxed text-foreground">{company.description}</p>
+                        <p className="mb-8 text-xl leading-relaxed text-foreground">
+                            {company.description || 'Agrega una descripción para tu empresa en el panel de administración.'}
+                        </p>
 
                         <div className="mb-8 flex flex-col gap-4 sm:flex-row">
                             <Button size="lg">
@@ -72,12 +74,13 @@ const Hero = ({ company }: { company: CompanyResource }) => {
                                 <div className="space-y-3">
                                     {branches.map((branch, index) => (
                                         <div key={index} className="rounded-lg bg-muted p-3 dark:bg-card">
-                                            <p className="text-sm font-medium text-foreground">{branch.name}</p>
+                                            <p className="text-sm font-bold text-foreground">{branch.name}</p>
                                             <p className="text-sm text-foreground">{branch.address}</p>
-                                            <p className="mt-1 flex items-center text-sm text-blue-500 dark:text-blue-400">
+                                            <a href={`tel:${branch.phone}`} className="mt-1 flex items-center gap-2 text-blue-500">
                                                 <Phone className="mr-1 h-3 w-3" />
-                                                {branch.phone}
-                                            </p>
+                                                <span className="text-sm">{branch.phone}</span>
+                                                <ArrowUpRight className="h-3 w-3" />
+                                            </a>
                                         </div>
                                     ))}
                                 </div>
@@ -90,9 +93,10 @@ const Hero = ({ company }: { company: CompanyResource }) => {
                                 <div className="rounded-lg bg-muted p-4 text-sm text-foreground dark:bg-card">
                                     {Object.keys(company.schedule).map((key) => (
                                         <div key={key}>
-                                            <p>
-                                                <span className="font-bold">{key}</span>: {company.schedule[key as keyof typeof company.schedule]}
-                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-10 font-bold">{key}</span>
+                                                <span className="text-sm">{company.schedule[key as keyof typeof company.schedule]}</span>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
