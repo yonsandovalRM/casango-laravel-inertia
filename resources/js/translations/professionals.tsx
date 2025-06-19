@@ -19,6 +19,15 @@ export const professionals = {
             },
         },
         professional: {
+            exceptions: {
+                form: {
+                    start_time: 'Start Time',
+                    end_time: 'End Time',
+                    reason: 'Reason',
+                    saving: 'Saving...',
+                    save: 'Save',
+                },
+            },
             profile: {
                 title: 'Professional Profile',
                 description: 'Manage your professional profile',
@@ -61,6 +70,15 @@ export const professionals = {
             },
         },
         professional: {
+            exceptions: {
+                form: {
+                    start_time: 'Hora de inicio',
+                    end_time: 'Hora de fin',
+                    reason: 'Motivo',
+                    saving: 'Guardando...',
+                    save: 'Guardar',
+                },
+            },
             profile: {
                 title: 'Perfil profesional',
                 description: 'Gestiona tu perfil profesional',

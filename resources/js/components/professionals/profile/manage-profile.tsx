@@ -185,7 +185,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                 ) : (
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col items-center space-y-4">
-                            <div className="pt-4">
+                            <div className="flex flex-col items-center pt-4">
                                 <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-border bg-muted shadow-lg">
                                     {photoPreview ? (
                                         <img src={photoPreview} alt="Profile" className="h-full w-full object-cover" />
