@@ -84,9 +84,7 @@ export default function TenantsCreate({ plans }: { plans: PlanResource[] }) {
                                     onChange={(e) => setData('subdomain', e.target.value)}
                                     className="pr-[105px]"
                                 />
-                                <span className="absolute top-1/2 right-3 -translate-y-1/2 transform text-sm text-muted-foreground">
-                                    .casango.com
-                                </span>
+                                <span className="absolute top-1/2 right-3 -translate-y-1/2 transform text-sm text-muted-foreground">.micita.cl</span>
                             </div>
                             <InputError message={errors.subdomain} />
                         </div>

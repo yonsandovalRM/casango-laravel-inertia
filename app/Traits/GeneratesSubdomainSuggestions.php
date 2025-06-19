@@ -12,7 +12,7 @@ trait GeneratesSubdomainSuggestions
      * Genera sugerencias de subdominio cuando el principal está ocupado
      * 
      * @param string $baseSubdomain Subdominio original solicitado
-     * @param string $mainDomain Dominio principal (ej: 'casango.com')
+     * @param string $mainDomain Dominio principal (ej: 'micita.cl')
      * @param int $count Número de sugerencias a generar
      * @return array
      */
@@ -21,15 +21,15 @@ trait GeneratesSubdomainSuggestions
         $suggestions = [];
         $attempts = 0;
         $maxAttempts = $count * 3; // Límite para evitar bucles infinitos
-        
+
         $baseSubdomain = Str::slug($baseSubdomain); // Normaliza el subdominio
 
         while (count($suggestions) < $count && $attempts < $maxAttempts) {
             $attempts++;
-            
+
             $variation = $this->generateSubdomainVariation($baseSubdomain, count($suggestions));
             $fullDomain = "{$variation}.{$mainDomain}";
-            
+
             if (!$this->subdomainExists($fullDomain)) {
                 $suggestions[] = $variation;
             }
