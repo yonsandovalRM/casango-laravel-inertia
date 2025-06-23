@@ -1,3 +1,4 @@
+import { ServiceResource } from './service';
 import { UserResource } from './user';
 
 export interface ProfessionalResource {
@@ -8,7 +9,7 @@ export interface ProfessionalResource {
     is_company_schedule: boolean;
     user: UserResource;
     exceptions: ExceptionResource[];
-    services_ids: string[];
+    services: ServiceResource[];
 }
 
 export type ProfessionalFormData = {

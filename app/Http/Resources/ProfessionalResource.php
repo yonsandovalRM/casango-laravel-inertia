@@ -22,7 +22,25 @@ class ProfessionalResource extends JsonResource
             'title' => $this->title,
             'is_company_schedule' => $this->is_company_schedule,
             'user' => new UserResource($this->user)->only('id', 'name', 'email'),
-            'exceptions' => ExceptionResource::collection($this->exceptions)->toArray(request()),
+            'exceptions' => $this->whenLoaded('exceptions', fn() => ExceptionResource::collection($this->exceptions)->toArray($request)),
+            'services' => $this->whenLoaded('services', function () {
+                return $this->services->map(function ($service) {
+                    return [
+                        'id' => $service->id,
+                        'name' => $service->name,
+                        'description' => $service->description,
+                        'notes' => $service->notes,
+                        'category_id' => $service->category_id,
+                        'preparation_time' => $service->preparation_time,
+                        'post_service_time' => $service->post_service_time,
+                        'is_active' => $service->is_active,
+                        'price' => $service->pivot->price ?? $service->price,
+                        'duration' => $service->pivot->duration ?? $service->duration,
+                    ];
+                });
+            }),
+            'created_at' => $this->created_at?->toDateTimeString(),
+            'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Professionals\UpdateProfessionalRequest;
+use App\Http\Requests\Professionals\UpdateProfessionalServicesRequest;
 use App\Http\Requests\ProfessionalSchedules\UpdateProfessionalScheduleRequest;
 use App\Http\Resources\CompanyScheduleResource;
 use App\Http\Resources\ProfessionalResource;
@@ -47,9 +48,19 @@ class ProfessionalController extends Controller
 
     public function showAssignServices(Professional $professional)
     {
-        $services = Service::all();
+        $services = Service::with(['professionals' => function ($query) use ($professional) {
+            $query->where('professionals.id', $professional->id)
+                ->select('professionals.id')
+                ->withPivot('duration', 'price');
+        }])->get();
+
         return Inertia::render('professionals/assign-services', [
-            'professional' => ProfessionalResource::make($professional)->toArray(request()),
+            'professional' => ProfessionalResource::make(
+                $professional->load(['services' => function ($query) {
+                    $query->withPivot('duration', 'price');
+                }])
+            )->toArray(request()),
+
             'services' => ServiceResource::collection($services)->toArray(request()),
         ]);
     }
@@ -99,9 +110,9 @@ class ProfessionalController extends Controller
         return redirect()->route('professionals.index')->with('success', __('professional.deleted'));
     }
 
-    public function assignServices(Professional $professional, Request $request)
+    public function assignServices(Professional $professional, UpdateProfessionalServicesRequest $request)
     {
         $professional->services()->sync($request->services);
-        return redirect()->route('professionals.show', $professional)->with('success', __('professional.updated'));
+        return redirect()->route('professionals.index')->with('success', __('professional.updated'));
     }
 }

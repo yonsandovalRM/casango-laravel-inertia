@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('professional_services', function (Blueprint $table) {
+        Schema::create('professional_service', function (Blueprint $table) {
             $table->uuid('professional_id');
             $table->uuid('service_id');
             $table->decimal('price', 10, 2)->nullable();
