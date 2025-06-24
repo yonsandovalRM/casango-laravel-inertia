@@ -37,7 +37,7 @@ const SelectAutocomplete = <T,>({
   getOptionValue = (option: any) => option.id,
   getOptionLabel = (option: any) => option.name,
   isMulti = false,
-  maxMenuHeight = 200,
+  maxMenuHeight = 150,
 }: SelectAutocompleteProps<T>) => {
   const transformOptions = (items: T[]): OptionType[] => {
     return items.map((item) => ({

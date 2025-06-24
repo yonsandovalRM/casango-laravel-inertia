@@ -16,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::where('is_active', true)->get();
+        $categories = Category::all();
         return Inertia::render('categories/index', [
             'categories' => CategoryResource::collection($categories)->toArray(request())
         ]);
