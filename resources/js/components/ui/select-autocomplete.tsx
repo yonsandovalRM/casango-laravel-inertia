@@ -89,11 +89,21 @@ const SelectAutocomplete = <T,>({
     }
   };
 
-  // Componente personalizado para el MenuList con ScrollArea
+
   const CustomMenuList = (props: any) => {
+    const { children } = props;
+
+    const itemHeight = 38;
+    const maxHeight = maxMenuHeight;
+    const visibleItemCount = Math.min(children.length, 8);
+    const calculatedHeight = Math.min(visibleItemCount * itemHeight, maxHeight);
+
     return (
-      <ScrollArea className="h-[200px] rounded-md border">
-        {props.children}
+      <ScrollArea 
+        className={`rounded-md border border-border`}
+        style={{ height: `${calculatedHeight}px` }}
+      >
+        {children}
       </ScrollArea>
     );
   };
