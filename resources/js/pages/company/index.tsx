@@ -199,7 +199,7 @@ function CompanyIndex({ company, t }: Props) {
                             {/* Logo Section */}
                             <div className="absolute -bottom-16 left-8">
                                 <div className="relative">
-                                    <div className="h-32 w-32 overflow-hidden rounded-2xl border-4 border-border bg-card shadow-xl">
+                                    <div className="h-32 w-32 overflow-hidden rounded-2xl border border-border bg-card shadow-xl">
                                         {logoPreview ? (
                                             <img src={logoPreview} alt="Logo" className="h-full w-full object-cover" />
                                         ) : (

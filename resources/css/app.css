@@ -154,3 +154,28 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* react-select */
+.react-select-container .react-select__control {
+    @apply border-border bg-background text-foreground hover:border-border rounded-md text-sm;
+}
+
+.react-select-container .react-select__single-value {
+    @apply text-foreground text-sm;
+}
+
+.react-select-container .react-select__menu {
+    @apply bg-background text-foreground z-50;
+}
+
+.react-select-container .react-select__option {
+    @apply bg-background text-muted-foreground hover:bg-accent hover:text-foreground dark:hover:bg-card text-sm;
+}
+
+/* indicator */
+.react-select-container .react-select__indicator {
+    @apply text-foreground;
+}
+.react-select-container .react-select__indicator-separator {
+    @apply bg-border text-muted-foreground;
+}

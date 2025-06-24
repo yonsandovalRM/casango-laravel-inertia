@@ -1,6 +1,4 @@
-import { CategoryResource } from '@/interfaces/category';
 import { useForm } from '@inertiajs/react';
-import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import InputError from '../input-error';
@@ -8,21 +6,22 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
-export const InlineFormCategory = ({ onSuccess }: { onSuccess: (category: CategoryResource) => void }) => {
+export const InlineFormCategory = ({ onSuccess }: { onSuccess: (category: string) => void }) => {
     const { t } = useTranslation();
-    const { data, setData, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
         name: '',
+        is_active: true,
     });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const newData = {
-            ...data,
-            is_active: true,
-        };
-        axios.post(route('categories.store.inline'), newData).then((response) => {
-            onSuccess(response.data);
-            setData('name', '');
+
+        post(route('categories.store.inline'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                onSuccess(data.name);
+                setData('name', '');
+            },
         });
     };
     return (

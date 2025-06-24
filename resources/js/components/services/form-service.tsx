@@ -10,24 +10,15 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ScrollArea } from '../ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { SelectAutocomplete } from '../ui/select-autocomplete';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '../ui/sheet';
 import { useService } from './service-context';
 
 export function FormService({ categories }: { categories: CategoryResource[] }) {
     const { t } = useTranslation();
     const [openModal, setOpenModal] = useState(false);
-    const [categoriesAvailables, setCategoriesAvailables] = useState<CategoryResource[]>(categories);
     const { open, handleSubmit, handleCancel, data, setData, errors, processing, service } = useService();
 
-    const handleCategoryChange = (category: CategoryResource) => {
-        setCategoriesAvailables([...categoriesAvailables, category]);
-        setData({ ...data, category_id: category.id });
-        setOpenModal(false);
-    };
-
-    /* Esto se renderiza 2 veces la primera bien con las categorias disponibles y la data con el id de la categoria pero la segunda el id es vacio  */
-    console.log({ data: data.category_id, categoriesAvailables });
     return (
         <>
             <Sheet open={open} onOpenChange={handleCancel}>
@@ -61,18 +52,12 @@ export function FormService({ categories }: { categories: CategoryResource[] }) 
                                         <div className="flex items-center gap-4">
                                             <div className="flex-1">
                                                 <Label required>{t('services.form.category')}</Label>
-                                                <Select value={data.category_id} onValueChange={(value) => setData({ ...data, category_id: value })}>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('services.form.category')} />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {categoriesAvailables.map((category) => (
-                                                            <SelectItem key={category.id} value={category.id}>
-                                                                {category.name}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
+                                                <SelectAutocomplete
+                                                    options={categories}
+                                                    value={data.category_id}
+                                                    onChange={(value) => setData({ ...data, category_id: value })}
+                                                    placeholder={t('services.form.category')}
+                                                />
                                                 <InputError message={errors.category_id} />
                                             </div>
                                             <div>
@@ -145,7 +130,7 @@ export function FormService({ categories }: { categories: CategoryResource[] }) 
                         <DialogTitle>{t('categories.form.create')}</DialogTitle>
                     </DialogHeader>
                     <DialogDescription>{t('categories.form.create_description')}</DialogDescription>
-                    <InlineFormCategory onSuccess={(category) => handleCategoryChange(category)} />
+                    <InlineFormCategory onSuccess={() => setOpenModal(false)} />
                 </DialogContent>
             </Dialog>
         </>

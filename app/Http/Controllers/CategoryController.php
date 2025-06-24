@@ -51,9 +51,9 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')->with('success', __('category.deleted'));
     }
 
-    public function storeInline(StoreCategoryRequest $request): JsonResponse
+    public function storeInline(StoreCategoryRequest $request)
     {
-        $category = Category::create($request->validated());
-        return response()->json(new CategoryResource($category)->toArray(request()));
+        Category::create($request->validated());
+        return redirect()->back()->with('success', __('category.created'));
     }
 }
