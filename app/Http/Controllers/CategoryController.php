@@ -7,6 +7,7 @@ use App\Http\Requests\Categories\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Inertia\Inertia;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
@@ -48,5 +49,11 @@ class CategoryController extends Controller
     {
         $category->delete();
         return redirect()->route('categories.index')->with('success', __('category.deleted'));
+    }
+
+    public function storeInline(StoreCategoryRequest $request): JsonResponse
+    {
+        $category = Category::create($request->validated());
+        return response()->json(new CategoryResource($category)->toArray(request()));
     }
 }
