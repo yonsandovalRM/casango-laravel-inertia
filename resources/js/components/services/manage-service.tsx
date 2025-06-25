@@ -3,7 +3,18 @@ import { ServiceResource } from '@/interfaces/service';
 import { formatCurrency } from '@/lib/utils';
 import { TFunction } from 'i18next';
 import { Clock, DollarSign, Edit, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { AppHeaderPage } from '../app-header-page';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '../ui/alert-dialog';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -13,9 +24,12 @@ import { useService } from './service-context';
 
 export function ManageService({ services, categories, t }: { services: ServiceResource[]; categories: CategoryResource[]; t: TFunction }) {
     const { setService, setOpen, onDelete } = useService();
+    const [openModal, setOpenModal] = useState(false);
+    const [serviceId, setServiceId] = useState<string | null>(null);
 
     const handleDelete = (serviceId: string) => {
-        onDelete(serviceId);
+        setServiceId(serviceId);
+        setOpenModal(true);
     };
     const handleCreate = () => {
         setService(null);
@@ -66,7 +80,7 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => onDelete(service.id)}
+                                            onClick={() => handleDelete(service.id)}
                                             className="h-8 w-8 p-0 text-destructive opacity-0 transition-opacity group-hover:opacity-100 hover:text-destructive"
                                         >
                                             <Trash2 className="h-4 w-4" />
@@ -112,6 +126,18 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
                 </div>
             </div>
             <FormService categories={categories} />
+            <AlertDialog open={openModal} onOpenChange={setOpenModal}>
+                <AlertDialogContent className="max-w-md">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t('services.manage.dialog_delete.title')}</AlertDialogTitle>
+                        <AlertDialogDescription>{t('services.manage.dialog_delete.description')}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>{t('services.manage.dialog_delete.cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onDelete(serviceId!)}>{t('services.manage.dialog_delete.confirm')}</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

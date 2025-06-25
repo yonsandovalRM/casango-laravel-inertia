@@ -10,6 +10,12 @@ export const services = {
                 edit: 'Edit Service',
                 delete: 'Delete Service',
                 no_services: 'No services available',
+                dialog_delete: {
+                    title: 'Delete Service',
+                    description: 'Are you sure you want to delete this service?',
+                    confirm: 'Delete',
+                    cancel: 'Cancel',
+                },
             },
             form: {
                 create: 'Create Service',
@@ -43,6 +49,12 @@ export const services = {
                 edit: 'Editar Servicio',
                 delete: 'Eliminar Servicio',
                 no_services: 'No hay servicios disponibles',
+                dialog_delete: {
+                    title: 'Eliminar Servicio',
+                    description: '¿Estás seguro de querer eliminar este servicio?',
+                    confirm: 'Eliminar',
+                    cancel: 'Cancelar',
+                },
             },
             form: {
                 create: 'Crear Servicio',
