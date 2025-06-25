@@ -1,5 +1,6 @@
+import { Role } from '@/interfaces/role';
 import { UserFormData, UserResource } from '@/interfaces/user';
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { PencilIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
@@ -9,6 +10,7 @@ import { FormUser } from './form-user';
 
 export const EditUser = ({ user }: { user: UserResource }) => {
     const [open, setOpen] = useState(false);
+    const { roles } = usePage<{ roles: Role[] }>().props;
 
     const { data, setData, put, processing, errors, clearErrors, reset } = useForm<UserFormData>({
         name: '',
@@ -49,7 +51,7 @@ export const EditUser = ({ user }: { user: UserResource }) => {
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-200px)]">
                     <form id="user-form" onSubmit={handleSubmit}>
-                        <FormUser data={data} setData={setData} errors={errors} />
+                        <FormUser data={data} setData={setData} errors={errors} roles={roles} />
                     </form>
                 </ScrollArea>
                 <SheetFooter className="grid grid-cols-2 gap-4">

@@ -21,7 +21,11 @@ export const UserList = ({ users }: { users: UserResource[] }) => {
     const [colDefs, setColDefs] = useState([
         { field: 'name', headerName: 'Nombre' },
         { field: 'email', headerName: 'Correo' },
-        { field: 'role', headerName: 'Rol', cellRenderer: (params: any) => <Badge variant="outline">{params.data.role}</Badge> },
+        {
+            field: 'role_display_name',
+            headerName: 'Rol',
+            cellRenderer: (params: any) => <Badge variant="outline">{params.data.role_display_name}</Badge>,
+        },
         { field: 'created_at', headerName: 'Creado el' },
         {
             field: 'actions',

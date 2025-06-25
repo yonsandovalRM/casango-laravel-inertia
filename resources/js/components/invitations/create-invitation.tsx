@@ -1,5 +1,6 @@
 import { InvitationFormData } from '@/interfaces/invitation';
-import { useForm } from '@inertiajs/react';
+import { Role } from '@/interfaces/role';
+import { useForm, usePage } from '@inertiajs/react';
 import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
@@ -8,6 +9,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { FormInvitation } from './form-invitation';
 
 export const CreateInvitation = () => {
+    const { roles } = usePage<{ roles: Role[] }>().props;
     const [open, setOpen] = useState(false);
 
     const { data, setData, post, processing, errors, clearErrors, reset } = useForm<InvitationFormData>({
@@ -44,7 +46,7 @@ export const CreateInvitation = () => {
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-180px)]">
                     <form id="invitation-form" onSubmit={handleSubmit}>
-                        <FormInvitation data={data} setData={setData} errors={errors} />
+                        <FormInvitation data={data} setData={setData} errors={errors} roles={roles} />
                     </form>
                 </ScrollArea>
                 <SheetFooter className="grid grid-cols-2 gap-4">

@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { Role } from '@/interfaces/role';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -7,9 +8,10 @@ type FormInvitationProps = {
     data: any;
     setData: (name: string, value: any) => void;
     errors: any;
+    roles: Role[];
 };
 
-export const FormInvitation = ({ data, setData, errors }: FormInvitationProps) => {
+export const FormInvitation = ({ data, setData, errors, roles }: FormInvitationProps) => {
     return (
         <div>
             <div className="grid flex-1 auto-rows-min gap-6 px-4">
@@ -44,10 +46,11 @@ export const FormInvitation = ({ data, setData, errors }: FormInvitationProps) =
                                     <SelectValue placeholder="Selecciona un rol" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="admin">Administrador</SelectItem>
-                                    <SelectItem value="owner">Propietario</SelectItem>
-                                    <SelectItem value="member">Miembro</SelectItem>
-                                    <SelectItem value="professional">Profesional</SelectItem>
+                                    {roles.map((role) => (
+                                        <SelectItem key={role.id} value={role.name}>
+                                            {role.display_name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.role} />

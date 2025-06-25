@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleMapper;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\UserCreated;
@@ -12,13 +13,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Mail;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
     public function index()
     {
         $users = UserResource::collection(User::all())->toArray(request());
-        return Inertia::render('users/index', ['users' => $users]);
+        $roles = Role::all()->map(function ($role) {
+            return [
+                'id' => $role->id,
+                'name' => $role->name,
+                'display_name' => RoleMapper::getRoleName($role->name),
+            ];
+        });
+        return Inertia::render('users/index', ['users' => $users, 'roles' => $roles]);
     }
 
     public function destroy(User $user)
@@ -45,6 +54,4 @@ class UserController extends Controller
         $user->forceDelete();
         return redirect()->route('users.index')->with('success', __('user.deleted'));
     }
-
-    
 }
