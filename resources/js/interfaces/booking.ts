@@ -12,7 +12,7 @@ export interface BookingResource {
     date: string;
     time: string;
     status: string;
-    payment_status: string;
-    payment_method: string;
-    payment_id: string;
+    payment_status?: string;
+    payment_method?: string;
+    payment_id?: string;
 }

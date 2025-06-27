@@ -25,7 +25,6 @@ class StoreBookingRequest extends FormRequest
             'client_id' => 'required|uuid|exists:users,id',
             'professional_id' => 'required|uuid|exists:users,id',
             'service_id' => 'required|uuid|exists:services,id',
-            'coupon_code' => 'nullable|string', // TODO: Implementar validacion de cupones |exists:coupons,code
             'date' => 'required|date',
             'time' => 'required|date_format:H:i',
         ];
