@@ -46,6 +46,11 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'create professional exceptions']);
         Permission::create(['name' => 'delete professional exceptions']);
 
+        Permission::create(['name' => 'view bookings']);
+        Permission::create(['name' => 'edit bookings']);
+        Permission::create(['name' => 'delete bookings']);
+        Permission::create(['name' => 'create bookings']);
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
 
@@ -57,9 +62,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo(Permission::all());
 
         $role = Role::create(['name' => 'client']);
-        $role->givePermissionTo(['view company']);
+        $role->givePermissionTo(['view company', 'view bookings', 'create bookings', 'edit bookings', 'delete bookings']);
 
         $role = Role::create(['name' => 'professional']);
-        $role->givePermissionTo(['view company', 'view services', 'view professional profile', 'edit professional profile', 'view professional exceptions', 'create professional exceptions', 'delete professional exceptions']);
+        $role->givePermissionTo(['view company', 'view services', 'view professional profile', 'edit professional profile', 'view professional exceptions', 'create professional exceptions', 'delete professional exceptions', 'view bookings', 'create bookings', 'edit bookings', 'delete bookings']);
     }
 }

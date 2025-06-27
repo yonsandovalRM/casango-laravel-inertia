@@ -41,6 +41,11 @@ class Permissions
     public const PROFESSIONALS_EDIT = 'edit professionals';
     public const PROFESSIONALS_DELETE = 'delete professionals';
 
+    public const BOOKINGS_VIEW = 'view bookings';
+    public const BOOKINGS_EDIT = 'edit bookings';
+    public const BOOKINGS_DELETE = 'delete bookings';
+    public const BOOKINGS_CREATE = 'create bookings';
+
     public static function plans(): array
     {
         return [
@@ -115,6 +120,16 @@ class Permissions
             self::PROFESSIONALS_DELETE,
             self::PROFESSIONAL_EXCEPTIONS_CREATE,
             self::PROFESSIONAL_EXCEPTIONS_DELETE,
+        ];
+    }
+
+    public static function bookings(): array
+    {
+        return [
+            self::BOOKINGS_VIEW,
+            self::BOOKINGS_EDIT,
+            self::BOOKINGS_DELETE,
+            self::BOOKINGS_CREATE,
         ];
     }
 }
