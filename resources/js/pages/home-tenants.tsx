@@ -1,3 +1,4 @@
+import PopularServices from '@/components/bookings/popular-services';
 import Footer from '@/components/home-tenants/footer';
 import Header from '@/components/home-tenants/header';
 import Hero from '@/components/home-tenants/hero';
@@ -14,6 +15,7 @@ export default function HomeTenants({ company }: HomeTenantsProps) {
             <Head title="Home Tenants" />
             <Header company={company} />
             <Hero company={company} />
+            <PopularServices />
             <ProfessionalsGrid />
             <Footer />
         </div>

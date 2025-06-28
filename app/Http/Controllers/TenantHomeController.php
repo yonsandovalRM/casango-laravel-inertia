@@ -17,4 +17,13 @@ class TenantHomeController extends Controller
             'company' => CompanyResource::make($company)->toArray(request()),
         ]);
     }
+
+    public function services()
+    {
+        $company = Company::with('schedules')->first();
+
+        return Inertia::render('public-pages/services', [
+            'company' => CompanyResource::make($company)->toArray(request()),
+        ]);
+    }
 }

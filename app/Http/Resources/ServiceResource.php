@@ -21,6 +21,7 @@ class ServiceResource extends JsonResource
             'description' => $this->description,
             'notes' => $this->notes,
             'category' => new CategoryResource($this->category)->toArray(request()),
+            'professionals_count' => $this->professionals->count(),
             'price' => $this->price,
             'duration' => $this->duration,
             'preparation_time' => $this->preparation_time,

@@ -6,6 +6,7 @@ export interface ServiceResource {
     description: string;
     notes: string;
     category: CategoryResource;
+    professionals_count: number;
     price: number;
     duration: number;
     preparation_time: number;

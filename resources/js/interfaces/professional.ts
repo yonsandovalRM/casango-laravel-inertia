@@ -30,3 +30,15 @@ export interface ExceptionResource {
 export type ProfessionalServicesFormData = {
     services: string[];
 };
+
+export interface ProfessionalAvailability {
+    professional: ProfessionalResource;
+    service: ServiceResource;
+    date: string;
+    time_blocks: TimeBlock[];
+}
+
+export interface TimeBlock {
+    morning: string[];
+    afternoon: string[];
+}

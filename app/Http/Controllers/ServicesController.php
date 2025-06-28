@@ -8,10 +8,18 @@ use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ServiceResource;
 use App\Models\Category;
 use App\Models\Service;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
 class ServicesController extends Controller
 {
+
+    public function getServices(): JsonResponse
+    {
+        $services = Service::where('is_active', true)->with('category')->get();
+        return response()->json(ServiceResource::collection($services)->toArray(request()));
+    }
+
     /**
      * Display a listing of the resource.
      */
