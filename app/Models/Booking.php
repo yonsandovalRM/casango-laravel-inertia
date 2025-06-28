@@ -32,7 +32,7 @@ class Booking extends Model
 
     public function professional()
     {
-        return $this->belongsTo(User::class, 'professional_id');
+        return $this->belongsTo(Professional::class, 'professional_id');
     }
 
     public function service()

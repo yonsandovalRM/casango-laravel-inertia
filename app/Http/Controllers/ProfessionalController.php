@@ -5,19 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Professionals\UpdateProfessionalRequest;
 use App\Http\Requests\Professionals\UpdateProfessionalServicesRequest;
 use App\Http\Requests\ProfessionalSchedules\UpdateProfessionalScheduleRequest;
-use App\Http\Resources\CompanyScheduleResource;
 use App\Http\Resources\ProfessionalResource;
 use App\Http\Resources\ProfessionalScheduleResource;
 use App\Http\Resources\ServiceResource;
 use App\Models\Company;
-use App\Models\CompanySchedule;
 use App\Models\Professional;
 use App\Models\ProfessionalSchedule;
 use App\Models\Service;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
 
 class ProfessionalController extends Controller
 {
