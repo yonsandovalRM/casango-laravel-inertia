@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Resources\CompanyResource;
+use App\Models\Company;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -42,9 +44,10 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'company' => CompanyResource::make(Company::first())->toArray(request()),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-               'user' => $request->user() ? [
+                'user' => $request->user() ? [
                     'id' => $request->user()->id,
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
@@ -53,7 +56,7 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'flash' => $this->getFlashMessages(),
-            'ziggy' => fn (): array => [
+            'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
@@ -67,7 +70,7 @@ class HandleInertiaRequests extends Middleware
     private function getFlashMessages(): array
     {
         $messages = [];
-        
+
         if ($error = session('error')) {
             $messages['error'] = [
                 'id' => uniqid('error_'),

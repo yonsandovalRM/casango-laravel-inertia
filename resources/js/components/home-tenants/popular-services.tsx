@@ -8,8 +8,8 @@ export default function PopularServices() {
         <>
             {/* Popular Services */}
             <div className="mb-12 text-center">
-                <h2 className="mb-4 text-3xl font-bold text-gray-900">Servicios Populares</h2>
-                <p className="mb-8 text-gray-600">Los servicios más solicitados por nuestros clientes</p>
+                <h2 className="mb-4 text-3xl font-bold text-foreground">Servicios Populares</h2>
+                <p className="mb-8 text-muted-foreground">Los servicios más solicitados por nuestros clientes</p>
             </div>
 
             <div className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -19,15 +19,15 @@ export default function PopularServices() {
                     { name: 'Limpieza Facial', price: 'Desde $55.000', duration: '90 min', category: 'Estética' },
                     { name: 'Masaje Relajante', price: 'Desde $40.000', duration: '60 min', category: 'Bienestar' },
                 ].map((service, index) => (
-                    <Card key={index} className="group cursor-pointer bg-white/60 backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+                    <Card key={index} className="group cursor-pointer bg-card transition-all duration-300 hover:shadow-lg">
                         <CardHeader className="pb-3">
-                            <div className="text-sm font-medium text-blue-600">{service.category}</div>
-                            <CardTitle className="text-lg transition-colors group-hover:text-blue-600">{service.name}</CardTitle>
+                            <div className="text-sm font-medium text-primary">{service.category}</div>
+                            <CardTitle className="text-lg transition-colors group-hover:text-primary">{service.name}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="mb-3 flex items-center justify-between">
-                                <span className="font-semibold text-green-600">{service.price}</span>
-                                <span className="text-sm text-gray-500">{service.duration}</span>
+                                <span className="font-semibold text-primary">{service.price}</span>
+                                <span className="text-sm text-muted-foreground">{service.duration}</span>
                             </div>
                             <Button
                                 variant="outline"

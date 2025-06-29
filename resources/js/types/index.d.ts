@@ -1,3 +1,4 @@
+import { CompanyResource } from '@/interfaces/company';
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
@@ -25,6 +26,7 @@ export interface NavItem {
 
 export interface SharedData {
     name: string;
+    company: CompanyResource;
     quote: { message: string; author: string };
     auth: Auth;
     ziggy: Config & { location: string };

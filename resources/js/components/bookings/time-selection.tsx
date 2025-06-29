@@ -2,26 +2,43 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCompany } from '@/hooks/use-company';
 import { useProfessionalAvailability } from '@/hooks/use-professional-availability';
-import { ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, CheckCircle, Clock } from 'lucide-react';
 import React, { useState } from 'react';
 import { BookingConfirmation } from './booking-confirmation';
+
+interface TimeSlot {
+    time: string;
+    available: boolean;
+    period: 'morning' | 'afternoon';
+}
 
 interface TimeSelectionProps {
     service: any;
     professional: any;
     selectedDate: string;
-    onBack: () => void;
+    onBack?: () => void;
+    onTimeSelect?: (timeSlot: any, availability: any) => void;
+    hideHeader?: boolean;
 }
 
-export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professional, selectedDate, onBack }) => {
-    const [selectedTime, setSelectedTime] = useState(null);
+export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professional, selectedDate, onBack, onTimeSelect, hideHeader = false }) => {
+    const company = useCompany();
+
+    const [selectedTime, setSelectedTime] = useState<TimeSlot | null>(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
 
     const { availability, loading } = useProfessionalAvailability(professional.id, service.id, selectedDate);
 
-    const handleTimeSelect = (timeSlot: any) => {
+    const handleTimeSelect = (timeSlot: TimeSlot) => {
         setSelectedTime(timeSlot);
+    };
+
+    const handleConfirmSelection = () => {
+        if (onTimeSelect && selectedTime) {
+            onTimeSelect(selectedTime, availability);
+        }
     };
 
     const handleConfirmBooking = () => {
@@ -31,6 +48,19 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
     const handleBackToTimes = () => {
         setShowConfirmation(false);
         setSelectedTime(null);
+    };
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('es-ES', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    };
+
+    const getPeriodLabel = (period: string) => {
+        return period === 'morning' ? 'Mañana' : 'Tarde';
     };
 
     if (showConfirmation && selectedTime) {
@@ -48,119 +78,205 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
 
     const finalPrice = availability?.service?.price || service.price;
     const finalDuration = availability?.service?.duration || service.duration;
+    const professionalName = professional.user?.name || availability?.professional?.name;
+    const professionalPhoto = professional.photo || availability?.professional?.photo;
+
+    // Verificar si hay horarios disponibles
+    const hasAvailableSlots =
+        availability?.time_blocks && (availability.time_blocks.morning?.length > 0 || availability.time_blocks.afternoon?.length > 0);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
-            <div className="mx-auto max-w-4xl">
+        <div className={hideHeader ? '' : 'min-h-screen p-4'}>
+            <div className={hideHeader ? '' : 'mx-auto max-w-4xl'}>
                 {/* Header */}
-                <div className="mb-6 flex items-center">
-                    <Button variant="ghost" onClick={onBack} className="mr-4 hover:bg-white/50">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Volver a profesionales
-                    </Button>
-                </div>
+                {!hideHeader && onBack && (
+                    <div className="mb-6 flex items-center">
+                        <Button variant="ghost" onClick={onBack} className="mr-4 hover:bg-white/50">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Volver a profesionales
+                        </Button>
+                    </div>
+                )}
 
                 {/* Booking Summary */}
-                <Card className="mb-8 bg-white/80 backdrop-blur-sm">
-                    <CardHeader>
-                        <CardTitle className="text-2xl">Resumen de tu reserva</CardTitle>
-                    </CardHeader>
+                <Card className="mb-8 bg-card">
                     <CardContent>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div>
-                                <h3 className="mb-2 text-lg font-semibold">{service.name}</h3>
+                                <h3 className="mb-4 text-lg font-semibold text-foreground">{service.name}</h3>
                                 <div className="mb-4 flex items-center space-x-4">
                                     <Avatar className="h-12 w-12">
-                                        <AvatarImage src={professional.user?.photo} />
+                                        <AvatarImage src={professionalPhoto} alt={professionalName} />
                                         <AvatarFallback className="bg-blue-100 text-blue-600">
-                                            {professional.user?.name
+                                            {professionalName
                                                 ?.split(' ')
                                                 .map((n: string) => n[0])
-                                                .join('') ||
-                                                availability?.professional?.user?.name
-                                                    ?.split(' ')
-                                                    .map((n: string) => n[0])
-                                                    .join('') ||
-                                                'P'}
+                                                .join('') || 'P'}
                                         </AvatarFallback>
                                     </Avatar>
                                     <div>
-                                        <p className="font-medium">
-                                            {professional.title} {professional.user?.name || availability?.professional?.user?.name}
+                                        <p className="font-medium text-foreground">
+                                            {professional.title && `${professional.title} `}
+                                            {professionalName}
                                         </p>
-                                        <p className="text-sm text-gray-600">Profesional</p>
+                                        <p className="text-sm text-muted-foreground">Profesional</p>
                                     </div>
                                 </div>
-                                <div className="space-y-2 text-sm text-gray-600">
+                                <div className="space-y-2 text-sm text-muted-foreground">
                                     <div className="flex items-center">
-                                        <Calendar className="mr-2 h-4 w-4" />
-                                        {new Date(selectedDate).toLocaleDateString('es-ES', {
-                                            weekday: 'long',
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                        })}
+                                        <Calendar className="mr-2 h-4 w-4 text-primary" />
+                                        {formatDate(selectedDate)}
                                     </div>
                                     <div className="flex items-center">
-                                        <Clock className="mr-2 h-4 w-4" />
+                                        <Clock className="mr-2 h-4 w-4 text-primary" />
                                         {finalDuration} minutos
                                     </div>
                                 </div>
                             </div>
 
                             <div className="text-right">
-                                <div className="mb-2 text-3xl font-bold text-blue-600">${Number(finalPrice).toLocaleString()}</div>
-                                <Badge variant="secondary">COP</Badge>
-                                {finalPrice !== service.price && <p className="mt-2 text-sm text-gray-500">Precio personalizado del profesional</p>}
+                                <div className="mb-2 text-3xl font-bold text-primary">${Number(finalPrice).toLocaleString()}</div>
+                                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                                    {company.currency}
+                                </Badge>
+                                {finalPrice !== service.price && (
+                                    <p className="mt-2 text-sm text-muted-foreground">Precio personalizado del profesional</p>
+                                )}
                             </div>
                         </div>
                     </CardContent>
                 </Card>
 
                 {/* Time Selection */}
-                <Card className="bg-white/80 backdrop-blur-sm">
+                <Card className="bg-card">
                     <CardHeader>
-                        <CardTitle className="flex items-center">
-                            <Clock className="mr-2 h-5 w-5" />
+                        <CardTitle className="flex items-center text-foreground">
+                            <Clock className="mr-2 h-5 w-5 text-primary" />
                             Selecciona un horario
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         {loading ? (
-                            <div className="space-y-4">
+                            <div className="space-y-6">
                                 {['Mañana', 'Tarde'].map((period) => (
                                     <div key={period}>
-                                        <h3 className="mb-3 font-semibold">{period}</h3>
+                                        <h3 className="mb-3 font-semibold text-foreground">{period}</h3>
                                         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
                                             {[1, 2, 3, 4, 5, 6].map((i) => (
-                                                <div key={i} className="h-12 animate-pulse rounded-lg bg-gray-200"></div>
+                                                <div key={i} className="h-12 animate-pulse rounded-lg bg-secondary" />
                                             ))}
                                         </div>
                                     </div>
                                 ))}
                             </div>
+                        ) : hasAvailableSlots ? (
+                            <div className="space-y-6">
+                                {/* Horarios de Mañana */}
+                                {availability.time_blocks.morning && availability.time_blocks.morning.length > 0 && (
+                                    <div>
+                                        <h3 className="mb-4 flex items-center text-lg font-semibold text-foreground">
+                                            <div className="mr-2 h-2 w-2 rounded-full bg-yellow-400"></div>
+                                            Mañana
+                                        </h3>
+                                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+                                            {availability.time_blocks.morning.map((timeSlot: any, index: number) => (
+                                                <Button
+                                                    key={`morning-${index}`}
+                                                    variant={selectedTime?.time === timeSlot.time ? 'default' : 'outline'}
+                                                    className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                                                        selectedTime?.time === timeSlot.time
+                                                            ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
+                                                            : 'border-secondary bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/90'
+                                                    } `}
+                                                    onClick={() =>
+                                                        handleTimeSelect({
+                                                            time: timeSlot.time || timeSlot,
+                                                            available: true,
+                                                            period: 'morning',
+                                                        })
+                                                    }
+                                                >
+                                                    <div className="flex items-center">
+                                                        {selectedTime?.time === (timeSlot.time || timeSlot) && (
+                                                            <CheckCircle className="mr-1 h-3 w-3" />
+                                                        )}
+                                                        {timeSlot.time || timeSlot}
+                                                    </div>
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Horarios de Tarde */}
+                                {availability.time_blocks.afternoon && availability.time_blocks.afternoon.length > 0 && (
+                                    <div>
+                                        <h3 className="mb-4 flex items-center text-lg font-semibold text-foreground">
+                                            <div className="mr-2 h-2 w-2 rounded-full bg-orange-400"></div>
+                                            Tarde
+                                        </h3>
+                                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+                                            {availability.time_blocks.afternoon.map((timeSlot: any, index: number) => (
+                                                <Button
+                                                    key={`afternoon-${index}`}
+                                                    variant={selectedTime?.time === timeSlot.time ? 'default' : 'outline'}
+                                                    className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                                                        selectedTime?.time === (timeSlot.time || timeSlot)
+                                                            ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
+                                                            : 'border-secondary bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/90'
+                                                    } `}
+                                                    onClick={() =>
+                                                        handleTimeSelect({
+                                                            time: timeSlot.time || timeSlot,
+                                                            available: true,
+                                                            period: 'afternoon',
+                                                        })
+                                                    }
+                                                >
+                                                    <div className="flex items-center">
+                                                        {selectedTime?.time === (timeSlot.time || timeSlot) && (
+                                                            <CheckCircle className="mr-1 h-3 w-3" />
+                                                        )}
+                                                        {timeSlot.time || timeSlot}
+                                                    </div>
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         ) : (
-                            <div className="space-y-6">{/* mostrar los horarios disponibles */}</div>
-                        )}
-                        {!loading && availability && Object.keys(availability.time_blocks || {}).length === 0 && (
-                            <div className="py-8 text-center">
-                                <Clock className="mx-auto mb-3 h-12 w-12 text-gray-400" />
-                                <p className="text-gray-600">No hay horarios disponibles para esta fecha</p>
+                            <div className="py-12 text-center">
+                                <Clock className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+                                <h3 className="mb-2 text-lg font-medium text-gray-600">No hay horarios disponibles</h3>
+                                <p className="text-gray-500">
+                                    Para esta fecha no hay horarios disponibles.
+                                    <br />
+                                    Por favor, selecciona otra fecha.
+                                </p>
                             </div>
                         )}
 
+                        {/* Botón de avanzar */}
                         {selectedTime && (
                             <div className="mt-8 border-t pt-6">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="font-semibold">Horario seleccionado:</p>
                                         <p className="text-blue-600">
-                                            {/* {selectedTime.time} - {selectedTime.period === 'morning' ? 'Mañana' : 'Tarde'} */}
+                                            {selectedTime.time} - {selectedTime.period === 'morning' ? 'Mañana' : 'Tarde'}
                                         </p>
                                     </div>
-                                    <Button onClick={handleConfirmBooking} className="bg-blue-600 hover:bg-blue-700" size="lg">
-                                        Confirmar Reserva
-                                    </Button>
+                                    <div className="flex gap-3">
+                                        {onBack && (
+                                            <Button variant="outline" onClick={onBack}>
+                                                Volver
+                                            </Button>
+                                        )}
+                                        <Button onClick={handleConfirmSelection} className="bg-blue-600 hover:bg-blue-700" size="lg">
+                                            Continuar
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         )}

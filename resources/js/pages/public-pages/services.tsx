@@ -1,5 +1,3 @@
-import { ProfessionalSelection } from '@/components/bookings/professional-selection';
-import Header from '@/components/home-tenants/header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useServices } from '@/hooks/use-services';
 import { CompanyResource } from '@/interfaces/company';
-import { Head } from '@inertiajs/react';
+import BookingLayout from '@/layouts/booking-layout';
+import { Head, router } from '@inertiajs/react';
 import { Calendar, Clock, Filter, Search, User } from 'lucide-react';
 import { useState } from 'react';
 
@@ -15,32 +14,19 @@ const Services = ({ company }: { company: CompanyResource }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('price');
-    const [selectedService, setSelectedService] = useState(null);
-    const [showProfessionals, setShowProfessionals] = useState(false);
 
     const { categories, filteredServices } = useServices(searchTerm, selectedCategory, sortBy);
 
     const handleServiceSelect = (service: any) => {
-        setSelectedService(service);
-        setShowProfessionals(true);
+        router.visit(route('public.reservation-wizard', { service_id: service.id }));
     };
-
-    const handleBackToServices = () => {
-        setShowProfessionals(false);
-        setSelectedService(null);
-    };
-
-    if (showProfessionals && selectedService) {
-        return <ProfessionalSelection service={selectedService} onBack={handleBackToServices} />;
-    }
 
     return (
-        <>
+        <BookingLayout>
             <Head title="Reserva tu Cita Profesional" />
-            <Header company={company} />
 
             <div className="min-h-screen p-4 pt-24">
-                <div className="mx-auto max-w-7xl">
+                <div className="mx-auto max-w-6xl">
                     {/* Header */}
                     <div className="mb-8 text-center">
                         <h1 className="mb-2 text-5xl font-bold text-foreground">Encuentra el servicio que necesitas</h1>
@@ -156,7 +142,7 @@ const Services = ({ company }: { company: CompanyResource }) => {
                     )}
                 </div>
             </div>
-        </>
+        </BookingLayout>
     );
 };
 

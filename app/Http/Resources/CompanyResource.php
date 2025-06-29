@@ -25,7 +25,7 @@ class CompanyResource extends JsonResource
             'currency' => $this->currency,
             'timezone' => $this->timezone,
             'locale' => $this->locale,
-            'schedules' => CompanyScheduleResource::collection($this->whenLoaded('schedules'))->toArray(request()),
+            'schedules' => $this->schedules ? CompanyScheduleResource::collection($this->whenLoaded('schedules'))->toArray(request()) : [],
             'schedule' => $this->getDailySchedulesArray(),
         ];
     }

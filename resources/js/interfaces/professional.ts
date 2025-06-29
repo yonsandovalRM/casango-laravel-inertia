@@ -31,14 +31,30 @@ export type ProfessionalServicesFormData = {
     services: string[];
 };
 
-export interface ProfessionalAvailability {
-    professional: ProfessionalResource;
-    service: ServiceResource;
-    date: string;
-    time_blocks: TimeBlock[];
+export interface TimeSlot {
+    time: string;
+    available: boolean;
+    period: 'morning' | 'afternoon';
 }
 
-export interface TimeBlock {
-    morning: string[];
-    afternoon: string[];
+export interface TimeBlocks {
+    morning: (string | TimeSlot)[];
+    afternoon: (string | TimeSlot)[];
+}
+
+export interface ProfessionalAvailability {
+    professional: {
+        id: string;
+        name?: string;
+        photo?: string;
+        user?: UserResource;
+    };
+    service: {
+        id: string;
+        name: string;
+        duration: number;
+        price: number;
+    };
+    date: string;
+    time_blocks: TimeBlocks;
 }

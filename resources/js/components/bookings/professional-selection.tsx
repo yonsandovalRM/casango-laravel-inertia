@@ -1,64 +1,59 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProfessionals } from '@/hooks/use-professionals';
 import { ArrowLeft, Calendar, Clock, DollarSign, User } from 'lucide-react';
 import React, { useState } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Badge } from '../ui/badge';
-import { TimeSelection } from './time-selection';
 
 interface ProfessionalSelectionProps {
     service: any;
-    onBack: () => void;
+    onBack?: () => void;
+    onProfessionalSelect?: (professional: any, date: string) => void;
+    hideHeader?: boolean;
 }
 
-export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ service, onBack }) => {
-    const [selectedProfessional, setSelectedProfessional] = useState(null);
+export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ service, onBack, onProfessionalSelect, hideHeader = false }) => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    const [showTimeSelection, setShowTimeSelection] = useState(false);
 
     const { professionals, loading } = useProfessionals(service.id, selectedDate);
 
     const handleProfessionalSelect = (professional: any) => {
-        setSelectedProfessional(professional);
-        setShowTimeSelection(true);
+        if (onProfessionalSelect) {
+            onProfessionalSelect(professional, selectedDate);
+        }
     };
-
-    const handleBackToProfessionals = () => {
-        setShowTimeSelection(false);
-        setSelectedProfessional(null);
-    };
-
-    if (showTimeSelection && selectedProfessional) {
-        return <TimeSelection service={service} professional={selectedProfessional} selectedDate={selectedDate} onBack={handleBackToProfessionals} />;
-    }
 
     return (
-        <div className="min-h-screen p-4">
-            <div className="mx-auto max-w-6xl">
+        <div className={hideHeader ? '' : 'min-h-screen p-4'}>
+            <div className={hideHeader ? '' : 'mx-auto max-w-6xl'}>
                 {/* Header */}
-                <div className="mb-6 flex items-center">
-                    <Button variant="ghost" onClick={onBack}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Volver a servicios
-                    </Button>
-                </div>
+                {!hideHeader && onBack && (
+                    <div className="mb-6 flex items-center">
+                        <Button variant="ghost" onClick={onBack} className="mr-4 hover:bg-white/50">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Volver a servicios
+                        </Button>
+                    </div>
+                )}
 
                 {/* Service Info */}
-                <Card className="mb-8 bg-card">
-                    <CardHeader>
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <CardTitle className="mb-2 text-2xl">{service.name}</CardTitle>
-                                <p className="text-muted-foreground">{service.description}</p>
+                {!hideHeader && (
+                    <Card className="mb-8 bg-white/80 backdrop-blur-sm">
+                        <CardHeader>
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <CardTitle className="mb-2 text-2xl">{service.name}</CardTitle>
+                                    <p className="text-muted-foreground">{service.description}</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-3xl font-bold text-primary">${Number(service.price).toLocaleString()}</div>
+                                    <div className="text-sm text-muted-foreground">{service.duration} minutos</div>
+                                </div>
                             </div>
-                            <div className="text-right">
-                                <div className="text-3xl font-bold text-blue-600">${Number(service.price).toLocaleString()}</div>
-                                <div className="text-sm text-muted-foreground">{service.duration} minutos</div>
-                            </div>
-                        </div>
-                    </CardHeader>
-                </Card>
+                        </CardHeader>
+                    </Card>
+                )}
 
                 {/* Date Selection */}
                 <Card className="mb-8 bg-card">
@@ -74,7 +69,7 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
                             min={new Date().toISOString().split('T')[0]}
-                            className="w-full rounded-lg border border-input p-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-secondary p-3 focus:border-transparent focus:ring-2 focus:ring-primary"
                         />
                     </CardContent>
                 </Card>
@@ -98,18 +93,18 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                             <Card key={i} className="animate-pulse">
                                 <CardHeader>
                                     <div className="flex items-center space-x-4">
-                                        <div className="h-12 w-12 rounded-full bg-muted"></div>
+                                        <div className="h-12 w-12 rounded-full bg-secondary"></div>
                                         <div className="flex-1 space-y-2">
-                                            <div className="h-4 w-3/4 rounded bg-muted"></div>
-                                            <div className="h-3 w-1/2 rounded bg-muted"></div>
+                                            <div className="h-4 w-3/4 rounded bg-secondary"></div>
+                                            <div className="h-3 w-1/2 rounded bg-secondary"></div>
                                         </div>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
-                                        <div className="h-3 rounded bg-muted"></div>
-                                        <div className="h-3 w-2/3 rounded bg-muted"></div>
-                                        <div className="h-10 rounded bg-muted"></div>
+                                        <div className="h-3 rounded bg-secondary"></div>
+                                        <div className="h-3 w-2/3 rounded bg-secondary"></div>
+                                        <div className="h-10 rounded bg-secondary"></div>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -141,33 +136,33 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                                         </div>
                                     </div>
 
-                                    {professional.bio && <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">{professional.bio}</p>}
+                                    {professional.bio && <p className="mb-3 line-clamp-2 text-sm text-gray-600">{professional.bio}</p>}
                                 </CardHeader>
 
                                 <CardContent>
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center text-sm text-muted-foreground">
+                                            <div className="flex items-center text-sm text-gray-600">
                                                 <DollarSign className="mr-1 h-4 w-4" />
                                                 Precio personalizado
                                             </div>
                                             <Badge variant="outline">Disponible</Badge>
                                         </div>
 
-                                        <div className="flex items-center text-sm text-muted-foreground">
+                                        <div className="flex items-center text-sm text-gray-600">
                                             <Clock className="mr-1 h-4 w-4" />
                                             Duración personalizada disponible
                                         </div>
 
                                         <Button
-                                            className="w-full transition-colors group-hover:bg-blue-600"
+                                            className="w-full"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleProfessionalSelect(professional);
                                             }}
                                         >
                                             <Calendar className="mr-2 h-4 w-4" />
-                                            Ver horarios disponibles
+                                            Seleccionar profesional
                                         </Button>
                                     </div>
                                 </CardContent>
