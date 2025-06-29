@@ -5,7 +5,5 @@ use App\Http\Controllers\TenantHomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::prefix('public')->group(function () {
-    Route::get('services', [TenantHomeController::class, 'services'])->name('public.services');
-    Route::get('reservation-wizard/{service_id}', [TenantHomeController::class, 'reservationWizard'])->name('public.reservation-wizard');
-});
+Route::get('bookings', [TenantHomeController::class, 'bookings'])->name('home.bookings');
+Route::get('bookings/{service_id}', [TenantHomeController::class, 'bookingsService'])->name('home.bookings.service');

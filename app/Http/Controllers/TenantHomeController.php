@@ -20,7 +20,7 @@ class TenantHomeController extends Controller
         ]);
     }
 
-    public function services()
+    public function bookings()
     {
         $company = Company::with('schedules')->first();
 
@@ -29,7 +29,7 @@ class TenantHomeController extends Controller
         ]);
     }
 
-    public function reservationWizard($service_id)
+    public function bookingsService($service_id)
     {
         $service = Service::find($service_id);
 

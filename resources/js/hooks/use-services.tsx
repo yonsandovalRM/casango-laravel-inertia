@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 export const useServices = (searchTerm: string, category: string, sortBy: string) => {
     const [services, setServices] = useState<ServiceResource[]>([]);
+    const [highlightedServices, setHighlightedServices] = useState<ServiceResource[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -13,6 +14,7 @@ export const useServices = (searchTerm: string, category: string, sortBy: string
     const getServices = async () => {
         const response = await axios.get(route('services.get-services'));
         setServices(response.data);
+        setHighlightedServices(response.data.slice(0, 4));
     };
 
     const categories = useMemo(() => {
@@ -60,6 +62,7 @@ export const useServices = (searchTerm: string, category: string, sortBy: string
         services,
         categories,
         filteredServices,
+        highlightedServices,
         loading,
     };
 };

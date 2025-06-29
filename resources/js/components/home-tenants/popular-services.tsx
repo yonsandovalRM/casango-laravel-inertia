@@ -1,9 +1,11 @@
+import { useServices } from '@/hooks/use-services';
 import { router } from '@inertiajs/react';
 import { Calendar } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 export default function PopularServices() {
+    const { highlightedServices } = useServices('', '', '');
     return (
         <>
             {/* Popular Services */}
@@ -13,15 +15,10 @@ export default function PopularServices() {
             </div>
 
             <div className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-                {[
-                    { name: 'Corte de Cabello', price: 'Desde $15.000', duration: '45 min', category: 'Peluquería' },
-                    { name: 'Manicure', price: 'Desde $25.000', duration: '60 min', category: 'Belleza' },
-                    { name: 'Limpieza Facial', price: 'Desde $55.000', duration: '90 min', category: 'Estética' },
-                    { name: 'Masaje Relajante', price: 'Desde $40.000', duration: '60 min', category: 'Bienestar' },
-                ].map((service, index) => (
+                {highlightedServices.map((service, index) => (
                     <Card key={index} className="group cursor-pointer bg-card transition-all duration-300 hover:shadow-lg">
                         <CardHeader className="pb-3">
-                            <div className="text-sm font-medium text-primary">{service.category}</div>
+                            <div className="text-sm font-medium text-primary">{service.category.name}</div>
                             <CardTitle className="text-lg transition-colors group-hover:text-primary">{service.name}</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -33,7 +30,7 @@ export default function PopularServices() {
                                 variant="outline"
                                 size="sm"
                                 className="w-full group-hover:border-blue-300 group-hover:bg-blue-50"
-                                onClick={() => router.visit(route('public.services'))}
+                                onClick={() => router.visit(route('home.bookings.service', service.id))}
                             >
                                 Ver Disponibilidad
                             </Button>

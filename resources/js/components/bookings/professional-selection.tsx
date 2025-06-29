@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProfessionals } from '@/hooks/use-professionals';
 import { ArrowLeft, Calendar, Clock, DollarSign, User } from 'lucide-react';
 import React, { useState } from 'react';
+import { WeeklyDatePicker } from './weekly-date-picker';
 
 interface ProfessionalSelectionProps {
     service: any;
@@ -56,23 +57,15 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                 )}
 
                 {/* Date Selection */}
-                <Card className="mb-8 bg-card">
-                    <CardHeader>
-                        <CardTitle className="flex items-center">
+                <div className="mb-8">
+                    <div className="mb-4">
+                        <h2 className="flex items-center text-xl font-semibold text-foreground">
                             <Calendar className="mr-2 h-5 w-5" />
                             Selecciona una fecha
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full rounded-lg border border-secondary p-3 focus:border-transparent focus:ring-2 focus:ring-primary"
-                        />
-                    </CardContent>
-                </Card>
+                        </h2>
+                    </div>
+                    <WeeklyDatePicker selectedDate={selectedDate} onDateSelect={setSelectedDate} />
+                </div>
 
                 {/* Professionals */}
                 <div className="mb-6">

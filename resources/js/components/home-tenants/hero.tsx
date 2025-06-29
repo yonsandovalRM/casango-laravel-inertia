@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { CompanyResource } from '@/interfaces/company';
+import { useCompany } from '@/hooks/use-company';
 import { ArrowUpRight, Calendar, Clock, MapPin, Phone } from 'lucide-react';
 
 const branches = [
@@ -15,8 +15,8 @@ const branches = [
     },
 ];
 
-const Hero = ({ company }: { company: CompanyResource }) => {
-    console.log(company);
+const Hero = () => {
+    const company = useCompany();
     return (
         <section id="inicio" className="relative overflow-hidden pt-20 pb-16">
             {/* Background Image */}

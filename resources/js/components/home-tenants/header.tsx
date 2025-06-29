@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useAppearance } from '@/hooks/use-appearance';
-import { CompanyResource } from '@/interfaces/company';
+import { useCompany } from '@/hooks/use-company';
 import { router } from '@inertiajs/react';
 import { Menu, MoonIcon, SunIcon, X } from 'lucide-react';
 import { useState } from 'react';
@@ -12,7 +12,8 @@ const companyData = {
     logo: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=50&h=50&fit=crop&crop=center',
 };
 
-const Header = ({ company }: { company: CompanyResource }) => {
+const Header = () => {
+    const company = useCompany();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { appearance, updateAppearance } = useAppearance();
     const { t } = useTranslation();
