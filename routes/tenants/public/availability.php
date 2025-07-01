@@ -3,6 +3,7 @@
 use App\Http\Controllers\AvailabilityController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::prefix('availability')->group(function () {
     // Obtener profesionales disponibles para un servicio en una fecha
     Route::get('/professionals', [AvailabilityController::class, 'getAvailableProfessionals'])

@@ -41,10 +41,15 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $company = null;
+
+        if (tenancy()->initialized) {
+            $company = Company::first();
+        }
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'company' => CompanyResource::make(Company::first())->toArray(request()),
+            'company' => $company ? CompanyResource::make($company)->toArray(request()) : null,
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user() ? [

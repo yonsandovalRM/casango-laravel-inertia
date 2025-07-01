@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('client_id');
             $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
             $table->uuid('professional_id');
-            $table->foreign('professional_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('professional_id')->references('id')->on('professionals')->onDelete('cascade');
             $table->uuid('service_id');
             $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->decimal('price', 10, 2);
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('total', 10, 2);
             $table->date('date');
             $table->time('time');
+            $table->string('notes')->nullable();
             $table->string('status')->default('pending');
             $table->string('payment_status')->default('pending');
             $table->string('payment_method')->nullable();

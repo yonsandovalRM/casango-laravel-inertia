@@ -18,7 +18,7 @@ const Services = ({ company }: { company: CompanyResource }) => {
     const { categories, filteredServices } = useServices(searchTerm, selectedCategory, sortBy);
 
     const handleServiceSelect = (service: any) => {
-        router.visit(route('public.reservation-wizard', { service_id: service.id }));
+        router.visit(route('home.bookings.service', service.id));
     };
 
     return (

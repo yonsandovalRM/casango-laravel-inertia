@@ -188,6 +188,7 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                                             ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
                                                             : 'border-secondary bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/90'
                                                     } `}
+                                                    disabled={!timeSlot.available}
                                                     onClick={() =>
                                                         handleTimeSelect({
                                                             time: timeSlot.time || timeSlot,
@@ -225,6 +226,7 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                                             ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
                                                             : 'border-secondary bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/90'
                                                     } `}
+                                                    disabled={!timeSlot.available}
                                                     onClick={() =>
                                                         handleTimeSelect({
                                                             time: timeSlot.time || timeSlot,
@@ -263,8 +265,8 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="font-semibold">Horario seleccionado:</p>
-                                        <p className="text-blue-600">
-                                            {selectedTime.time} - {selectedTime.period === 'morning' ? 'Mañana' : 'Tarde'}
+                                        <p className="text-foreground">
+                                            {selectedTime.time} - {selectedTime.period === 'morning' ? 'Por la mañana' : 'Por la tarde'}
                                         </p>
                                     </div>
                                     <div className="flex gap-3">

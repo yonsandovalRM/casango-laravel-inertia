@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useCompany } from '@/hooks/use-company';
+import { SharedData } from '@/types';
+import { router, useForm, usePage } from '@inertiajs/react';
 import { ArrowLeft, Calendar, CheckCircle, Clock, DollarSign, LogIn, Mail, Phone, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
@@ -31,155 +33,115 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
     hideHeader = false,
 }) => {
     const company = useCompany();
+    const { auth } = usePage<SharedData>().props;
 
     const [bookingData, setBookingData] = useState({
-        name: '',
-        email: '',
+        name: auth?.user?.name || '',
+        email: auth?.user?.email || '',
         phone: '',
         notes: '',
     });
-    const [loginData, setLoginData] = useState({
-        email: '',
-        password: '',
-    });
-    const [registerData, setRegisterData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-    });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [activeTab, setActiveTab] = useState('login');
+
+    // Forms de Inertia para login y registro
+    const loginForm = useForm({
+        email: '',
+        password: '',
+    });
+
+    const registerForm = useForm({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        password_confirmation: '',
+    });
 
     const finalPrice = availability?.service?.price || service.price;
     const finalDuration = availability?.service?.duration || service.duration;
 
-    const handleInputChange = (field: string, value: string, type: 'booking' | 'login' | 'register' = 'booking') => {
-        if (type === 'booking') {
-            setBookingData((prev) => ({ ...prev, [field]: value }));
-        } else if (type === 'login') {
-            setLoginData((prev) => ({ ...prev, [field]: value }));
-        } else if (type === 'register') {
-            setRegisterData((prev) => ({ ...prev, [field]: value }));
-        }
+    const handleInputChange = (field: string, value: string) => {
+        setBookingData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleLogin = async () => {
-        if (!loginData.email || !loginData.password) {
-            toast.error('Error', {
-                description: 'Por favor completa todos los campos',
-            });
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        // Simular autenticación
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-
-            console.log('Login:', loginData);
-
-            setIsLoggedIn(true);
-            setBookingData((prev) => ({
-                ...prev,
-                name: 'Usuario Logueado',
-                email: loginData.email,
-                phone: '+57 300 123 4567', // Datos simulados del usuario
-            }));
-
-            toast.success('¡Bienvenido!', {
-                description: 'Has iniciado sesión correctamente',
-            });
-        } catch (error) {
-            toast.error('Error', {
-                description: 'Credenciales incorrectas',
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
+    const handleLogin = () => {
+        loginForm.post(route('auth.login-inline'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('¡Bienvenido!', {
+                    description: 'Has iniciado sesión correctamente',
+                });
+            },
+            onError: (errors) => {
+                toast.error('Error', {
+                    description: errors.email || errors.password || 'Credenciales incorrectas',
+                });
+            },
+        });
     };
 
-    const handleRegister = async () => {
-        if (!registerData.name || !registerData.email || !registerData.password || !registerData.confirmPassword) {
-            toast.error('Error', {
-                description: 'Por favor completa todos los campos',
-            });
-            return;
-        }
-
-        if (registerData.password !== registerData.confirmPassword) {
-            toast.error('Error', {
-                description: 'Las contraseñas no coinciden',
-            });
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        // Simular registro
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-
-            console.log('Register:', registerData);
-
-            setIsLoggedIn(true);
-            setBookingData((prev) => ({
-                ...prev,
-                name: registerData.name,
-                email: registerData.email,
-                phone: '+57 300 123 4567', // Teléfono por defecto
-            }));
-
-            toast.success('¡Cuenta creada!', {
-                description: 'Tu cuenta ha sido creada exitosamente',
-            });
-        } catch (error) {
-            toast.error('Error', {
-                description: 'Error al crear la cuenta',
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
+    const handleRegister = () => {
+        registerForm.post(route('auth.register-inline'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('¡Cuenta creada!', {
+                    description: 'Tu cuenta ha sido creada exitosamente',
+                });
+                setBookingData({
+                    name: registerForm.data.name,
+                    email: registerForm.data.email,
+                    phone: '',
+                    notes: '',
+                });
+            },
+            onError: (errors) => {
+                toast.error('Error', {
+                    description: Object.values(errors).join(', ') || 'Error al crear la cuenta',
+                });
+            },
+        });
     };
 
     const handleConfirmBooking = async () => {
-        if (!bookingData.name || !bookingData.email || !bookingData.phone) {
+        if (!bookingData.phone) {
             toast.error('Error', {
-                description: 'Por favor completa todos los campos obligatorios',
+                description: 'Por favor ingresa tu número de teléfono',
             });
             return;
         }
 
         setIsSubmitting(true);
 
-        // Simular llamada a API
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-
-            console.log('Reserva confirmada:', {
+        router.post(
+            route('bookings.store'),
+            {
                 service: service.id,
                 professional: professional.id,
                 date: selectedDate,
                 time: selectedTime.time,
                 client: bookingData,
-                price: finalPrice,
-                duration: finalDuration,
-            });
-
-            setIsConfirmed(true);
-            toast.success('¡Reserva confirmada!', {
-                description: 'Tu cita ha sido agendada exitosamente',
-            });
-        } catch (error) {
-            toast.error('Error', {
-                description: 'Hubo un problema al confirmar tu reserva. Inténtalo de nuevo.',
-            });
-        } finally {
-            setIsSubmitting(false);
-        }
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setIsConfirmed(true);
+                    toast.success('¡Reserva confirmada!', {
+                        description: 'Tu cita ha sido agendada exitosamente',
+                    });
+                },
+                onError: (errors) => {
+                    toast.error('Error', {
+                        description: errors.message || 'Hubo un problema al confirmar tu reserva. Inténtalo de nuevo.',
+                    });
+                },
+                onFinish: () => {
+                    setIsSubmitting(false);
+                },
+            },
+        );
     };
 
     if (isConfirmed) {
@@ -280,6 +242,23 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                 </div>
                             </div>
 
+                            {/* User Info (when logged in) */}
+                            {auth.user && (
+                                <div className="rounded-lg bg-accent p-4">
+                                    <h4 className="mb-3 font-semibold">Tus datos</h4>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center">
+                                            <User className="mr-2 h-4 w-4" />
+                                            <span>{auth.user.name}</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <Mail className="mr-2 h-4 w-4" />
+                                            <span>{auth.user.email}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Date & Time */}
                             <div className="space-y-3">
                                 <div className="flex items-center">
@@ -326,12 +305,12 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                     <Card className="bg-card">
                         <CardHeader>
                             <CardTitle className="flex items-center">
-                                {!isLoggedIn ? <LogIn className="mr-2 h-5 w-5" /> : <User className="mr-2 h-5 w-5" />}
-                                {!isLoggedIn ? 'Inicia sesión o regístrate' : 'Información de Contacto'}
+                                {!auth.user ? <LogIn className="mr-2 h-5 w-5" /> : <User className="mr-2 h-5 w-5" />}
+                                {!auth.user ? 'Inicia sesión o regístrate' : 'Información adicional'}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {!isLoggedIn ? (
+                            {!auth.user ? (
                                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                                     <TabsList className="grid w-full grid-cols-2">
                                         <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
@@ -344,25 +323,27 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                             <Input
                                                 id="login-email"
                                                 type="email"
-                                                value={loginData.email}
-                                                onChange={(e) => handleInputChange('email', e.target.value, 'login')}
+                                                value={loginForm.data.email}
+                                                onChange={(e) => loginForm.setData('email', e.target.value)}
                                                 placeholder="tu@email.com"
                                                 className="mt-1"
                                             />
+                                            {loginForm.errors.email && <p className="mt-1 text-sm text-red-500">{loginForm.errors.email}</p>}
                                         </div>
                                         <div>
                                             <Label htmlFor="login-password">Contraseña</Label>
                                             <Input
                                                 id="login-password"
                                                 type="password"
-                                                value={loginData.password}
-                                                onChange={(e) => handleInputChange('password', e.target.value, 'login')}
+                                                value={loginForm.data.password}
+                                                onChange={(e) => loginForm.setData('password', e.target.value)}
                                                 placeholder="Tu contraseña"
                                                 className="mt-1"
                                             />
+                                            {loginForm.errors.password && <p className="mt-1 text-sm text-red-500">{loginForm.errors.password}</p>}
                                         </div>
-                                        <Button onClick={handleLogin} disabled={isSubmitting} className="w-full">
-                                            {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                                        <Button onClick={handleLogin} disabled={loginForm.processing} className="w-full">
+                                            {loginForm.processing ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                                         </Button>
                                     </TabsContent>
 
@@ -371,80 +352,71 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                             <Label htmlFor="register-name">Nombre completo</Label>
                                             <Input
                                                 id="register-name"
-                                                value={registerData.name}
-                                                onChange={(e) => handleInputChange('name', e.target.value, 'register')}
+                                                value={registerForm.data.name}
+                                                onChange={(e) => registerForm.setData('name', e.target.value)}
                                                 placeholder="Tu nombre completo"
                                                 className="mt-1"
                                             />
+                                            {registerForm.errors.name && <p className="mt-1 text-sm text-red-500">{registerForm.errors.name}</p>}
                                         </div>
                                         <div>
                                             <Label htmlFor="register-email">Correo electrónico</Label>
                                             <Input
                                                 id="register-email"
                                                 type="email"
-                                                value={registerData.email}
-                                                onChange={(e) => handleInputChange('email', e.target.value, 'register')}
+                                                value={registerForm.data.email}
+                                                onChange={(e) => registerForm.setData('email', e.target.value)}
                                                 placeholder="tu@email.com"
                                                 className="mt-1"
                                             />
+                                            {registerForm.errors.email && <p className="mt-1 text-sm text-red-500">{registerForm.errors.email}</p>}
+                                        </div>
+                                        <div>
+                                            <Label htmlFor="register-phone">Teléfono</Label>
+                                            <Input
+                                                id="register-phone"
+                                                type="tel"
+                                                value={registerForm.data.phone}
+                                                onChange={(e) => registerForm.setData('phone', e.target.value)}
+                                                placeholder="+57 300 123 4567"
+                                                className="mt-1"
+                                            />
+                                            {registerForm.errors.phone && <p className="mt-1 text-sm text-red-500">{registerForm.errors.phone}</p>}
                                         </div>
                                         <div>
                                             <Label htmlFor="register-password">Contraseña</Label>
                                             <Input
                                                 id="register-password"
                                                 type="password"
-                                                value={registerData.password}
-                                                onChange={(e) => handleInputChange('password', e.target.value, 'register')}
+                                                value={registerForm.data.password}
+                                                onChange={(e) => registerForm.setData('password', e.target.value)}
                                                 placeholder="Contraseña"
                                                 className="mt-1"
                                             />
+                                            {registerForm.errors.password && (
+                                                <p className="mt-1 text-sm text-red-500">{registerForm.errors.password}</p>
+                                            )}
                                         </div>
                                         <div>
                                             <Label htmlFor="register-confirm">Confirmar contraseña</Label>
                                             <Input
                                                 id="register-confirm"
                                                 type="password"
-                                                value={registerData.confirmPassword}
-                                                onChange={(e) => handleInputChange('confirmPassword', e.target.value, 'register')}
+                                                value={registerForm.data.password_confirmation}
+                                                onChange={(e) => registerForm.setData('password_confirmation', e.target.value)}
                                                 placeholder="Confirma tu contraseña"
                                                 className="mt-1"
                                             />
                                         </div>
-                                        <Button onClick={handleRegister} disabled={isSubmitting} className="w-full">
-                                            {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta'}
+                                        <Button onClick={handleRegister} disabled={registerForm.processing} className="w-full">
+                                            {registerForm.processing ? 'Creando cuenta...' : 'Crear Cuenta'}
                                         </Button>
                                     </TabsContent>
                                 </Tabs>
                             ) : (
                                 <div className="space-y-4">
                                     <div className="mb-4 rounded-lg bg-accent p-3">
-                                        <p className="text-sm text-green-700">✓ Sesión iniciada correctamente</p>
-                                    </div>
-
-                                    <div>
-                                        <Label htmlFor="name">Nombre completo *</Label>
-                                        <Input
-                                            id="name"
-                                            value={bookingData.name}
-                                            onChange={(e) => handleInputChange('name', e.target.value)}
-                                            placeholder="Tu nombre completo"
-                                            className="mt-1"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <Label htmlFor="email">Correo electrónico *</Label>
-                                        <div className="relative">
-                                            <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                value={bookingData.email}
-                                                onChange={(e) => handleInputChange('email', e.target.value)}
-                                                placeholder="tu@email.com"
-                                                className="mt-1 pl-10"
-                                            />
-                                        </div>
+                                        <p className="text-sm text-green-700">✓ Sesión iniciada como {auth.user.name}</p>
                                     </div>
 
                                     <div>
@@ -477,7 +449,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                     <div className="pt-4">
                                         <Button
                                             onClick={handleConfirmBooking}
-                                            disabled={isSubmitting || !bookingData.name || !bookingData.email || !bookingData.phone}
+                                            disabled={isSubmitting || (!auth.user.phone && !bookingData.phone)}
                                             className="w-full bg-blue-600 hover:bg-blue-700"
                                             size="lg"
                                         >

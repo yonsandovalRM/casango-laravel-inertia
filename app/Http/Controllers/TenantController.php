@@ -101,6 +101,7 @@ class TenantController extends Controller
 
             $this->createSubscription($tenant, $plan);
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
+            $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
             $this->createCompany($tenant);
 
 
@@ -148,6 +149,25 @@ class TenantController extends Controller
 
             $owner = Role::findOrCreate('owner');
             $user->assignRole($owner);
+        });
+    }
+
+    private function createProfessional(Tenant $tenant)
+    {
+        $tenant->run(function () {
+            $user = User::create([
+                'name' => 'Luis Jimenez',
+                'email' => 'lj@pro.com',
+                'password' => bcrypt('password'),
+            ]);
+
+            $professional = Role::findOrCreate('professional');
+            $user->assignRole($professional);
+
+            $user->professional()->create([
+                'title' => 'Dr.',
+                'is_company_schedule' => true,
+            ]);
         });
     }
 

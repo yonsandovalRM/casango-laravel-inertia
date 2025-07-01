@@ -54,7 +54,7 @@ class AvailabilityController extends Controller
     }
 
     /**
-     * Obtener bloques de tiempo disponibles para un profesional específico
+     * Obtener bloques de tiempo para un profesional específico (disponibles y no disponibles)
      */
     public function getProfessionalAvailability(Request $request)
     {
@@ -90,8 +90,8 @@ class AvailabilityController extends Controller
             return response()->json(['time_blocks' => [], 'message' => 'Professional not available on this day']);
         }
 
-        // Generar bloques de tiempo disponibles
-        $timeBlocks = $this->generateAvailableTimeBlocks(
+        // Generar todos los bloques de tiempo posibles (disponibles y no disponibles)
+        $timeBlocks = $this->generateAllTimeBlocks(
             $professional,
             $date,
             $workingHours,
@@ -165,9 +165,9 @@ class AvailabilityController extends Controller
     }
 
     /**
-     * Generar bloques de tiempo disponibles
+     * Generar TODOS los bloques de tiempo (disponibles y no disponibles)
      */
-    private function generateAvailableTimeBlocks($professional, $date, $workingHours, $serviceDuration, $preparationTime = 0, $postServiceTime = 0)
+    private function generateAllTimeBlocks($professional, $date, $workingHours, $serviceDuration, $preparationTime = 0, $postServiceTime = 0)
     {
         $totalServiceTime = $serviceDuration + $preparationTime + $postServiceTime;
 
@@ -195,10 +195,16 @@ class AvailabilityController extends Controller
         $currentTime = $startTime->copy();
 
         while ($currentTime->copy()->addMinutes($totalServiceTime) <= $endTime) {
+            $isAvailable = true;
+            $reason = null;
+
             // Verificar si está en horario de descanso
             if ($workingHours['has_break'] && $this->isInBreakTime($currentTime, $totalServiceTime, $workingHours)) {
-                // Avanzar al final del descanso si el servicio no cabe antes
                 if ($this->serviceWouldOverlapBreak($currentTime, $totalServiceTime, $workingHours)) {
+                    $isAvailable = false;
+                    $reason = 'break_time';
+
+                    // Avanzar al final del descanso si el servicio no cabe antes
                     $breakEnd = Carbon::parse($date->format('Y-m-d') . ' ' . $workingHours['break_end_time']);
                     $currentTime = $breakEnd->copy();
                     continue;
@@ -206,21 +212,28 @@ class AvailabilityController extends Controller
             }
 
             // Verificar si hay conflictos con reservas existentes
-            if (!$this->hasBookingConflict($currentTime, $totalServiceTime, $existingBookings)) {
-                // Verificar si hay conflictos con excepciones
-                if (!$this->hasExceptionConflict($currentTime, $totalServiceTime, $exceptions)) {
-                    $timeSlot = [
-                        'time' => $currentTime->format('H:i'),
-                        'available' => true,
-                        'period' => $currentTime->format('H') < 12 ? 'morning' : 'afternoon'
-                    ];
+            if ($this->hasBookingConflict($currentTime, $totalServiceTime, $existingBookings)) {
+                $isAvailable = false;
+                $reason = 'existing_booking';
+            }
 
-                    if ($timeSlot['period'] === 'morning') {
-                        $timeBlocks['morning'][] = $timeSlot;
-                    } else {
-                        $timeBlocks['afternoon'][] = $timeSlot;
-                    }
-                }
+            // Verificar si hay conflictos con excepciones
+            if ($this->hasExceptionConflict($currentTime, $totalServiceTime, $exceptions)) {
+                $isAvailable = false;
+                $reason = 'exception';
+            }
+
+            $timeSlot = [
+                'time' => $currentTime->format('H:i'),
+                'available' => $isAvailable,
+                'reason' => $reason,
+                'period' => $currentTime->format('H') < 12 ? 'morning' : 'afternoon'
+            ];
+
+            if ($timeSlot['period'] === 'morning') {
+                $timeBlocks['morning'][] = $timeSlot;
+            } else {
+                $timeBlocks['afternoon'][] = $timeSlot;
             }
 
             // Avanzar exactamente la duración total del servicio

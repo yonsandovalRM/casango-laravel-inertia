@@ -26,23 +26,26 @@ Route::middleware([
     InitializeTenancyByDomain::class,
     PreventAccessFromCentralDomains::class,
 ])->group(function () {
+
     Route::get('/', [TenantHomeController::class, 'index'])->name('home');
-
-    Route::get('company', [CompanyController::class, 'index'])->name('company.index');
-    Route::put('company', [CompanyController::class, 'update'])->name('company.update');
-
     require __DIR__ . '/auth.php';
-    require __DIR__ . '/settings.php';
-    require __DIR__ . '/common/invitations.php';
-    require __DIR__ . '/common/users.php';
-    require __DIR__ . '/tenants/services.php';
-    require __DIR__ . '/tenants/categories.php';
-    require __DIR__ . '/tenants/professionals.php';
-    require __DIR__ . '/tenants/bookings.php';
-    require __DIR__ . '/tenants/availability.php';
-    require __DIR__ . '/tenants/public-pages.php';
+    require __DIR__ . '/tenants/public/services.php';
+    require __DIR__ . '/tenants/public/bookings.php';
+    require __DIR__ . '/tenants/public/availability.php';
+    require __DIR__ . '/tenants/public/auth-inline.php';
 
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+
+    Route::middleware('auth')->group(function () {
+        Route::get('dashboard', function () {
+            return Inertia::render('dashboard');
+        })->name('dashboard');
+        require __DIR__ . '/tenants/company.php';
+        require __DIR__ . '/settings.php';
+        require __DIR__ . '/common/invitations.php';
+        require __DIR__ . '/common/users.php';
+        require __DIR__ . '/tenants/services.php';
+        require __DIR__ . '/tenants/categories.php';
+        require __DIR__ . '/tenants/professionals.php';
+        require __DIR__ . '/tenants/bookings.php';
+    });
 });

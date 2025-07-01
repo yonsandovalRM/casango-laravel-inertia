@@ -19,6 +19,7 @@ class Booking extends Model
         'total',
         'date',
         'time',
+        'notes',
         'status',
         'payment_status',
         'payment_method',

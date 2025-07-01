@@ -34,12 +34,13 @@ export type ProfessionalServicesFormData = {
 export interface TimeSlot {
     time: string;
     available: boolean;
+    reason?: string;
     period: 'morning' | 'afternoon';
 }
 
 export interface TimeBlocks {
-    morning: (string | TimeSlot)[];
-    afternoon: (string | TimeSlot)[];
+    morning: TimeSlot[];
+    afternoon: TimeSlot[];
 }
 
 export interface ProfessionalAvailability {

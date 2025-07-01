@@ -129,20 +129,20 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                                         </div>
                                     </div>
 
-                                    {professional.bio && <p className="mb-3 line-clamp-2 text-sm text-gray-600">{professional.bio}</p>}
+                                    {professional.bio && <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">{professional.bio}</p>}
                                 </CardHeader>
 
                                 <CardContent>
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center text-sm text-gray-600">
+                                            <div className="flex items-center text-sm text-muted-foreground">
                                                 <DollarSign className="mr-1 h-4 w-4" />
                                                 Precio personalizado
                                             </div>
                                             <Badge variant="outline">Disponible</Badge>
                                         </div>
 
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className="flex items-center text-sm text-muted-foreground">
                                             <Clock className="mr-1 h-4 w-4" />
                                             Duración personalizada disponible
                                         </div>
