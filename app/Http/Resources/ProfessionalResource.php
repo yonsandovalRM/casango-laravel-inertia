@@ -20,6 +20,8 @@ class ProfessionalResource extends JsonResource
             'photo' => $this->photo,
             'bio' => $this->bio,
             'title' => $this->title,
+            'profession' => $this->profession,
+            'specialty' => $this->specialty,
             'is_company_schedule' => $this->is_company_schedule,
             'user' => new UserResource($this->user)->only('id', 'name', 'email'),
             'exceptions' => $this->whenLoaded('exceptions', fn() => ExceptionResource::collection($this->exceptions)->toArray($request)),

@@ -74,6 +74,12 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                 toast.success('¡Bienvenido!', {
                     description: 'Has iniciado sesión correctamente',
                 });
+                setBookingData({
+                    name: auth.user.name,
+                    email: auth.user.email,
+                    phone: '',
+                    notes: '',
+                });
             },
             onError: (errors) => {
                 toast.error('Error', {

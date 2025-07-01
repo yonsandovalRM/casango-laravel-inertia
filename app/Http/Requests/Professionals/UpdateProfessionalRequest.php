@@ -25,6 +25,8 @@ class UpdateProfessionalRequest extends FormRequest
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'bio' => 'nullable|string',
             'title' => 'nullable|string',
+            'profession' => 'nullable|string',
+            'specialty' => 'nullable|string',
             'is_company_schedule' => 'nullable|boolean',
         ];
     }

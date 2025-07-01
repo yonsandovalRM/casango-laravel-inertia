@@ -1,10 +1,11 @@
 import { User } from '@/types';
+import { ProfessionalResource } from './professional';
 import { ServiceResource } from './service';
 
 export interface BookingResource {
     id: string;
     client: User;
-    professional: User;
+    professional: ProfessionalResource;
     service: ServiceResource;
     price: number;
     discount: number;

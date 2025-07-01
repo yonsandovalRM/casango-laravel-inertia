@@ -40,6 +40,16 @@ export function FormProfessional({ professionals }: { professionals: Professiona
                                         <Input value={data.title} onChange={(e) => setData({ ...data, title: e.target.value })} />
                                         <InputError message={errors.title} />
                                     </div>
+                                    <div>
+                                        <Label>{t('professionals.form.profession')}</Label>
+                                        <Input value={data.profession} onChange={(e) => setData({ ...data, profession: e.target.value })} />
+                                        <InputError message={errors.profession} />
+                                    </div>
+                                    <div>
+                                        <Label>{t('professionals.form.specialty')}</Label>
+                                        <Input value={data.specialty} onChange={(e) => setData({ ...data, specialty: e.target.value })} />
+                                        <InputError message={errors.specialty} />
+                                    </div>
 
                                     <div className="flex items-center gap-2">
                                         <Checkbox

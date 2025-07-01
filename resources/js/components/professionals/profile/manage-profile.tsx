@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -17,8 +18,10 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
     const photoInputRef = useRef<HTMLInputElement>(null);
     const { data, setData, post, errors, processing } = useForm({
         photo: professional?.photo ? new File([], professional.photo as string) : null,
-        bio: professional.bio,
+        bio: professional.bio || '',
         title: professional.title,
+        profession: professional.profession || '',
+        specialty: professional.specialty || '',
         is_company_schedule: professional.is_company_schedule,
     });
 
@@ -126,6 +129,8 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                                             {professional.user.name}
                                         </h3>
                                         <p className="text-sm text-muted-foreground">{professional.user.email}</p>
+                                        {professional.profession && <p className="text-sm text-muted-foreground">{professional.profession}</p>}
+                                        {professional.specialty && <p className="text-sm text-muted-foreground">{professional.specialty}</p>}
                                     </div>
                                 </div>
 
@@ -162,6 +167,14 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                                             rows={4}
                                             className="resize-none"
                                         />
+                                    </div>
+                                    <div>
+                                        <Label>{t('professional.profile.form.profession')}</Label>
+                                        <Input value={data.profession} onChange={(e) => setData('profession', e.target.value)} />
+                                    </div>
+                                    <div>
+                                        <Label>{t('professional.profile.form.specialty')}</Label>
+                                        <Input value={data.specialty} onChange={(e) => setData('specialty', e.target.value)} />
                                     </div>
 
                                     <div className="flex items-center gap-2">
@@ -202,10 +215,13 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                                         {professional.user.name}
                                     </h3>
                                     <p className="text-sm text-muted-foreground">{professional.user.email}</p>
+                                    {professional.profession && <p className="text-sm text-muted-foreground">{professional.profession}</p>}
+                                    {professional.specialty && <p className="text-sm text-muted-foreground">{professional.specialty}</p>}
                                 </div>
                             </div>
                             <div className="flex flex-col gap-4">
                                 <div className="text-sm text-muted-foreground">{professional.bio}</div>
+
                                 <div className="text-sm text-muted-foreground">
                                     {professional.is_company_schedule ? 'Trabajo a tiempo completo' : 'Trabajo a tiempo parcial'}
                                 </div>

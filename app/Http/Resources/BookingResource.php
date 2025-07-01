@@ -10,9 +10,9 @@ class BookingResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'client' => new UserResource($this->client),
-            'professional' => new ProfessionalResource($this->professional),
-            'service' => new ServiceResource($this->service),
+            'client' => UserResource::make($this->client)->toArray(request()),
+            'professional' => ProfessionalResource::make($this->professional)->toArray(request()),
+            'service' => ServiceResource::make($this->service)->toArray(request()),
             'price' => $this->price,
             'discount' => $this->discount,
             'total' => $this->total,

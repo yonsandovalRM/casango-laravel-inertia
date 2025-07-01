@@ -62,6 +62,16 @@ export function ManageProfessional({ professionals, t }: ManageProfessionalProps
                                                 {professional.bio}
                                             </CardDescription>
                                         )}
+                                        {professional.profession && (
+                                            <CardDescription className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                                                {professional.profession}
+                                            </CardDescription>
+                                        )}
+                                        {professional.specialty && (
+                                            <CardDescription className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                                                {professional.specialty}
+                                            </CardDescription>
+                                        )}
                                     </div>
                                     <div className="ml-2 flex items-center gap-1">
                                         <Button

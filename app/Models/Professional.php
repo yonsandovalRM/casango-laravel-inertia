@@ -18,6 +18,8 @@ class Professional extends Model
         'photo',
         'bio',
         'title',
+        'profession',
+        'specialty',
         'is_company_schedule',
     ];
 

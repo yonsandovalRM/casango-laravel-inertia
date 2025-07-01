@@ -3,9 +3,11 @@ import { UserResource } from './user';
 
 export interface ProfessionalResource {
     id: string;
-    photo: string;
-    bio: string;
+    photo?: string;
+    bio?: string;
     title: string;
+    profession?: string;
+    specialty?: string;
     is_company_schedule: boolean;
     user: UserResource;
     exceptions: ExceptionResource[];
@@ -16,6 +18,8 @@ export type ProfessionalFormData = {
     photo: string;
     bio: string;
     title: string;
+    profession: string;
+    specialty: string;
     is_company_schedule: boolean;
 };
 

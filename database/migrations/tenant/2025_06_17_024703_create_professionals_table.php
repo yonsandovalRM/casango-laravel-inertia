@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->string('bio')->nullable();
             $table->string('title')->default('Sr.');
+            $table->string('profession')->nullable();
+            $table->string('specialty')->nullable();
             $table->boolean('is_company_schedule')->default(false);
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
