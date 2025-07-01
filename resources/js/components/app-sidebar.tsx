@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Building2, Folder, LayoutGrid, Package, Tags, Users } from 'lucide-react';
+import { BookOpen, Building2, Calendar, Folder, LayoutGrid, Package, Tags, Users } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
@@ -35,6 +35,18 @@ function AppSidebar({ t }: { t: any }) {
             href: route('professional.me'),
             icon: Users,
             permission: ROLES.professional,
+        },
+        {
+            title: t('ui.menu.client_bookings'),
+            href: route('bookings.client'),
+            icon: Calendar,
+            permission: null,
+        },
+        {
+            title: t('ui.menu.professional_bookings'),
+            href: route('bookings.professional'),
+            icon: Calendar,
+            permission: null,
         },
     ];
 

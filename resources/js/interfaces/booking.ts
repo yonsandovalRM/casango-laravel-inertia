@@ -11,8 +11,9 @@ export interface BookingResource {
     total: number;
     date: string;
     time: string;
-    status: string;
-    payment_status?: string;
+    notes?: string;
+    status: 'pending' | 'confirmed' | 'cancelled';
+    payment_status?: 'pending' | 'paid' | 'failed';
     payment_method?: string;
     payment_id?: string;
 }

@@ -11,13 +11,14 @@ class BookingResource extends JsonResource
         return [
             'id' => $this->id,
             'client' => new UserResource($this->client),
-            'professional' => new UserResource($this->professional),
+            'professional' => new ProfessionalResource($this->professional),
             'service' => new ServiceResource($this->service),
             'price' => $this->price,
             'discount' => $this->discount,
             'total' => $this->total,
             'date' => $this->date,
             'time' => $this->time,
+            'notes' => $this->notes,
             'status' => $this->status,
             'payment_status' => $this->payment_status,
         ];

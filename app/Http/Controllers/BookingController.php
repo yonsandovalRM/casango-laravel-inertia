@@ -21,17 +21,21 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function client()
     {
         $user = User::find(Auth::user()->id);
-        $bookings = [];
+        $bookings = Booking::where('client_id', $user->id)->get();
 
-        if ($user->hasRole('professional')) {
-            $bookings = Booking::where('professional_id', $user->id)->get();
-        } else {
-            $bookings = Booking::where('client_id', $user->id)->get();
-        }
-        return Inertia::render('bookings/index', [
+        return Inertia::render('bookings/client', [
+            'bookings' => BookingResource::collection($bookings)->toArray(request()),
+        ]);
+    }
+
+    public function professional()
+    {
+        $user = User::find(Auth::user()->id);
+        $bookings = Booking::where('professional_id', $user->id)->get();
+        return Inertia::render('bookings/professional', [
             'bookings' => BookingResource::collection($bookings)->toArray(request()),
         ]);
     }
