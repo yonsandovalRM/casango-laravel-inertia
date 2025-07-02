@@ -9,8 +9,8 @@ export default function FiltersBookings({ bookings }: { bookings: BookingResourc
     return (
         <Card>
             <CardContent className="p-4">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-                    <div className="relative">
+                <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-4">
+                    <div className="relative flex items-center">
                         <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                         <Input placeholder="Buscar por servicio, profesional o cliente..." className="pl-10" />
                     </div>
