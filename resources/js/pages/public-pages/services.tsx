@@ -29,7 +29,7 @@ const Services = ({ company }: { company: CompanyResource }) => {
                 <div className="mx-auto max-w-6xl">
                     {/* Header */}
                     <div className="mb-8 text-center">
-                        <h1 className="mb-2 text-5xl font-bold text-foreground">Encuentra el servicio que necesitas</h1>
+                        <h1 className="mb-2 font-outfit text-5xl font-bold text-foreground">Encuentra el servicio que necesitas</h1>
                         <p className="text-lg text-muted-foreground">Encuentra y reserva servicios con los mejores profesionales</p>
                     </div>
 

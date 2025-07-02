@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { useAppearance } from '@/hooks/use-appearance';
+import { useAuth } from '@/hooks/use-auth';
 import { useCompany } from '@/hooks/use-company';
-import { router } from '@inertiajs/react';
-import { Menu, MoonIcon, SunIcon, X } from 'lucide-react';
+import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
+import { Link, router } from '@inertiajs/react';
+import { LogOut, Menu, MoonIcon, SunIcon, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,10 +16,17 @@ const companyData = {
 
 const Header = () => {
     const company = useCompany();
+    const { auth } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { appearance, updateAppearance } = useAppearance();
     const { t } = useTranslation();
 
+    const cleanup = useMobileNavigation();
+
+    const handleLogout = () => {
+        cleanup();
+        router.flushAll();
+    };
     return (
         <header className="fixed top-0 z-50 w-full bg-background shadow-lg">
             <div className="container mx-auto">
@@ -50,10 +59,31 @@ const Header = () => {
                         <Button variant="ghost" onClick={() => updateAppearance(appearance === 'light' ? 'dark' : 'light')}>
                             {appearance === 'light' ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
                         </Button>
-                        <Button variant="ghost" className="text-foreground" onClick={() => router.visit(route('login'))}>
-                            Iniciar Sesión
-                        </Button>
-                        <Button>Reservar Cita</Button>
+
+                        {auth.user ? (
+                            <>
+                                <Button variant="ghost" className="text-foreground" onClick={() => router.visit(route('bookings.client'))}>
+                                    Mis Reservas
+                                </Button>
+                                <Link
+                                    className="inline-flex h-9 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] outline-none hover:bg-accent hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 has-[>svg]:px-3 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+                                    method="post"
+                                    href={route('logout')}
+                                    as="button"
+                                    onClick={handleLogout}
+                                >
+                                    <LogOut className="mr-2" />
+                                    Cerrar Sesión
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Button variant="ghost" className="text-foreground" onClick={() => router.visit(route('login'))}>
+                                    Iniciar Sesión
+                                </Button>
+                                <Button>Reservar Cita</Button>
+                            </>
+                        )}
                     </div>
 
                     {/* Mobile menu button */}

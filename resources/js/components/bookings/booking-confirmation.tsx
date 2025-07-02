@@ -6,11 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/hooks/use-auth';
 import { useCompany } from '@/hooks/use-company';
-import { SharedData } from '@/types';
-import { router, useForm, usePage } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, CheckCircle, Clock, DollarSign, LogIn, Mail, Phone, User } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface BookingConfirmationProps {
@@ -33,7 +33,18 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
     hideHeader = false,
 }) => {
     const company = useCompany();
-    const { auth } = usePage<SharedData>().props;
+    const { auth } = useAuth();
+
+    useEffect(() => {
+        if (auth.user) {
+            setBookingData({
+                name: auth.user.name,
+                email: auth.user.email,
+                phone: '',
+                notes: '',
+            });
+        }
+    }, [auth]);
 
     const [bookingData, setBookingData] = useState({
         name: auth?.user?.name || '',
@@ -73,12 +84,6 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             onSuccess: () => {
                 toast.success('¡Bienvenido!', {
                     description: 'Has iniciado sesión correctamente',
-                });
-                setBookingData({
-                    name: auth.user.name,
-                    email: auth.user.email,
-                    phone: '',
-                    notes: '',
                 });
             },
             onError: (errors) => {
@@ -250,16 +255,19 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
 
                             {/* User Info (when logged in) */}
                             {auth.user && (
-                                <div className="rounded-lg bg-accent p-4">
-                                    <h4 className="mb-3 font-semibold">Tus datos</h4>
-                                    <div className="space-y-2">
-                                        <div className="flex items-center">
-                                            <User className="mr-2 h-4 w-4" />
-                                            <span>{auth.user.name}</span>
+                                <div className="space-y-3">
+                                    <div className="flex items-center">
+                                        <User className="mr-2 h-4 w-4 text-blue-600" />
+                                        <div>
+                                            <p className="font-medium">Nombre</p>
+                                            <p className="text-sm text-muted-foreground">{auth.user.name}</p>
                                         </div>
-                                        <div className="flex items-center">
-                                            <Mail className="mr-2 h-4 w-4" />
-                                            <span>{auth.user.email}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <Mail className="mr-2 h-4 w-4 text-blue-600" />
+                                        <div>
+                                            <p className="font-medium">Correo electrónico</p>
+                                            <p className="text-sm text-muted-foreground">{auth.user.email}</p>
                                         </div>
                                     </div>
                                 </div>

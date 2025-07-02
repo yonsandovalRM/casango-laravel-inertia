@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Building2, Calendar, Folder, LayoutGrid, Package, Tags, Users } from 'lucide-react';
+import { BookOpen, Building2, Calendar, Globe, LayoutGrid, Package, Tags, Users } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
@@ -85,9 +85,9 @@ function AppSidebar({ t }: { t: any }) {
     ];
     const footerNavItems: NavItem[] = [
         {
-            title: t('ui.menu.repository'),
-            href: 'https://github.com/laravel/react-starter-kit',
-            icon: Folder,
+            title: t('ui.menu.website'),
+            href: route('home'),
+            icon: Globe,
         },
         {
             title: t('ui.menu.documentation'),

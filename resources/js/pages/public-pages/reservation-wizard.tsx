@@ -4,17 +4,17 @@ import { TimeSelection } from '@/components/bookings/time-selection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import BookingLayout from '@/layouts/booking-layout';
+import { router } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle, Clock, User } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface ReservationWizardProps {
     service: any;
-    onBack: () => void;
 }
 
 type Step = 'professional' | 'time' | 'confirmation';
 
-export default function ReservationWizard({ service, onBack }: ReservationWizardProps) {
+export default function ReservationWizard({ service }: ReservationWizardProps) {
     const [currentStep, setCurrentStep] = useState<Step>('professional');
     const [selectedProfessional, setSelectedProfessional] = useState(null);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -55,7 +55,7 @@ export default function ReservationWizard({ service, onBack }: ReservationWizard
                 <div className="mx-auto max-w-6xl">
                     {/* Header */}
                     <div className="mb-6 flex items-center">
-                        <Button variant="ghost" onClick={onBack} className="mr-4 hover:bg-background">
+                        <Button variant="ghost" onClick={() => router.visit(route('home.bookings'))} className="mr-4 hover:bg-background">
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Volver a servicios
                         </Button>
