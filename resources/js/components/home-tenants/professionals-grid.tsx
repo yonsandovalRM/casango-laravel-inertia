@@ -65,7 +65,7 @@ const ProfessionalsGrid = () => {
         <section id="profesionales" className="bg-background px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-12 text-center">
-                    <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">Nuestros Profesionales</h2>
+                    <h2 className="mb-4 font-outfit text-4xl font-bold text-foreground">Nuestros Profesionales</h2>
                     <p className="mx-auto max-w-2xl text-xl text-muted-foreground">
                         Contamos con un equipo de especialistas altamente calificados, comprometidos con brindarte la mejor atención profesional.
                     </p>

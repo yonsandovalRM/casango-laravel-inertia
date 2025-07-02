@@ -24,7 +24,7 @@ class BookingController extends Controller
     public function client()
     {
         $user = User::find(Auth::user()->id);
-        $bookings = Booking::where('client_id', $user->id)->get();
+        $bookings = Booking::where('client_id', $user->id)->orderBy('date', 'asc')->get();
 
         return Inertia::render('bookings/client', [
             'bookings' => BookingResource::collection($bookings)->toArray(request()),
@@ -40,13 +40,7 @@ class BookingController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -84,28 +78,16 @@ class BookingController extends Controller
         return redirect()->back()->with('success', __('booking.created'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Booking $booking)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Booking $booking)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateBookingRequest $request, Booking $booking)
     {
-        //
+        $booking->update($request->validated());
+
+        return redirect()->back()->with('success', __('booking.updated'));
     }
 
     /**

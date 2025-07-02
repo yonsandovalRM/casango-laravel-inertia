@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Bookings;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\BookingStatus;
 
 class UpdateBookingRequest extends FormRequest
 {

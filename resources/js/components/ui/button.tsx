@@ -19,9 +19,11 @@ const buttonVariants = cva(
           "border border-destructive text-destructive bg-background shadow-xs hover:bg-destructive/10",
         secondary:
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+        success: "bg-green-600 text-white shadow-xs hover:bg-green-700",
         ghost: "hover:bg-accent hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         "soft-destructive": "text-destructive bg-destructive/5 hover:bg-destructive/10",
+        "soft-success": "text-green-600 bg-green-50 hover:bg-green-100 dark:text-green-400 dark:bg-green-950 dark:hover:bg-green-900",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

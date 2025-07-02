@@ -42,7 +42,7 @@ const Hero = () => {
                             {/* <h1 className="text-3xl font-bold text-white sm:text-4xl">{company.name}</h1> */}
                         </div>
 
-                        <h2 className="mb-4 text-2xl font-bold sm:text-3xl">
+                        <h2 className="mb-4 font-outfit text-4xl font-bold sm:text-5xl">
                             <span className="text-foreground">{company.tagline || 'Agrega un slogan para tu empresa.'}</span>
                         </h2>
 
@@ -63,10 +63,9 @@ const Hero = () => {
 
                     {/* Company Info Card */}
                     <div className="rounded-xl border border-border bg-background p-6 shadow-lg">
-                        <h3 className="mb-6 text-xl font-bold text-foreground">Información de utilidad</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 font-outfit text-xl font-bold text-foreground">
                                     <MapPin className="mr-2 h-5 w-5 text-blue-500" />
                                     Nuestras Sucursales
                                 </div>
@@ -86,7 +85,7 @@ const Hero = () => {
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 font-outfit text-xl font-bold text-foreground">
                                     <Clock className="mr-2 h-5 w-5 text-blue-500" />
                                     Horario de Atención
                                 </div>

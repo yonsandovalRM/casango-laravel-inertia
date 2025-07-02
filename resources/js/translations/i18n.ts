@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { auth } from './auth';
+import { bookings } from './bookings';
 import { categories } from './categories';
 import { company } from './company';
 import { plans } from './plans';
@@ -24,6 +25,7 @@ const resources = {
             ...services.en,
             ...categories.en,
             ...professionals.en,
+            ...bookings.en,
         },
     },
     es: {
@@ -37,6 +39,7 @@ const resources = {
             ...services.es,
             ...categories.es,
             ...professionals.es,
+            ...bookings.es,
         },
     },
 };

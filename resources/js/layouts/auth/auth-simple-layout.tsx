@@ -22,7 +22,7 @@ export default function AuthSimpleLayout({ children, title, description }: Props
                         </Link>
 
                         <div className="space-y-2 text-center">
-                            <h1 className="text-xl font-medium">{title}</h1>
+                            <h1 className="font-outfit text-2xl font-medium">{title}</h1>
                             <p className="text-center text-sm text-muted-foreground">{description}</p>
                         </div>
                     </div>
