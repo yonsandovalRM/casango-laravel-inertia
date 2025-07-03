@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookingResource } from '@/interfaces/booking';
+import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -65,7 +66,7 @@ export const RecentBookings = ({ bookings, userType }: RecentBookingsProps) => {
                             </div>
                             <div className="flex flex-col items-end space-y-1">
                                 <Badge variant={getStatusBadgeVariant(booking.status)}>{getStatusText(booking.status)}</Badge>
-                                <span className="text-sm font-medium">${booking.total}</span>
+                                <span className="text-sm font-medium">${formatCurrency(booking.total)}</span>
                             </div>
                         </div>
                     ))}

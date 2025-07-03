@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookingResource } from '@/interfaces/booking';
 import { UserResource } from '@/interfaces/user';
 import AppLayout from '@/layouts/app-layout';
+import { formatCurrency } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -46,33 +47,17 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                     <p className="text-green-100">Gestiona tus reservas y descubre nuevos servicios</p>
                 </div>
 
-                {/* Quick Actions */}
-                <div className="grid gap-4 md:grid-cols-3">
-                    <Button className="flex h-20 flex-col items-center justify-center space-y-2">
-                        <Calendar className="h-6 w-6" />
-                        <span>Nueva Reserva</span>
-                    </Button>
-                    <Button variant="outline" className="flex h-20 flex-col items-center justify-center space-y-2">
-                        <Clock className="h-6 w-6" />
-                        <span>Mis Citas</span>
-                    </Button>
-                    <Button variant="outline" className="flex h-20 flex-col items-center justify-center space-y-2">
-                        <Star className="h-6 w-6" />
-                        <span>Favoritos</span>
-                    </Button>
-                </div>
-
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard title="Total de Reservas" value={stats.totalBookings} icon={Calendar} description="Todas las reservas" />
                     <StatsCard title="Próximas Citas" value={stats.upcomingBookings} icon={Clock} description="Reservas confirmadas" />
                     <StatsCard
                         title="Total Gastado"
-                        value={`$${stats.totalSpent.toLocaleString()}`}
+                        value={`$${formatCurrency(stats.totalSpent)}`}
                         icon={DollarSign}
                         description="Todas las reservas completadas"
                     />
-                    <StatsCard title="Gasto Mensual" value={`$${stats.monthlySpent.toLocaleString()}`} icon={User} description="Este mes" />
+                    <StatsCard title="Gasto Mensual" value={`$${formatCurrency(stats.monthlySpent)}`} icon={User} description="Este mes" />
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
@@ -84,7 +69,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                         <CardContent>
                             {nextBooking ? (
                                 <div className="space-y-4">
-                                    <div className="flex items-center space-x-4 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                    <div className="flex items-center space-x-4 rounded-lg border border-border bg-accent p-4">
                                         <div className="flex-shrink-0">
                                             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                                                 <Calendar className="h-6 w-6 text-blue-600" />
@@ -102,7 +87,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                                         </div>
                                         <div className="text-right">
                                             <Badge variant="default">Confirmada</Badge>
-                                            <p className="mt-2 text-lg font-bold">${nextBooking.total}</p>
+                                            <p className="mt-2 text-lg font-bold">${formatCurrency(nextBooking.total)}</p>
                                         </div>
                                     </div>
                                     <div className="flex space-x-2">
@@ -140,7 +125,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                                             <div>
                                                 <span className="block font-medium">{service.service_name}</span>
                                                 <span className="text-xs text-muted-foreground">
-                                                    {service.count} veces • ${service.total_spent.toLocaleString()}
+                                                    {service.count} veces • ${formatCurrency(service.total_spent)}
                                                 </span>
                                             </div>
                                         </div>
@@ -196,7 +181,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                                 <div>
                                     <p className="text-sm text-muted-foreground">Promedio por Reserva</p>
                                     <p className="font-semibold">
-                                        ${stats.completedBookings > 0 ? (stats.totalSpent / stats.completedBookings).toFixed(0) : '0'}
+                                        ${stats.completedBookings > 0 ? formatCurrency(stats.totalSpent / stats.completedBookings) : '0'}
                                     </p>
                                 </div>
                             </div>

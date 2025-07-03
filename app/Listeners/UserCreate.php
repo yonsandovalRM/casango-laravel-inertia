@@ -24,7 +24,7 @@ class UserCreate
     {
         $user = $event->user;
 
-        $role = Role::findOrCreate('user');
+        $role = Role::findOrCreate('client');
         $user->assignRole($role);
     }
 }

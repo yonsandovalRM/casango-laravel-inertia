@@ -139,7 +139,13 @@ export default function BookingCardTimeline({
 
                         <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
                             <Badge className={getStatusColor(booking.status)}>
-                                {booking.status === 'confirmed' ? 'Confirmada' : booking.status === 'pending' ? 'Pendiente' : 'Cancelada'}
+                                {booking.status === 'confirmed'
+                                    ? 'Confirmada'
+                                    : booking.status === 'pending'
+                                      ? 'Pendiente'
+                                      : booking.status === 'completed'
+                                        ? 'Completada'
+                                        : 'Cancelada'}
                             </Badge>
                             {booking.payment_status && (
                                 <Badge className={getPaymentStatusColor(booking.payment_status)}>

@@ -7,6 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { BookingResource } from '@/interfaces/booking';
 import { ProfessionalResource } from '@/interfaces/professional';
 import AppLayout from '@/layouts/app-layout';
+import { formatCurrency } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -72,7 +73,7 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
                     <StatsCard title="Citas de Hoy" value={stats.todayBookings} icon={Clock} description="Reservas programadas hoy" />
                     <StatsCard
                         title="Ingresos del Mes"
-                        value={`$${stats.monthlyRevenue.toLocaleString()}`}
+                        value={`$${formatCurrency(stats.monthlyRevenue)}`}
                         icon={DollarSign}
                         description="Solo completadas"
                     />
@@ -103,7 +104,7 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
                                 </div>
                                 <div>
                                     <p className="text-sm text-muted-foreground">Valor Promedio</p>
-                                    <p className="font-semibold">${stats.avgBookingValue.toLocaleString()}</p>
+                                    <p className="font-semibold">${formatCurrency(stats.avgBookingValue)}</p>
                                 </div>
                             </div>
                         </CardContent>

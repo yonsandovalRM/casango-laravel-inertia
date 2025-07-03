@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { BookingResource } from '@/interfaces/booking';
 import { UserResource } from '@/interfaces/user';
 import AppLayout from '@/layouts/app-layout';
+import { formatCurrency } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { Award, Calendar, ChevronRight, DollarSign, Star, TrendingUp, UserCheck, Users } from 'lucide-react';
 
@@ -68,7 +69,7 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
                     />
                     <StatsCard
                         title="Ingresos del Mes"
-                        value={`$${stats.monthlyRevenue.toLocaleString()}`}
+                        value={`$${formatCurrency(stats.monthlyRevenue)}`}
                         icon={DollarSign}
                         trend={{
                             value: stats.revenueGrowth,
@@ -84,7 +85,7 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
                 <div className="grid gap-4 md:grid-cols-3">
                     <StatsCard
                         title="Valor Promedio"
-                        value={`$${stats.avgBookingValue.toLocaleString()}`}
+                        value={`$${formatCurrency(stats.avgBookingValue)}`}
                         icon={TrendingUp}
                         description="por reserva"
                     />
@@ -152,7 +153,7 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-medium">${professional.bookings_sum_total?.toLocaleString() || '0'}</p>
+                                            <p className="font-medium">${formatCurrency(professional.bookings_sum_total || 0)}</p>
                                             <p className="text-sm text-muted-foreground">ingresos</p>
                                         </div>
                                     </div>
@@ -192,20 +193,24 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <div className="rounded-lg bg-green-50 p-4">
+                                <div className="rounded-lg bg-green-50 p-4 dark:bg-green-900/50">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-green-800">Ingresos Totales</p>
-                                            <p className="text-2xl font-bold text-green-900">${stats.totalRevenue.toLocaleString()}</p>
+                                            <p className="text-sm font-medium text-green-800 dark:text-green-200">Ingresos Totales</p>
+                                            <p className="text-2xl font-bold text-green-900 dark:text-green-200">
+                                                ${formatCurrency(stats.totalRevenue)}
+                                            </p>
                                         </div>
                                         <DollarSign className="h-8 w-8 text-green-600" />
                                     </div>
                                 </div>
-                                <div className="rounded-lg bg-blue-50 p-4">
+                                <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/50">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-blue-800">Total Reservas</p>
-                                            <p className="text-2xl font-bold text-blue-900">{stats.totalBookings.toLocaleString()}</p>
+                                            <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Total Reservas</p>
+                                            <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
+                                                {stats.totalBookings.toLocaleString()}
+                                            </p>
                                         </div>
                                         <Calendar className="h-8 w-8 text-blue-600" />
                                     </div>
@@ -265,7 +270,7 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
                                                               ? 'Pendiente'
                                                               : booking.status}
                                                 </Badge>
-                                                <p className="mt-1 text-sm font-medium">${booking.total}</p>
+                                                <p className="mt-1 text-sm font-medium">${formatCurrency(booking.total)}</p>
                                             </div>
                                         </div>
                                     </div>
