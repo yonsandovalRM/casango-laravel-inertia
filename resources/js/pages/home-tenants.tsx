@@ -1,3 +1,4 @@
+import { FAQSection } from '@/components/home-tenants/faq-section';
 import Footer from '@/components/home-tenants/footer';
 import Header from '@/components/home-tenants/header';
 import Hero from '@/components/home-tenants/hero';
@@ -13,6 +14,7 @@ export default function HomeTenants() {
             <Hero />
             <PopularServices />
             <ProfessionalsGrid />
+            <FAQSection />
             <Footer />
         </div>
     );

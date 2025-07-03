@@ -6,7 +6,7 @@ const HeroSection = () => {
         <section className="relative flex min-h-screen items-center px-6 pt-20 pb-24">
             <AnimatedBackground />
             <div className="relative z-10 mx-auto max-w-4xl text-center">
-                <h1 className="mb-8 text-5xl leading-tight font-bold text-foreground md:text-7xl">
+                <h1 className="mb-8 font-outfit text-5xl leading-tight font-bold text-foreground md:text-7xl">
                     Gestión de citas
                     <br />
                     <span className="text-blue-600 dark:text-blue-500">sin complicaciones</span>
