@@ -1,14 +1,20 @@
 import { AppHeaderPage } from '@/components/app-header-page';
 import BookingTimeline from '@/components/bookings/booking-timeline';
 import { Button } from '@/components/ui/button';
-import { BookingResource } from '@/interfaces/booking';
+import { BookingFilters, BookingResource, ServiceOption } from '@/interfaces/booking';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-export default function ClientBookings({ bookings }: { bookings: BookingResource[] }) {
+interface ClientBookingsProps {
+    bookings: BookingResource[];
+    filters: BookingFilters;
+    services: ServiceOption[];
+}
+
+export default function ClientBookings({ bookings, filters, services }: ClientBookingsProps) {
     const { t } = useTranslation();
 
     const handleSyncGoogle = () => {
@@ -48,7 +54,13 @@ export default function ClientBookings({ bookings }: { bookings: BookingResource
                     </>
                 }
             />
-            <BookingTimeline bookings={bookings} onSyncGoogle={handleSyncGoogle} onSyncOutlook={handleSyncOutlook} />
+            <BookingTimeline
+                bookings={bookings}
+                filters={filters}
+                services={services}
+                onSyncGoogle={handleSyncGoogle}
+                onSyncOutlook={handleSyncOutlook}
+            />
         </AppLayout>
     );
 }

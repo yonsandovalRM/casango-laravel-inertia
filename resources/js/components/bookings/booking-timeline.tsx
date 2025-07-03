@@ -1,6 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { BookingResource } from '@/interfaces/booking';
-
+import { BookingFilters, BookingResource, ServiceOption } from '@/interfaces/booking';
 import { Calendar } from 'lucide-react';
 import React, { useState } from 'react';
 import BookingCardTimeline from './booking-card-timeline';
@@ -8,18 +7,18 @@ import FiltersBookings from './filters-bookings';
 
 interface BookingTimelineProps {
     bookings: BookingResource[];
+    filters: BookingFilters;
+    services: ServiceOption[];
     onSyncGoogle?: () => void;
     onSyncOutlook?: () => void;
-    onConfirmBooking?: (bookingId: string) => void;
-    onCancelBooking?: (bookingId: string) => void;
 }
 
-const BookingTimeline: React.FC<BookingTimelineProps> = ({ bookings, onSyncGoogle, onSyncOutlook }) => {
-    const [selectedBooking, setSelectedBooking] = useState<string | null>(bookings[0]?.id || null);
+const BookingTimeline: React.FC<BookingTimelineProps> = ({ bookings, filters, services, onSyncGoogle, onSyncOutlook }) => {
+    const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
 
     return (
         <div className="mx-auto max-w-6xl space-y-6 p-4">
-            <FiltersBookings bookings={bookings} />
+            <FiltersBookings bookings={bookings} filters={filters} services={services} />
 
             {/* Timeline */}
             {bookings.length > 0 ? (

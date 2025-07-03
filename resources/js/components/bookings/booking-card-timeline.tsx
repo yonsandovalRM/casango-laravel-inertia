@@ -101,10 +101,10 @@ export default function BookingCardTimeline({
         const endDate = new Date(startDate.getTime() + booking.service.duration * 60000);
 
         return {
-            title: `${booking.service.name} - ${booking.professional.title} ${booking.professional.user.name}`,
+            title: `${booking.service.name} - ${booking.professional.title} ${booking.professional.user?.name}`,
             start: startDate.toISOString(),
             end: endDate.toISOString(),
-            description: `Servicio: ${booking.service.name}\nProfesional: ${booking.professional.title} ${booking.professional.user.name}\nNotas: ${booking.notes || 'Sin notas'}`,
+            description: `Servicio: ${booking.service.name}\nProfesional: ${booking.professional.title} ${booking.professional.user?.name}\nNotas: ${booking.notes || 'Sin notas'}`,
             location: booking.professional.title,
         };
     };
@@ -157,8 +157,8 @@ export default function BookingCardTimeline({
                 <CardContent className="pt-0">
                     <div className="mb-4 flex items-center gap-3">
                         <Avatar className="h-12 w-12">
-                            <AvatarImage src={booking.professional.photo} alt={booking.professional.user.name} />
-                            <AvatarFallback className="bg-blue-100 text-blue-700">{booking.professional.user.name.charAt(0)}</AvatarFallback>
+                            <AvatarImage src={booking.professional.photo} alt={booking.professional.user?.name} />
+                            <AvatarFallback className="bg-blue-100 text-blue-700">{booking.professional.user?.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
                             <h4 className="font-medium text-foreground">

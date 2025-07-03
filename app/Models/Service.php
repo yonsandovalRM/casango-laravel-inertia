@@ -46,4 +46,9 @@ class Service extends Model
             ->withPivot('duration', 'price')
             ->withTimestamps();
     }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
 }
