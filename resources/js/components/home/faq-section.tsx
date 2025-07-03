@@ -74,7 +74,7 @@ export function FAQSection() {
     };
 
     return (
-        <section className="bg-muted/30 px-4 py-20">
+        <section className="bg-muted/30 px-4 py-20" id="faq">
             <div className="container mx-auto">
                 <div className="mb-16 text-center">
                     <Badge className="mb-4 border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-800 dark:bg-blue-900 dark:text-blue-300">

@@ -1,7 +1,8 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Progress } from '@/components/ui/progress';
-import { Calendar, Clock, Mail, MessageSquare, User, Users } from 'lucide-react';
+import { Calendar, Clock, Mail, MessageSquare, PauseIcon, PlayIcon, User, Users } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { Button } from '../ui/button';
 
 interface Feature {
     id: string;
@@ -151,7 +152,8 @@ export function AnimatedFeaturesAccordion() {
                     <div className="space-y-4">
                         <div className="mb-6 flex items-center justify-between">
                             <h3 className="text-lg font-medium text-foreground">Características principales</h3>
-                            <button
+                            <Button
+                                variant="ghost"
                                 onClick={() => {
                                     setIsAutoPlaying(!isAutoPlaying);
                                     if (isAutoPlaying) {
@@ -163,10 +165,11 @@ export function AnimatedFeaturesAccordion() {
                                         animateProgress();
                                     }
                                 }}
-                                className="text-sm text-blue-600 transition-colors duration-200 hover:underline"
+                                className="flex items-center gap-2 text-sm transition-colors duration-200"
                             >
+                                {isAutoPlaying ? <PauseIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
                                 {isAutoPlaying ? 'Pausar' : 'Reproducir'} tour
-                            </button>
+                            </Button>
                         </div>
 
                         <Accordion type="single" value={activeItem} onValueChange={handleAccordionChange} className="space-y-3">
