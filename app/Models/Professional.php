@@ -44,4 +44,39 @@ class Professional extends Model
             ->withPivot('duration', 'price')
             ->withTimestamps();
     }
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    // Métodos de utilidad para estadísticas
+    public function getMonthlyRevenue($month = null)
+    {
+        $startOfMonth = $month ? \Carbon\Carbon::parse($month)->startOfMonth() : \Carbon\Carbon::now()->startOfMonth();
+
+        return $this->bookings()
+            ->where('created_at', '>=', $startOfMonth)
+            ->where('status', 'completed')
+            ->sum('total');
+    }
+
+    public function getCompletionRate()
+    {
+        $totalBookings = $this->bookings()->count();
+        if ($totalBookings === 0) return 0;
+
+        $completedBookings = $this->bookings()->where('status', 'completed')->count();
+        return round(($completedBookings / $totalBookings) * 100, 1);
+    }
+
+    public function getTodayBookings()
+    {
+        $today = \Carbon\Carbon::today();
+
+        return $this->bookings()
+            ->whereDate('date', $today)
+            ->orderBy('time')
+            ->get();
+    }
 }
