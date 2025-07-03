@@ -9,7 +9,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Calendar, Clock, Star, User } from 'lucide-react';
+import { Calendar, Clock, DollarSign, Star, User } from 'lucide-react';
 
 interface ClientDashboardProps {
     client: UserResource;
@@ -17,8 +17,15 @@ interface ClientDashboardProps {
     stats: {
         totalBookings: number;
         upcomingBookings: number;
-        favoriteServices: string[];
+        favoriteServices: Array<{
+            service_name: string;
+            count: number;
+            total_spent: number;
+        }>;
         totalSpent: number;
+        monthlySpent: number;
+        completedBookings: number;
+        cancelledBookings: number;
     };
 }
 
@@ -32,7 +39,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: route('dashboard') }]}>
             <Head title="Dashboard" />
-            <div className="p-4">
+            <div className="space-y-6 p-4">
                 {/* Welcome Section */}
                 <div className="rounded-lg bg-gradient-to-r from-green-600 to-teal-600 p-6 text-white">
                     <h1 className="mb-2 font-outfit text-2xl font-bold">Hola, {client.name}</h1>
@@ -59,8 +66,13 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard title="Total de Reservas" value={stats.totalBookings} icon={Calendar} description="Todas las reservas" />
                     <StatsCard title="Próximas Citas" value={stats.upcomingBookings} icon={Clock} description="Reservas confirmadas" />
-                    <StatsCard title="Servicios Favoritos" value={stats.favoriteServices.length} icon={Star} description="Servicios más usados" />
-                    <StatsCard title="Total Gastado" value={`$${stats.totalSpent.toLocaleString()}`} icon={User} description="Este año" />
+                    <StatsCard
+                        title="Total Gastado"
+                        value={`$${stats.totalSpent.toLocaleString()}`}
+                        icon={DollarSign}
+                        description="Todas las reservas completadas"
+                    />
+                    <StatsCard title="Gasto Mensual" value={`$${stats.monthlySpent.toLocaleString()}`} icon={User} description="Este mes" />
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
@@ -125,7 +137,12 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
                                                 <Star className="h-4 w-4 text-green-600" />
                                             </div>
-                                            <span className="font-medium">{service}</span>
+                                            <div>
+                                                <span className="block font-medium">{service.service_name}</span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {service.count} veces • ${service.total_spent.toLocaleString()}
+                                                </span>
+                                            </div>
                                         </div>
                                         <Button size="sm" variant="outline">
                                             Reservar
@@ -135,6 +152,53 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                                 {stats.favoriteServices.length === 0 && (
                                     <p className="py-4 text-center text-muted-foreground">Aún no tienes servicios favoritos</p>
                                 )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Additional Stats */}
+                <div className="grid gap-4 md:grid-cols-3">
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="flex items-center space-x-2">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+                                    <Calendar className="h-4 w-4 text-green-600" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Completadas</p>
+                                    <p className="font-semibold">{stats.completedBookings}</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="flex items-center space-x-2">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
+                                    <Calendar className="h-4 w-4 text-red-600" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Canceladas</p>
+                                    <p className="font-semibold">{stats.cancelledBookings}</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="flex items-center space-x-2">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
+                                    <DollarSign className="h-4 w-4 text-blue-600" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-muted-foreground">Promedio por Reserva</p>
+                                    <p className="font-semibold">
+                                        ${stats.completedBookings > 0 ? (stats.totalSpent / stats.completedBookings).toFixed(0) : '0'}
+                                    </p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
