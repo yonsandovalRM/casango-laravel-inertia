@@ -1,5 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
 import { Calendar, Clock, Mail, MessageSquare, PauseIcon, PlayIcon, User, Users } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
@@ -61,6 +62,80 @@ const features: Feature[] = [
     },
 ];
 
+// Sistema de colores mejorado con variantes más completas
+const COLOR_SCHEMES = [
+    {
+        name: 'violet',
+        active: {
+            text: 'text-white',
+            bg: 'bg-cm-violet-600',
+            border: 'border-cm-violet-200 dark:border-cm-violet-800',
+            progress: 'bg-cm-violet-600',
+        },
+        inactive: {
+            text: 'text-cm-violet-600',
+            bg: 'bg-cm-violet-50',
+            iconContainer: 'bg-card',
+        },
+    },
+    {
+        name: 'blue',
+        active: {
+            text: 'text-white',
+            bg: 'bg-cm-blue-600',
+            border: 'border-cm-blue-200 dark:border-cm-blue-800',
+            progress: 'bg-cm-blue-600',
+        },
+        inactive: {
+            text: 'text-cm-blue-600',
+            bg: 'bg-cm-blue-50',
+            iconContainer: 'bg-card',
+        },
+    },
+    {
+        name: 'green',
+        active: {
+            text: 'text-white',
+            bg: 'bg-cm-green-600',
+            border: 'border-cm-green-200 dark:border-cm-green-800',
+            progress: 'bg-cm-green-600',
+        },
+        inactive: {
+            text: 'text-cm-green-600',
+            bg: 'bg-cm-green-50',
+            iconContainer: 'bg-card',
+        },
+    },
+    {
+        name: 'orange',
+        active: {
+            text: 'text-white',
+            bg: 'bg-cm-orange-600',
+            border: 'border-cm-orange-200 dark:border-cm-orange-800',
+            progress: 'bg-cm-orange-600',
+        },
+        inactive: {
+            text: 'text-cm-orange-600',
+            bg: 'bg-cm-orange-50',
+            iconContainer: 'bg-card',
+        },
+    },
+    {
+        name: 'pink',
+        active: {
+            text: 'text-white',
+            bg: 'bg-cm-pink-600',
+            border: 'border-cm-pink-200 dark:border-cm-pink-800',
+            progress: 'bg-cm-pink-600',
+        },
+        inactive: {
+            text: 'text-cm-pink-600',
+            bg: 'bg-cm-pink-50',
+            iconContainer: 'bg-card',
+        },
+    },
+];
+
 export function AnimatedFeaturesAccordion() {
     const [activeItem, setActiveItem] = useState<string>(features[0].id);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -69,7 +144,12 @@ export function AnimatedFeaturesAccordion() {
     const startTimeRef = useRef<number>(0);
     const duration = 6000; // 6 segundos por item
 
-    // Efecto para manejar la transición entre items
+    // Obtener el esquema de color para un feature específico
+    const getColorScheme = (featureIndex: number) => {
+        return COLOR_SCHEMES[featureIndex % COLOR_SCHEMES.length];
+    };
+
+    // Efecto para manejar la transición automática
     useEffect(() => {
         if (!isAutoPlaying) return;
 
@@ -87,21 +167,17 @@ export function AnimatedFeaturesAccordion() {
         return () => clearTimeout(timeoutId);
     }, [activeItem, isAutoPlaying]);
 
-    // Animación suave del progress bar usando requestAnimationFrame
+    // Animación del progress bar
     const animateProgress = () => {
         if (!isAutoPlaying) {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-            }
+            cancelAnimationFrame(animationRef.current);
             return;
         }
 
         const animate = (timestamp: number) => {
             if (!startTimeRef.current) startTimeRef.current = timestamp;
-
             const elapsed = timestamp - startTimeRef.current;
             const newProgress = Math.min((elapsed / duration) * 100, 100);
-
             setProgress(newProgress);
 
             if (newProgress < 100) {
@@ -110,37 +186,29 @@ export function AnimatedFeaturesAccordion() {
         };
 
         animationRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(animationRef.current);
     };
 
-    // Iniciar animación cuando cambia el item activo o se reanuda el autoplay
+    // Iniciar/restablecer animación
     useEffect(() => {
         startTimeRef.current = performance.now();
         animateProgress();
-
-        return () => {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-            }
-        };
     }, [activeItem, isAutoPlaying]);
 
     const handleAccordionChange = (value: string) => {
-        if (value) {
-            setActiveItem(value);
-            setIsAutoPlaying(false);
-            setProgress(0);
-
-            // Cancelar cualquier animación en curso
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-            }
-        }
+        if (!value) return;
+        setActiveItem(value);
+        setIsAutoPlaying(false);
+        setProgress(0);
+        cancelAnimationFrame(animationRef.current);
     };
 
     const activeFeature = features.find((f) => f.id === activeItem);
+    const activeIndex = features.findIndex((f) => f.id === activeItem);
+    const activeColorScheme = getColorScheme(activeIndex);
 
     return (
-        <section className="bg-card px-6 py-24" id="features">
+        <section className="px-6 py-24" id="features">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-16 text-center">
                     <h2 className="mb-6 font-outfit text-4xl font-bold text-foreground">Todo lo que necesitas</h2>
@@ -156,16 +224,12 @@ export function AnimatedFeaturesAccordion() {
                                 variant="ghost"
                                 onClick={() => {
                                     setIsAutoPlaying(!isAutoPlaying);
-                                    if (isAutoPlaying) {
-                                        if (animationRef.current) {
-                                            cancelAnimationFrame(animationRef.current);
-                                        }
-                                    } else {
+                                    if (!isAutoPlaying) {
                                         startTimeRef.current = performance.now() - (progress / 100) * duration;
                                         animateProgress();
                                     }
                                 }}
-                                className="flex items-center gap-2 text-sm transition-colors duration-200"
+                                className="flex items-center gap-2 text-sm"
                             >
                                 {isAutoPlaying ? <PauseIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
                                 {isAutoPlaying ? 'Pausar' : 'Reproducir'} tour
@@ -173,38 +237,41 @@ export function AnimatedFeaturesAccordion() {
                         </div>
 
                         <Accordion type="single" value={activeItem} onValueChange={handleAccordionChange} className="space-y-3">
-                            {features.map((feature) => {
+                            {features.map((feature, index) => {
                                 const isActive = activeItem === feature.id;
                                 const IconComponent = feature.icon;
+                                const colorScheme = getColorScheme(index);
 
                                 return (
                                     <AccordionItem
                                         key={feature.id}
                                         value={feature.id}
-                                        className={`overflow-hidden rounded-xl border transition-all duration-500 ease-in-out ${
-                                            isActive
-                                                ? 'border-blue-200 bg-background shadow-lg dark:border-blue-900'
-                                                : 'border-border bg-background/50'
-                                        }`}
+                                        className={cn(
+                                            'overflow-hidden rounded-xl border border-border transition-all duration-300',
+                                            isActive ? 'opacity-100' : 'opacity-70 hover:opacity-100',
+                                        )}
                                     >
                                         <AccordionTrigger className="px-6 py-4 hover:no-underline">
                                             <div className="flex items-center space-x-4 text-left">
                                                 <div
-                                                    className={`flex h-12 w-12 items-center justify-center rounded-lg transition-all duration-300 ${
-                                                        isActive ? 'bg-blue-100 dark:bg-blue-900/50' : 'bg-border'
-                                                    }`}
+                                                    className={cn(
+                                                        'flex h-12 w-12 items-center justify-center rounded-lg transition-all duration-300',
+                                                        isActive ? colorScheme.active.bg : colorScheme.inactive.iconContainer,
+                                                    )}
                                                 >
                                                     <IconComponent
-                                                        className={`h-6 w-6 transition-colors duration-300 ${
-                                                            isActive ? 'text-blue-600' : 'text-muted-foreground'
-                                                        }`}
+                                                        className={cn(
+                                                            'h-6 w-6 transition-all duration-300',
+                                                            isActive ? colorScheme.active.text : colorScheme.inactive.text,
+                                                        )}
                                                     />
                                                 </div>
                                                 <div className="flex-1">
                                                     <h4
-                                                        className={`font-outfit text-lg font-semibold transition-colors duration-300 ${
-                                                            isActive ? 'text-foreground' : 'text-muted-foreground'
-                                                        }`}
+                                                        className={cn(
+                                                            'font-semibold transition-all duration-300',
+                                                            isActive ? 'text-lg text-foreground' : 'text-sm text-muted-foreground',
+                                                        )}
                                                     >
                                                         {feature.title}
                                                     </h4>
@@ -216,10 +283,9 @@ export function AnimatedFeaturesAccordion() {
                                             <p className="leading-relaxed text-muted-foreground">{feature.description}</p>
                                         </AccordionContent>
 
-                                        {/* Progress Bar at the bottom of the card */}
                                         {isActive && (
                                             <div className="px-6 pb-6">
-                                                <Progress value={progress} className="h-1 bg-gray-200 dark:bg-gray-700" />
+                                                <Progress value={progress} className={cn('h-0.5', colorScheme.active.progress)} />
                                             </div>
                                         )}
                                     </AccordionItem>
@@ -230,7 +296,13 @@ export function AnimatedFeaturesAccordion() {
 
                     {/* Image Section */}
                     <div className="lg:sticky lg:top-24">
-                        <div className="rounded-2xl bg-background p-4 shadow-xl">
+                        <div
+                            className="rounded-2xl bg-card p-4 shadow-xl"
+                            style={{
+                                borderTop: `4px solid ${isAutoPlaying ? activeColorScheme.active.bg : 'transparent'}`,
+                                transition: 'border-color 0.3s ease',
+                            }}
+                        >
                             <div className="aspect-video overflow-hidden rounded-xl">
                                 <img
                                     src={activeFeature?.image}
@@ -239,10 +311,8 @@ export function AnimatedFeaturesAccordion() {
                                 />
                             </div>
                             <div className="mt-4 p-4">
-                                <h4 className="mb-2 font-outfit text-lg font-semibold text-foreground transition-all duration-500">
-                                    {activeFeature?.title}
-                                </h4>
-                                <p className="text-sm text-muted-foreground transition-all duration-500">{activeFeature?.description}</p>
+                                <h4 className="mb-2 font-outfit text-lg font-semibold text-gray-900 dark:text-white">{activeFeature?.title}</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-300">{activeFeature?.description}</p>
                             </div>
                         </div>
                     </div>
