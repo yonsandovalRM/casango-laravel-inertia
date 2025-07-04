@@ -6,13 +6,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { PlanResource } from '@/interfaces/plan';
 import { MOCK_CATEGORIES } from '@/interfaces/tenant';
 import { useForm } from '@inertiajs/react';
 import { Building2, Globe, Lock, Mail, ShieldCheck, Tag, User } from 'lucide-react';
 import { useState } from 'react';
 
-export default function TenantsCreate({ plans, plan }: { plans: PlanResource[]; plan: PlanResource }) {
+export default function TenantsCreate({ plans, plan, billing }: { plans: PlanResource[]; plan: PlanResource; billing: string }) {
     const [currentStep, setCurrentStep] = useState(1);
     const { data, setData, post, errors, processing } = useForm({
         name: 'Fast',
@@ -23,6 +24,7 @@ export default function TenantsCreate({ plans, plan }: { plans: PlanResource[]; 
         owner_password_confirmation: '12345678',
         plan_id: plan?.id || plans.find((p) => p.is_popular)?.id,
         category: 'bar',
+        billing: billing,
     });
 
     const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,13 +148,23 @@ export default function TenantsCreate({ plans, plan }: { plans: PlanResource[]; 
                                 description="Elige el plan que mejor se adapte a las necesidades de tu negocio"
                                 icon={<ShieldCheck className="h-5 w-5" />}
                             >
+                                <div className="mb-6 flex items-center gap-2">
+                                    <Switch
+                                        id="billing"
+                                        checked={data.billing === 'annual'}
+                                        onCheckedChange={(checked) => setData((prev) => ({ ...prev, billing: checked ? 'annual' : 'monthly' }))}
+                                    />
+                                    <label htmlFor="billing" className="text-sm font-medium">
+                                        Pago {data.billing === 'monthly' ? 'Mensual' : 'Anual'}
+                                    </label>
+                                </div>
                                 <RadioGroup
                                     value={data.plan_id}
                                     onValueChange={(value) => setData((prev) => ({ ...prev, plan_id: value }))}
                                     className="grid gap-4 md:grid-cols-3"
                                 >
                                     {plans.map((plan) => (
-                                        <PlanCard key={plan.id} plan={plan} isSelected={data.plan_id === plan.id} />
+                                        <PlanCard key={plan.id} plan={plan} isSelected={data.plan_id === plan.id} billing={data.billing} />
                                     ))}
                                 </RadioGroup>
 
