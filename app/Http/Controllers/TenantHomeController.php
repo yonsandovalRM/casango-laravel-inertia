@@ -15,7 +15,7 @@ class TenantHomeController extends Controller
     {
         $company = Company::with('schedules')->first();
 
-        return Inertia::render('home-tenants', [
+        return Inertia::render('tenant-pages/home-tenants', [
             'company' => CompanyResource::make($company)->toArray(request()),
         ]);
     }
@@ -24,7 +24,7 @@ class TenantHomeController extends Controller
     {
         $company = Company::with('schedules')->first();
 
-        return Inertia::render('public-pages/services', [
+        return Inertia::render('tenant-pages/services', [
             'company' => CompanyResource::make($company)->toArray(request()),
         ]);
     }
@@ -33,7 +33,7 @@ class TenantHomeController extends Controller
     {
         $service = Service::find($service_id);
 
-        return Inertia::render('public-pages/reservation-wizard', [
+        return Inertia::render('tenant-pages/reservation-wizard', [
             'service' => ServiceResource::make($service)->toArray(request()),
         ]);
     }
