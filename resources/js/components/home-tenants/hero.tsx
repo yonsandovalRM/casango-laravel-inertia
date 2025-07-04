@@ -21,14 +21,14 @@ const Hero = () => {
     return (
         <section id="inicio" className="relative overflow-hidden pt-20 pb-16">
             {/* Background Image */}
-            <div className="absolute inset-0 z-0">
+            {/*  <div className="absolute inset-0 z-0">
                 <img
                     src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1200&h=600&fit=crop"
                     alt="Background"
                     className="object-cover_image h-full w-full opacity-90"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/70 backdrop-blur-sm"></div>
-            </div>
+            </div> */}
 
             <div className="relative z-10 container mx-auto mt-10">
                 <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
