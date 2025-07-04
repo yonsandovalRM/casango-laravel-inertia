@@ -8,13 +8,13 @@ import { Calendar } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-interface ClientBookingsProps {
+interface HistoryProfessionalBookingsProps {
     bookings: BookingResource[];
     filters: BookingFilters;
     services: ServiceOption[];
 }
 
-export default function ClientBookings({ bookings, filters, services }: ClientBookingsProps) {
+export default function HistoryProfessionalBookings({ bookings, filters, services }: HistoryProfessionalBookingsProps) {
     const { t } = useTranslation();
 
     const handleSyncGoogle = () => {
@@ -34,11 +34,11 @@ export default function ClientBookings({ bookings, filters, services }: ClientBo
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: t('bookings.client.title'), href: '/bookings/client' }]}>
-            <Head title={t('bookings.client.title')} />
+        <AppLayout breadcrumbs={[{ title: t('bookings.professional.title'), href: '/bookings/professional' }]}>
+            <Head title={t('bookings.professional.title')} />
             <AppHeaderPage
-                title={t('bookings.client.title')}
-                description={t('bookings.client.description')}
+                title={t('bookings.professional.title')}
+                description={t('bookings.professional.description')}
                 actions={
                     <>
                         <div className="flex flex-col gap-3 sm:flex-row">

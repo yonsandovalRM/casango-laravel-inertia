@@ -37,14 +37,20 @@ function AppSidebar({ t }: { t: any }) {
             permission: ROLES.professional,
         },
         {
-            title: t('ui.menu.client_bookings'),
+            title: t('ui.menu.history_client_bookings'),
             href: route('bookings.client'),
             icon: Calendar,
             permission: null,
         },
         {
-            title: t('ui.menu.professional_bookings'),
+            title: t('ui.menu.history_professional_bookings'),
             href: route('bookings.professional'),
+            icon: Calendar,
+            permission: null,
+        },
+        {
+            title: t('ui.menu.bookings'),
+            href: route('bookings.index'),
             icon: Calendar,
             permission: null,
         },

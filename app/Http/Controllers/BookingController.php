@@ -7,6 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Http\Requests\Bookings\StoreBookingRequest;
 use App\Http\Requests\Bookings\UpdateBookingRequest;
 use App\Http\Resources\BookingResource;
+use App\Http\Resources\ProfessionalResource;
 use App\Models\Booking;
 use App\Models\Professional;
 use App\Models\Service;
@@ -17,10 +18,27 @@ use Inertia\Inertia;
 
 class BookingController extends Controller
 {
+    public function index()
+    {
+        $user = User::find(Auth::user()->id);
+        $professional = Professional::where('user_id', $user->id)->firstOrFail();
+
+        $bookings = Booking::where('professional_id', $professional->id)
+            ->where('status', BookingStatus::STATUS_PENDING)
+            ->orWhere('status', BookingStatus::STATUS_CONFIRMED)
+            ->whereDate('date', now())
+            ->get();
+
+        return Inertia::render('bookings/index', [
+            'professional' => ProfessionalResource::make($professional)->toArray(request()),
+            'bookings' => BookingResource::collection($bookings)->toArray(request()),
+        ]);
+    }
+
     /**
      * Display a listing of client bookings with filters.
      */
-    public function client(Request $request)
+    public function historyClient(Request $request)
     {
         $user = User::find(Auth::user()->id);
 
@@ -63,7 +81,7 @@ class BookingController extends Controller
             $query->where('client_id', $user->id);
         })->select('id', 'name')->get();
 
-        return Inertia::render('bookings/client', [
+        return Inertia::render('bookings/history-client', [
             'bookings' => BookingResource::collection($bookings)->toArray(request()),
             'filters' => $filters,
             'services' => $services,
@@ -73,7 +91,7 @@ class BookingController extends Controller
     /**
      * Display a listing of professional bookings with filters.
      */
-    public function professional(Request $request)
+    public function historyProfessional(Request $request)
     {
         $user = User::find(Auth::user()->id);
 
@@ -116,7 +134,7 @@ class BookingController extends Controller
             $query->where('professional_id', $user->id);
         })->select('id', 'name')->get();
 
-        return Inertia::render('bookings/professional', [
+        return Inertia::render('bookings/history-professional', [
             'bookings' => BookingResource::collection($bookings)->toArray(request()),
             'filters' => $filters,
             'services' => $services,
