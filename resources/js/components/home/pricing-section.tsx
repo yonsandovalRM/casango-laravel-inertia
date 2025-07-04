@@ -20,9 +20,11 @@ export function PricingSection({ plans }: { plans: PlanResource[] }) {
                         <Card key={plan.id} className={cn('border-0 shadow-lg', plan.is_popular ? 'scale-105 bg-primary text-white' : 'bg-accent')}>
                             <CardHeader className="pb-8 text-center">
                                 {plan.is_popular && <Badge className="mx-auto mb-4 bg-white text-blue-600">Más popular</Badge>}
-                                <CardTitle className="font-outfit text-lg font-medium text-foreground">{plan.name}</CardTitle>
+                                <CardTitle className={cn('font-outfit text-lg font-medium', plan.is_popular ? 'text-white' : 'text-foreground')}>
+                                    {plan.name}
+                                </CardTitle>
                                 <div className="mt-4">
-                                    <span className="text-4xl font-bold text-foreground">
+                                    <span className={cn('text-4xl font-bold', plan.is_popular ? 'text-white' : 'text-foreground')}>
                                         {plan.currency === 'CLP' ? '$' : '€'}
                                         {formatCurrency(plan.price_monthly)}
                                     </span>
@@ -37,11 +39,14 @@ export function PricingSection({ plans }: { plans: PlanResource[] }) {
                                     </div>
                                 ))}
                                 <Button
-                                    className="mt-8 w-full"
-                                    variant="outline"
+                                    className={cn(
+                                        'mt-8 w-full',
+                                        plan.is_popular ? 'bg-white text-blue-600 hover:bg-blue-600 hover:text-white' : 'bg-primary text-white',
+                                    )}
+                                    variant={plan.is_popular ? 'default' : 'outline'}
                                     onClick={() => router.visit(route('tenants.create', { plan_id: plan.id }))}
                                 >
-                                    {plan.is_free ? 'Comenzar prueba' : 'Comenzar'}
+                                    {plan.trial_days > 0 ? 'Comenzar prueba' : 'Comenzar'}
                                 </Button>
                             </CardContent>
                         </Card>

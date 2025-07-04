@@ -42,9 +42,13 @@ class TenantController extends Controller
     */
     public function create(Request $request)
     {
-        $plans = Plan::all();
 
-        $plan = $plans->findOrFail($request->plan_id);
+        $plans = Plan::all();
+        if ($request->plan_id) {
+            $plan = $plans->findOrFail($request->plan_id);
+        } else {
+            $plan = $plans->where('is_popular', true)->first();
+        }
         return Inertia::render('tenants/create', [
             'plans' => PlanResource::collection($plans)->toArray(request()),
             'plan' => $plan ? PlanResource::make($plan)->toArray(request()) : null,
