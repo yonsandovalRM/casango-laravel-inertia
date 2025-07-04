@@ -15,39 +15,39 @@ class PlansSeeder extends Seeder
     public function run(): void
     {
         Plan::create([
-            'name' => 'Plan 1',
-            'description' => 'Plan 1 description',
-            'price_monthly' => 100,
-            'price_annual' => 1000,
+            'name' => 'Básico',
+            'description' => 'Plan personal, ideal para profesionales independientes',
+            'price_monthly' => 8990,
+            'price_annual' => 89900,
             'currency' => 'CLP',
-            'features' => ['Feature 1', 'Feature 2', 'Feature 3'],
+            'features' => ['Hasta 500 citas/mes', '1 profesional', 'Recordatorios email'],
             'is_free' => false,
             'is_popular' => true,
-            'trial_days' => 30,
+            'trial_days' => 14,
         ]);
 
         Plan::create([
-            'name' => 'Plan 2',
-            'description' => 'Plan 2 description',
-            'price_monthly' => 200,
-            'price_annual' => 2000,
+            'name' => 'Pro',
+            'description' => 'Plan profesional, ideal centros pequeños',
+            'price_monthly' => 19990,
+            'price_annual' => 199900,
             'currency' => 'CLP',
-            'features' => ['Feature 1', 'Feature 2', 'Feature 3'],
+            'features' => ['Citas ilimitadas', '5 profesionales', 'WhatsApp + Email', 'Videollamadas'],
             'is_free' => false,
             'is_popular' => false,
-            'trial_days' => 30,
+            'trial_days' => 14,
         ]);
 
         Plan::create([
-            'name' => 'Plan 3',
-            'description' => 'Plan 3 description',
-            'price_monthly' => 300,
-            'price_annual' => 3000,
+            'name' => 'Empresarial',
+            'description' => 'Plan empresarial, ideal para centros grandes',
+            'price_monthly' => 39990,
+            'price_annual' => 399900,
             'currency' => 'CLP',
-            'features' => ['Feature 1', 'Feature 2', 'Feature 3'],
+            'features' => ['Todo ilimitado', 'Soporte prioritario', 'Videollamadas', 'WhatsApp + Email'],
             'is_free' => false,
             'is_popular' => false,
-            'trial_days' => 30,
+            'trial_days' => 0,
         ]);
     }
 }

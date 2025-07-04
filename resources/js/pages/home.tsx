@@ -9,9 +9,10 @@ import HeroSection from '@/components/home/hero-section';
 import { PricingSection } from '@/components/home/pricing-section';
 import { useAppearance } from '@/hooks/use-appearance';
 import { useAuth } from '@/hooks/use-auth';
+import { PlanResource } from '@/interfaces/plan';
 import { Head, router } from '@inertiajs/react';
 
-export default function Home() {
+export default function Home({ plans }: { plans: PlanResource[] }) {
     const { appearance, updateAppearance } = useAppearance();
     const { auth } = useAuth();
     return (
@@ -69,7 +70,7 @@ export default function Home() {
                 </div>
             </section>
 
-            <PricingSection />
+            <PricingSection plans={plans} />
 
             <FAQSection />
 

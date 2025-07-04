@@ -40,11 +40,14 @@ class TenantController extends Controller
     * Show the form for creating a new tenant
     * @return \Inertia\Response
     */
-    public function create()
+    public function create(Request $request)
     {
         $plans = Plan::all();
+
+        $plan = $plans->findOrFail($request->plan_id);
         return Inertia::render('tenants/create', [
             'plans' => PlanResource::collection($plans)->toArray(request()),
+            'plan' => $plan ? PlanResource::make($plan)->toArray(request()) : null,
         ]);
     }
 

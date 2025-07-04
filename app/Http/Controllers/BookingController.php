@@ -43,7 +43,7 @@ class BookingController extends Controller
             'date_from' => now()->format('Y-m-d'),
             'date_to' => now()->format('Y-m-d'),
             'sort_by' => 'date',
-            'sort_direction' => 'asc'
+            'sort_direction' => 'desc'
         ], $filters);
 
         // Construir query base
@@ -96,7 +96,7 @@ class BookingController extends Controller
             'date_from' => '',
             'date_to' => '',
             'sort_by' => 'date',
-            'sort_direction' => 'asc'
+            'sort_direction' => 'desc'
         ], $filters);
 
         // Construir query base
