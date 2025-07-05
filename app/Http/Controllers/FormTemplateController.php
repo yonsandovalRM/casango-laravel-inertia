@@ -25,7 +25,7 @@ class FormTemplateController extends Controller
         $template = $company->getOrCreateFormTemplate();
         $template->load('activeFields');
 
-        return Inertia::render('templates/form-template-builder', [
+        return Inertia::render('templates/builder', [
             'template' => $template,
             'company' => CompanyResource::make($company)->toArray(request()),
         ]);

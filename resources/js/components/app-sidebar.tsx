@@ -90,7 +90,7 @@ function AppSidebar({ t }: { t: any }) {
         },
         {
             title: t('ui.menu.templates'),
-            href: route('templates.index'),
+            href: route('templates.builder'),
             icon: LayoutGrid,
             permission: PERMISSIONS.templates.view,
         },
