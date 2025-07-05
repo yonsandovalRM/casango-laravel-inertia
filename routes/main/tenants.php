@@ -4,7 +4,7 @@ use App\Enums\Permissions;
 use App\Http\Controllers\TenantController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('businesses')->group(function () {
+Route::prefix('dashboard/businesses')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('', [TenantController::class, 'index'])->name('tenants.index')->middleware('can:' . Permissions::TENANTS_VIEW);
         Route::post('', [TenantController::class, 'store'])->name('tenants.store');

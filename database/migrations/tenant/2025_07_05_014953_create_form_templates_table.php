@@ -15,7 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->enum('visibility', ['private', 'team'])->default('private');
+            $table->uuid('company_id')->after('id');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->timestamps();
         });
     }

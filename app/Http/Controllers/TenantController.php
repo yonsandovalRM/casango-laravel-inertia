@@ -6,6 +6,8 @@ use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\TenantResource;
 use App\Models\Company;
+use App\Models\FormTemplate;
+use App\Models\FormTemplateField;
 use App\Models\Plan;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
@@ -113,6 +115,7 @@ class TenantController extends Controller
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
             $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
             $this->createCompany($tenant);
+
 
 
 
@@ -228,6 +231,7 @@ class TenantController extends Controller
 
             ]);
             $this->createCompanySchedule($company);
+            $this->createFormTemplate($tenant, $company);
         });
     }
 
@@ -243,5 +247,95 @@ class TenantController extends Controller
                 'has_break' => false,
             ]);
         }
+    }
+
+
+    private function createFormTemplate(Tenant $tenant, $company)
+    {
+        $tenant->run(function () use ($company) {
+
+            // Crear template básico para cada empresa
+            $template = FormTemplate::create([
+                'company_id' => $company->id,
+                'name' => 'Ficha de Cliente - ' . $company->name,
+                'description' => 'Ficha de datos del cliente para ' . $company->name,
+            ]);
+
+            // Crear campos básicos por defecto
+            $defaultFields = [
+                [
+                    'label' => 'Nombre Completo',
+                    'type' => 'text',
+                    'required' => true,
+                    'order' => 0,
+                ],
+                [
+                    'label' => 'Email',
+                    'type' => 'email',
+                    'required' => true,
+                    'order' => 1,
+                ],
+                [
+                    'label' => 'Teléfono',
+                    'type' => 'phone',
+                    'required' => false,
+                    'order' => 2,
+                ],
+                [
+                    'label' => 'Fecha de Nacimiento',
+                    'type' => 'date',
+                    'required' => false,
+                    'order' => 3,
+                ],
+                [
+                    'label' => 'Motivo de Consulta',
+                    'type' => 'textarea',
+                    'required' => false,
+                    'order' => 4,
+                    'placeholder' => 'Describe el motivo de tu consulta...',
+                ],
+                [
+                    'label' => 'Antecedentes Médicos',
+                    'type' => 'textarea',
+                    'required' => false,
+                    'order' => 5,
+                    'placeholder' => 'Menciona cualquier antecedente médico relevante...',
+                ],
+                [
+                    'label' => 'Alergias',
+                    'type' => 'textarea',
+                    'required' => false,
+                    'order' => 6,
+                    'placeholder' => 'Indica si tienes alguna alergia conocida...',
+                ],
+                [
+                    'label' => 'Medicamentos Actuales',
+                    'type' => 'textarea',
+                    'required' => false,
+                    'order' => 7,
+                    'placeholder' => 'Lista los medicamentos que tomas actualmente...',
+                ],
+                [
+                    'label' => 'Consentimiento Informado',
+                    'type' => 'checkbox',
+                    'required' => true,
+                    'order' => 8,
+                    'options' => ['He leído y acepto los términos del consentimiento informado'],
+                ],
+            ];
+
+            foreach ($defaultFields as $field) {
+                FormTemplateField::create([
+                    'form_template_id' => $template->id,
+                    'label' => $field['label'],
+                    'type' => $field['type'],
+                    'placeholder' => $field['placeholder'] ?? null,
+                    'required' => $field['required'],
+                    'options' => $field['options'] ?? null,
+                    'order' => $field['order'],
+                    'is_active' => true,
+                ]);
+            }
+        });
     }
 }

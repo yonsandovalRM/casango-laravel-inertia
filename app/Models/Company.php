@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-
     use HasFactory, HasUuid;
 
     protected $fillable = [
@@ -23,11 +22,29 @@ class Company extends Model
         'locale',
     ];
 
-
-
     public function schedules()
     {
         return $this->hasMany(CompanySchedule::class);
+    }
+
+    public function formTemplate()
+    {
+        return $this->hasOne(FormTemplate::class);
+    }
+
+    public function getOrCreateFormTemplate()
+    {
+        $template = $this->formTemplate;
+
+        if (!$template) {
+            $template = FormTemplate::create([
+                'company_id' => $this->id,
+                'name' => 'Ficha de Cliente - ' . $this->name,
+                'description' => 'Ficha de datos del cliente para ' . $this->name,
+            ]);
+        }
+
+        return $template;
     }
 
     // En el modelo Company

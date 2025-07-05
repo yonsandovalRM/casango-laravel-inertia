@@ -20,6 +20,7 @@ return new class extends Migration
             $table->json('options')->nullable();
             $table->boolean('required')->default(false);
             $table->integer('order')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->foreign('form_template_id')->references('id')->on('form_templates')->onDelete('cascade');
             $table->timestamps();
         });
