@@ -88,6 +88,12 @@ function AppSidebar({ t }: { t: any }) {
             icon: Tags,
             permission: PERMISSIONS.categories.view,
         },
+        {
+            title: t('ui.menu.templates'),
+            href: route('templates.index'),
+            icon: LayoutGrid,
+            permission: PERMISSIONS.templates.view,
+        },
     ];
     const footerNavItems: NavItem[] = [
         {

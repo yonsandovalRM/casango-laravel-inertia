@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FormTemaplate;
+
 use App\Models\FormTemplate;
 use App\Models\FormTemplateField;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class FormTemplateController extends Controller
 {
@@ -15,7 +16,15 @@ class FormTemplateController extends Controller
      */
     public function index()
     {
-        //
+        $templates = FormTemplate::all();
+        return Inertia::render('templates/index', [
+            'templates' => $templates,
+        ]);
+    }
+
+    public function builder()
+    {
+        return Inertia::render('templates/form-template-builder');
     }
 
     /**

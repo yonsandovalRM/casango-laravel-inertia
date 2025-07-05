@@ -72,6 +72,12 @@ export const PERMISSIONS = {
         delete: 'delete bookings',
         create: 'create bookings',
     },
+    templates: {
+        view: 'view templates',
+        edit: 'edit templates',
+        delete: 'delete templates',
+        create: 'create templates',
+    },
 };
 
 export const ROLES = {

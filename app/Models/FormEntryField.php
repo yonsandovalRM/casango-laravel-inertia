@@ -14,6 +14,11 @@ class FormEntryField extends Model
         'value',
     ];
 
+    protected $casts = [
+        'options' => 'array',
+        'required' => 'boolean',
+        'order' => 'integer',
+    ];
     public function entry()
     {
         return $this->belongsTo(FormEntry::class);

@@ -51,6 +51,11 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete bookings']);
         Permission::create(['name' => 'create bookings']);
 
+        Permission::create(['name' => 'view templates']);
+        Permission::create(['name' => 'edit templates']);
+        Permission::create(['name' => 'delete templates']);
+        Permission::create(['name' => 'create templates']);
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
 

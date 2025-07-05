@@ -13,6 +13,12 @@ class FormEntry extends Model
         'booking_id',
         'professional_id',
         'filled_at',
+        'visibility',
+    ];
+
+    protected $casts = [
+        'filled_at' => 'datetime',
+        'visibility' => 'string',
     ];
 
     public function template()

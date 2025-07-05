@@ -46,6 +46,11 @@ class Permissions
     public const BOOKINGS_DELETE = 'delete bookings';
     public const BOOKINGS_CREATE = 'create bookings';
 
+    public const TEMPLATES_VIEW = 'view templates';
+    public const TEMPLATES_EDIT = 'edit templates';
+    public const TEMPLATES_DELETE = 'delete templates';
+    public const TEMPLATES_CREATE = 'create templates';
+
     public static function plans(): array
     {
         return [
@@ -130,6 +135,16 @@ class Permissions
             self::BOOKINGS_EDIT,
             self::BOOKINGS_DELETE,
             self::BOOKINGS_CREATE,
+        ];
+    }
+
+    public static function templates(): array
+    {
+        return [
+            self::TEMPLATES_VIEW,
+            self::TEMPLATES_EDIT,
+            self::TEMPLATES_DELETE,
+            self::TEMPLATES_CREATE,
         ];
     }
 }

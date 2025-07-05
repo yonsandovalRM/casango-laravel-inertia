@@ -19,8 +19,9 @@ return new class extends Migration
             $table->foreign('form_template_id')->references('id')->on('form_templates')->onDelete('cascade');
             $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
             $table->foreign('professional_id')->references('id')->on('professionals')->onDelete('cascade');
+            $table->enum('visibility', ['private', 'team'])->default('private');
 
-            $table->timestamps('filled_at');
+            $table->timestamp('filled_at')->nullable();
             $table->timestamps();
         });
     }
