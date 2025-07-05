@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('payment_status')->default('pending');
             $table->string('payment_method')->nullable();
             $table->string('payment_id')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
     }

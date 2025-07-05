@@ -4,6 +4,22 @@ import { User } from '@/types';
 import { ProfessionalResource } from './professional';
 import { ServiceResource } from './service';
 
+export const bookingStatusMap = {
+    pending: 'Pendiente',
+    confirmed: 'Confirmada',
+    cancelled: 'Cancelada',
+    completed: 'Completada',
+    no_show: 'No asistió',
+    rescheduled: 'Reagendada',
+};
+
+export const paymentStatusMap = {
+    pending: 'Pendiente',
+    paid: 'Pagado',
+    refunded: 'Reembolsado',
+    failed: 'Fallido',
+};
+
 export interface BookingResource {
     id: string;
     client_id: string;

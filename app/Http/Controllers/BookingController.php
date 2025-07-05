@@ -26,12 +26,18 @@ class BookingController extends Controller
         $bookings = Booking::where('professional_id', $professional->id)
             ->where('status', BookingStatus::STATUS_PENDING)
             ->orWhere('status', BookingStatus::STATUS_CONFIRMED)
-            ->whereDate('date', now())
             ->get();
 
         return Inertia::render('bookings/index', [
             'professional' => ProfessionalResource::make($professional)->toArray(request()),
             'bookings' => BookingResource::collection($bookings)->toArray(request()),
+        ]);
+    }
+
+    public function show(Booking $booking)
+    {
+        return Inertia::render('bookings/show', [
+            'booking' => BookingResource::make($booking)->toArray(request()),
         ]);
     }
 

@@ -20,6 +20,7 @@ class BookingResource extends JsonResource
             'time' => $this->time,
             'notes' => $this->notes,
             'status' => $this->status,
+            'phone' => $this->phone,
             'payment_status' => $this->payment_status,
         ];
     }
