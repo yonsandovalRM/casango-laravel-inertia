@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import { Fields } from '@/components/templates/fields';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { FormField } from '@/interfaces/template';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { closestCenter, DndContext, DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -16,16 +18,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { Head, useForm } from '@inertiajs/react';
 import { Edit2, Eye, GripVertical, Plus, Save, Settings, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-interface FormField {
-    id: string;
-    label: string;
-    type: string;
-    placeholder?: string;
-    required: boolean;
-    options?: string[] | null;
-    [key: string]: any;
-}
 
 const fieldTypes = [
     { value: 'text', label: 'Texto' },
@@ -59,7 +51,9 @@ const SortableFieldEditor = ({
     onToggleEdit: (index: number) => void;
 }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
-
+    const form = useForm({
+        fields: {},
+    });
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
@@ -72,9 +66,7 @@ const SortableFieldEditor = ({
     const handleSave = () => {
         const updatedField: FormField = {
             ...localField,
-            options: ['select', 'radio', 'checkbox'].includes(localField.type)
-                ? options.split('\n').filter((opt: string) => opt.trim() !== '')
-                : null,
+            options: ['select', 'radio', 'checkbox'].includes(localField.type) ? options.split('\n').filter((opt: string) => opt.trim() !== '') : [],
         };
         onUpdate(index, updatedField);
         onToggleEdit(index);
@@ -246,90 +238,9 @@ const SortableFieldEditor = ({
 };
 
 const FormPreview = ({ fields, formName }: { fields: FormField[]; formName: string }) => {
-    const renderField = (field: FormField) => {
-        const baseProps = {
-            id: field.id,
-            placeholder: field.placeholder,
-            required: field.required,
-        };
-
-        switch (field.type) {
-            case 'text':
-            case 'email':
-            case 'phone':
-            case 'number':
-                return <Input {...baseProps} type={field.type} />;
-
-            case 'date':
-            case 'time':
-                return <Input {...baseProps} type={field.type} />;
-
-            case 'textarea':
-                return <Textarea {...baseProps} rows={3} />;
-
-            case 'select':
-                return (
-                    <Select>
-                        <SelectTrigger>
-                            <SelectValue placeholder={field.placeholder} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {field.options?.map((option, idx) => (
-                                <SelectItem key={idx} value={option.toLowerCase().replace(/\s+/g, '-')}>
-                                    {option}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                );
-
-            case 'checkbox':
-                return (
-                    <div className="space-y-2">
-                        {field.options?.map((option, idx) => (
-                            <div key={idx} className="flex items-center space-x-2">
-                                <input type="checkbox" id={`${field.id}-${idx}`} className="rounded" />
-                                <Label htmlFor={`${field.id}-${idx}`} className="text-sm">
-                                    {option}
-                                </Label>
-                            </div>
-                        ))}
-                    </div>
-                );
-
-            case 'radio':
-                return (
-                    <div className="space-y-2">
-                        {field.options?.map((option, idx) => (
-                            <div key={idx} className="flex items-center space-x-2">
-                                <input type="radio" id={`${field.id}-${idx}`} name={field.id} className="rounded-full" />
-                                <Label htmlFor={`${field.id}-${idx}`} className="text-sm">
-                                    {option}
-                                </Label>
-                            </div>
-                        ))}
-                    </div>
-                );
-
-            case 'switch':
-                return (
-                    <div className="flex items-center space-x-2">
-                        <Switch id={field.id} />
-                        <Label htmlFor={field.id} className="text-sm">
-                            {field.placeholder || 'Activar/Desactivar'}
-                        </Label>
-                    </div>
-                );
-
-            case 'file':
-            case 'image':
-                return <Input {...baseProps} type="file" accept={field.type === 'image' ? 'image/*' : undefined} />;
-
-            default:
-                return <Input {...baseProps} />;
-        }
-    };
-
+    const form = useForm({
+        fields: {},
+    });
     return (
         <div className="rounded-lg border bg-background p-6 shadow-sm">
             <div className="mb-6">
@@ -351,7 +262,7 @@ const FormPreview = ({ fields, formName }: { fields: FormField[]; formName: stri
                                 {field.label}
                                 {field.required && <span className="text-red-500">*</span>}
                             </Label>
-                            {renderField(field)}
+                            <Fields field={field} form={form} />
                         </div>
                     ))}
 
@@ -410,7 +321,7 @@ export default function FormTemplateBuilder({
             type: 'text',
             placeholder: '',
             required: false,
-            options: null,
+            options: [],
         };
         setFields([...fields, newField]);
         setEditingIndex(fields.length);

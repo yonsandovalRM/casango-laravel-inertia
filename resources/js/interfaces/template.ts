@@ -5,14 +5,14 @@ export interface Template {
     fields: FormField[];
 }
 
-export interface FormField {
+export type FormField = {
     id: string;
     label: string;
     type: string;
     required: boolean;
     placeholder: string;
     options: string[];
-}
+};
 
 export interface ClientHistory {
     id: string;
