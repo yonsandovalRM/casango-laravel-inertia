@@ -22,6 +22,11 @@ export const ui = {
                 history_professional_bookings: 'History Bookings',
                 website: 'Visit Website',
             },
+            components: {
+                date: {
+                    placeholder: 'Select date',
+                },
+            },
         },
     },
     es: {
@@ -46,6 +51,11 @@ export const ui = {
                 history_client_bookings: 'Mis Reservas',
                 history_professional_bookings: 'Historial Reservas',
                 website: 'Visitar Sitio Web',
+            },
+            components: {
+                date: {
+                    placeholder: 'Seleccionar fecha',
+                },
             },
         },
     },

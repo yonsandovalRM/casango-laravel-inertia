@@ -14,16 +14,18 @@ use Inertia\Inertia;
 
 class FormTemplateController extends Controller
 {
-
     /**
      * Show the form template builder
      */
     public function builder()
     {
-
         $company = Company::first();
         $template = $company->getOrCreateFormTemplate();
-        $template->load('activeFields');
+
+        // Cargar campos activos ordenados explícitamente
+        $template->load(['activeFields' => function ($query) {
+            $query->orderBy('order');
+        }]);
 
         return Inertia::render('templates/builder', [
             'template' => $template,
@@ -42,6 +44,9 @@ class FormTemplateController extends Controller
             'fields' => 'required|array|min:1',
             'fields.*.label' => 'required|string|max:255',
             'fields.*.type' => 'required|string|in:text,number,email,phone,date,time,textarea,select,checkbox,radio,file,image,switch',
+            'fields.*.placeholder' => 'nullable|string|max:255',
+            'fields.*.required' => 'boolean',
+            'fields.*.options' => 'nullable|array',
         ]);
 
         $company = Company::first();
@@ -61,7 +66,6 @@ class FormTemplateController extends Controller
         return redirect()->back()->with('success', __('template.updated'));
     }
 
-
     /**
      * Get field usage statistics
      */
@@ -74,17 +78,21 @@ class FormTemplateController extends Controller
             return response()->json(['fields' => []]);
         }
 
-        $fields = $template->fields()->get()->map(function ($field) {
-            return [
-                'id' => $field->id,
-                'label' => $field->label,
-                'type' => $field->type,
-                'is_active' => $field->is_active,
-                'required' => $field->required,
-                'entries_count' => $field->getEntriesCount(),
-                'has_entries' => $field->hasEntries(),
-            ];
-        });
+        $fields = $template->fields()
+            ->orderBy('order') // ← AGREGADO: orden explícito
+            ->get()
+            ->map(function ($field) {
+                return [
+                    'id' => $field->id,
+                    'label' => $field->label,
+                    'type' => $field->type,
+                    'is_active' => $field->is_active,
+                    'required' => $field->required,
+                    'order' => $field->order, // ← AGREGADO: incluir orden
+                    'entries_count' => $field->getEntriesCount(),
+                    'has_entries' => $field->hasEntries(),
+                ];
+            });
 
         return response()->json(['fields' => $fields]);
     }

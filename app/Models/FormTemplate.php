@@ -13,7 +13,6 @@ class FormTemplate extends Model
         'company_id',
         'name',
         'description',
-
     ];
 
     public function company()
@@ -28,7 +27,9 @@ class FormTemplate extends Model
 
     public function activeFields()
     {
-        return $this->hasMany(FormTemplateField::class)->where('is_active', true);
+        return $this->hasMany(FormTemplateField::class)
+            ->where('is_active', true)
+            ->orderBy('order'); // ← AGREGADO: orden por defecto
     }
 
     public function entries()
@@ -50,7 +51,7 @@ class FormTemplate extends Model
     public function updateFields(array $fields)
     {
         // Marcar todos los campos como inactivos primero
-        $this->fields()->update(['active' => false]);
+        $this->fields()->update(['is_active' => false]); // ← CORREGIDO: era 'active'
 
         foreach ($fields as $index => $fieldData) {
             // Buscar si el campo ya existe por label
@@ -61,7 +62,7 @@ class FormTemplate extends Model
             if ($existingField) {
                 // Reactivar y actualizar el campo existente
                 $existingField->update([
-                    'active' => true,
+                    'is_active' => true, // ← CORREGIDO: era 'active'
                     'type' => $fieldData['type'],
                     'placeholder' => $fieldData['placeholder'] ?? null,
                     'required' => $fieldData['required'] ?? false,
