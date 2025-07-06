@@ -9,6 +9,8 @@ use App\Http\Requests\Bookings\UpdateBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\ProfessionalResource;
 use App\Models\Booking;
+use App\Models\Company;
+use App\Models\FormEntry;
 use App\Models\Professional;
 use App\Models\Service;
 use App\Models\User;
@@ -34,10 +36,76 @@ class BookingController extends Controller
         ]);
     }
 
+
+
     public function show(Booking $booking)
     {
+        $user = Auth::user();
+
+        // Cargar relaciones necesarias
+        $booking->load([
+            'client',
+            'service',
+            'professional.user',
+        ]);
+
+        // Obtener la empresa y template de formulario
+        $company = Company::first();
+        $template = $company->formTemplate;
+
+        // Obtener historial del cliente para este template
+        $clientHistory = [];
+        if ($template) {
+            $clientHistory = FormEntry::where('form_template_id', $template->id)
+                ->where('client_id', $booking->client_id)
+                ->with(['fields', 'professional.user', 'booking'])
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($entry) use ($booking) {
+                    return [
+                        'id' => $entry->id,
+                        'date' => $entry->created_at->format('Y-m-d'),
+                        'professional' => $entry->professional->user->name,
+                        'booking_id' => $entry->booking_id,
+                        'fields' => $entry->getFieldsAsArray(),
+                        'is_private' => $entry->visibility === 'private',
+                        'can_view' => $entry->professional_id === $booking->professional_id || $entry->visibility === 'public'
+                    ];
+                })
+                ->filter(function ($entry) {
+                    return $entry['can_view'];
+                })
+                ->values();
+        }
+
+        // Verificar si el usuario actual puede ver/editar esta reserva
+        $canEdit = $user->professional &&
+            ($booking->professional_id === $user->professional->id);
+
+
         return Inertia::render('bookings/show', [
             'booking' => BookingResource::make($booking)->toArray(request()),
+            'template' => $template ? [
+                'id' => $template->id,
+                'name' => $template->name,
+                'description' => $template->description,
+                'fields' => $template->getActiveFieldsOrdered()->map(function ($field) {
+                    return [
+                        'id' => $field->id,
+                        'label' => $field->label,
+                        'type' => $field->type,
+                        'required' => $field->required,
+                        'placeholder' => $field->placeholder,
+                        'options' => $field->options,
+                    ];
+                })
+            ] : null,
+            'clientHistory' => $clientHistory,
+            'canEdit' => $canEdit,
+            'currentProfessional' => $user->professional ? [
+                'id' => $user->professional->id,
+                'name' => $user->name
+            ] : null
         ]);
     }
 
