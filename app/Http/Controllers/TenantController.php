@@ -42,7 +42,6 @@ class TenantController extends Controller
     */
     public function create(Request $request)
     {
-
         $plans = Plan::all();
         if ($request->plan) {
             $plan = $plans->findOrFail($request->plan);
@@ -87,10 +86,7 @@ class TenantController extends Controller
 
         $tenant_id = $request->subdomain;
         $domain = $request->subdomain . '.' . config('tenancy.central_domains')[0];
-        $plan = Plan::find($request->plan_id);
-        if (!$plan) {
-            return redirect()->route('tenants.create')->with('error', __('plan.plan_not_found'));
-        }
+        $plan = Plan::findOrFail($request->plan_id);
 
         if ($this->validateDomainExists($domain)) {
             return redirect()->route('tenants.create')->with('error', __('tenant.subdomain_already_in_use'));
@@ -109,7 +105,7 @@ class TenantController extends Controller
                 'domain' => $domain,
             ]);
 
-            $this->createSubscription($tenant, $plan);
+            $this->createSubscription($tenant, $plan, $request->billing);
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
             $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
             $this->createCompany($tenant);
@@ -201,11 +197,10 @@ class TenantController extends Controller
     * @param Plan $plan
     * @return void
     */
-    private function createSubscription(Tenant $tenant, Plan $plan)
+    private function createSubscription(Tenant $tenant, Plan $plan, string $billing)
     {
-        // TODO: Solo maneja suscripciones de forma mensual, se debe agregar soporte para suscripciones anuales
         $trial_days = now()->addDays($plan->trial_days);
-        $ends_at = now()->addDays($plan->trial_days)->addMonths(1);
+        $ends_at = now()->addDays($plan->trial_days)->addMonths($billing === 'monthly' ? 1 : 12);
 
         $tenant->subscriptions()->create([
             'plan_id' => $plan->id,
@@ -214,7 +209,7 @@ class TenantController extends Controller
             'trial_ends_at' => $trial_days,
             'ends_at' => $ends_at,
             'payment_status' => 'pending',
-            'is_monthly' => true,
+            'is_monthly' => $billing === 'monthly',
             'is_active' => true,
         ]);
     }

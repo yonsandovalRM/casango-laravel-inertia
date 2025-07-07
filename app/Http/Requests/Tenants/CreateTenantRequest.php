@@ -21,6 +21,7 @@ class CreateTenantRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'name' => 'required|string|max:255',
             'subdomain' => 'required|string|max:63',
@@ -29,6 +30,7 @@ class CreateTenantRequest extends FormRequest
             'owner_password' => 'required|string|min:8|confirmed',
             'plan_id' => 'required|string|exists:plans,id',
             'category' => 'required|string|max:255',
+            'billing' => 'required|string|in:monthly,annual',
         ];
     }
 }
