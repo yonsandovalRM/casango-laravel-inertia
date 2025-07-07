@@ -18,6 +18,7 @@ use App\Models\UserProfileData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
 {
@@ -40,25 +41,31 @@ class BookingController extends Controller
     public function show(Booking $booking)
     {
         // Obtener templates activos
-        $user_profile_template = FormTemplate::where('type', 'user_profile')->where('is_active', true)->first();
-        $booking_form_template = FormTemplate::where('type', 'booking_form')->where('is_active', true)->first();
+        $user_profile_template = FormTemplate::where('type', 'user_profile')
+            ->where('is_active', true)
+            ->with(['fields' => function ($query) {
+                $query->orderBy('order');
+            }])
+            ->first();
+
+        $booking_form_template = FormTemplate::where('type', 'booking_form')
+            ->where('is_active', true)
+            ->with(['fields' => function ($query) {
+                $query->orderBy('order');
+            }])
+            ->first();
 
         if (!$user_profile_template || !$booking_form_template) {
             abort(404, 'Required form templates not found');
         }
 
         // Datos del CLIENTE
-        $client = $booking->client; // Asumo que hay una relación client en Booking
+        $client = $booking->client;
         $user_profile_data = UserProfileData::firstOrCreate([
             'user_id' => $client->id,
             'form_template_id' => $user_profile_template->id,
         ], [
-            'data' => $user_profile_template->fields->map(function ($field) {
-                return [
-                    'id' => $field->id,
-                    'value' => $field->default_value ?? '',
-                ];
-            })->toArray()
+            'data' => $this->initializeFormData($user_profile_template)
         ]);
 
         // Datos específicos de esta reserva
@@ -66,18 +73,13 @@ class BookingController extends Controller
             'booking_id' => $booking->id,
             'form_template_id' => $booking_form_template->id,
         ], [
-            'data' => $booking_form_template->fields->map(function ($field) {
-                return [
-                    'id' => $field->id,
-                    'value' => $field->default_value ?? '',
-                ];
-            })->toArray(),
+            'data' => $this->initializeFormData($booking_form_template),
             'is_visible_to_team' => true,
         ]);
 
         // Historial de formularios de reserva para este cliente
         $booking_history = Booking::where('client_id', $client->id)
-            ->where('id', '!=', $booking->id) // Excluir la reserva actual
+            ->where('id', '!=', $booking->id)
             ->with(['bookingFormData' => function ($query) use ($booking_form_template) {
                 $query->where('form_template_id', $booking_form_template->id);
             }])
@@ -94,12 +96,150 @@ class BookingController extends Controller
         ]);
     }
 
-    public function storeFormDataUserProfile(Request $request, Booking $booking) {}
+    public function storeFormDataUserProfile(Request $request, Booking $booking)
+    {
+        $template = FormTemplate::where('type', 'user_profile')
+            ->where('is_active', true)
+            ->with('fields')
+            ->firstOrFail();
+
+        // Validar datos dinámicamente
+        $validator = $this->validateFormData($request->all(), $template);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $client = $booking->client;
+        $userProfileData = UserProfileData::where('user_id', $client->id)
+            ->where('form_template_id', $template->id)
+            ->first();
+
+        if ($userProfileData) {
+            $userProfileData->update([
+                'data' => $request->all()
+            ]);
+        } else {
+            UserProfileData::create([
+                'user_id' => $client->id,
+                'form_template_id' => $template->id,
+                'data' => $request->all()
+            ]);
+        }
+
+        return back()->with('success', 'Perfil de usuario actualizado correctamente');
+    }
 
     public function storeFormDataBookingForm(Request $request, Booking $booking)
     {
-        dd($request->all(), $booking);
+        $template = FormTemplate::where('type', 'booking_form')
+            ->where('is_active', true)
+            ->with('fields')
+            ->firstOrFail();
+
+        // Validar datos dinámicamente
+        $validator = $this->validateFormData($request->all(), $template);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $bookingFormData = BookingFormData::where('booking_id', $booking->id)
+            ->where('form_template_id', $template->id)
+            ->first();
+
+        if ($bookingFormData) {
+            $bookingFormData->update([
+                'data' => $request->all()
+            ]);
+        } else {
+            BookingFormData::create([
+                'booking_id' => $booking->id,
+                'form_template_id' => $template->id,
+                'data' => $request->all(),
+                'is_visible_to_team' => true
+            ]);
+        }
+
+        return back()->with('success', 'Datos de reserva actualizados correctamente');
     }
+
+    /**
+     * Inicializar datos del formulario con valores por defecto
+     */
+    private function initializeFormData(FormTemplate $template): array
+    {
+        $data = [];
+
+        foreach ($template->fields as $field) {
+            $data[$field->name] = $field->default_value ?? '';
+        }
+
+        return $data;
+    }
+
+    /**
+     * Validar datos del formulario dinámicamente
+     */
+    private function validateFormData(array $data, FormTemplate $template)
+    {
+        $rules = [];
+        $messages = [];
+
+        foreach ($template->fields as $field) {
+            $fieldRules = [];
+
+            if ($field->is_required) {
+                $fieldRules[] = 'required';
+            }
+
+            // Agregar reglas específicas por tipo de campo
+            switch ($field->type) {
+                case 'email':
+                    $fieldRules[] = 'email';
+                    break;
+                case 'number':
+                    $fieldRules[] = 'numeric';
+                    break;
+                case 'date':
+                    $fieldRules[] = 'date';
+                    break;
+                case 'time':
+                    $fieldRules[] = 'date_format:H:i';
+                    break;
+                case 'tel':
+                    $fieldRules[] = 'string|max:20';
+                    break;
+                case 'url':
+                    $fieldRules[] = 'url';
+                    break;
+                case 'select':
+                    if ($field->options) {
+                        $fieldRules[] = 'in:' . implode(',', $field->options);
+                    }
+                    break;
+                case 'checkbox':
+                    $fieldRules[] = 'boolean';
+                    break;
+                case 'file':
+                    $fieldRules[] = 'file|max:10240'; // 10MB max
+                    break;
+            }
+
+            if (!empty($fieldRules)) {
+                $rules[$field->name] = implode('|', $fieldRules);
+            }
+
+            // Mensajes personalizados
+            if ($field->is_required) {
+                $messages[$field->name . '.required'] = "El campo {$field->label} es obligatorio";
+            }
+        }
+
+        return Validator::make($data, $rules, $messages);
+    }
+
+    // ... resto de métodos existentes sin cambios
 
     /**
      * Display a listing of client bookings with filters.

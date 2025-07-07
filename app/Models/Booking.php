@@ -46,4 +46,14 @@ class Booking extends Model
     {
         return $this->price - $this->discount;
     }
+
+    public function userProfileData()
+    {
+        return $this->hasOne(UserProfileData::class);
+    }
+
+    public function bookingFormData()
+    {
+        return $this->hasOne(BookingFormData::class);
+    }
 }
