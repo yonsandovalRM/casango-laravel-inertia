@@ -8,6 +8,7 @@ use App\Http\Resources\TenantResource;
 use App\Models\Company;
 use App\Models\Plan;
 use App\Models\Tenant;
+use App\Traits\HandlesMercadoPago;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -20,9 +21,7 @@ use App\Traits\GeneratesSubdomainSuggestions;
 
 class TenantController extends Controller
 {
-    use GeneratesSubdomainSuggestions;
-
-
+    use GeneratesSubdomainSuggestions, HandlesMercadoPago;
 
     /* 
     * Show the list of tenants
@@ -30,7 +29,10 @@ class TenantController extends Controller
     */
     public function index()
     {
-        $tenants = Tenant::with('subscriptions')->get();
+        $tenants = Tenant::with(['subscriptions' => function ($query) {
+            $query->where('is_active', true)->with('plan');
+        }])->get();
+
         return Inertia::render('tenants/index', [
             'tenants' => TenantResource::collection($tenants)->toArray(request()),
         ]);
@@ -59,9 +61,23 @@ class TenantController extends Controller
 
     public function created(Request $request)
     {
-        $tenant = Tenant::find($request->tenant);
+        $tenant = Tenant::with(['subscriptions' => function ($query) {
+            $query->where('is_active', true)->with('plan');
+        }])->findOrFail($request->tenant);
+
+        $subscription = $tenant->subscriptions->first();
+        $needsPaymentSetup = $subscription ? $this->needsPaymentSetup($subscription) : false;
+        $paymentUrl = null;
+
+        if ($needsPaymentSetup && $subscription) {
+            $paymentUrl = $this->getPaymentUrl($subscription);
+        }
+
         return Inertia::render('tenants/created', [
             'tenant' => TenantResource::make($tenant)->toArray(request()),
+            'subscription' => $subscription,
+            'needs_payment_setup' => $needsPaymentSetup,
+            'payment_url' => $paymentUrl,
         ]);
     }
 
@@ -83,7 +99,6 @@ class TenantController extends Controller
     */
     public function store(CreateTenantRequest $request)
     {
-
         $tenant_id = $request->subdomain;
         $domain = $request->subdomain . '.' . config('tenancy.central_domains')[0];
         $plan = Plan::findOrFail($request->plan_id);
@@ -93,6 +108,8 @@ class TenantController extends Controller
         }
 
         try {
+            // DB::beginTransaction();
+
             $tenant = Tenant::query()->create([
                 'id' => $tenant_id,
                 'name' => $request->name,
@@ -105,25 +122,60 @@ class TenantController extends Controller
                 'domain' => $domain,
             ]);
 
-            $this->createSubscription($tenant, $plan, $request->billing);
+            $subscription = $this->createSubscription($tenant, $plan, $request->billing);
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
             $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
             $this->createCompany($tenant);
 
+            // Programar creación de preaprobación para después del trial
+            $this->schedulePreapprovalCreation($subscription);
 
+            //DB::commit();
 
             Log::info("Tenant created successfully", [
                 'tenant' => $tenant,
+                'subscription' => $subscription,
             ]);
+
             return redirect()->route('tenants.created', ['tenant' => $tenant])->with('success', __('tenant.create_success'));
         } catch (\Exception $e) {
+            // DB::rollback();
+
             Log::error("Error creating tenant", [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
+
             return redirect()->route('tenants.create')->with('error', __('tenant.create_error'));
         }
     }
 
+    /* 
+    * Show tenant dashboard with subscription info
+    * @param Tenant $tenant
+    * @return \Inertia\Response
+    */
+    public function show(Tenant $tenant)
+    {
+        $tenant->load(['subscriptions' => function ($query) {
+            $query->where('is_active', true)->with('plan');
+        }]);
+
+        $subscription = $tenant->subscriptions->first();
+        $needsPaymentSetup = $subscription ? $this->needsPaymentSetup($subscription) : false;
+        $paymentUrl = null;
+
+        if ($needsPaymentSetup && $subscription) {
+            $paymentUrl = $this->getPaymentUrl($subscription);
+        }
+
+        return Inertia::render('tenants/show', [
+            'tenant' => TenantResource::make($tenant)->toArray(request()),
+            'subscription' => $subscription,
+            'needs_payment_setup' => $needsPaymentSetup,
+            'payment_url' => $paymentUrl,
+        ]);
+    }
 
     /* 
     * Destroy a tenant
@@ -132,8 +184,24 @@ class TenantController extends Controller
     */
     public function destroy(Tenant $tenant)
     {
-        $tenant->delete();
-        return redirect()->route('tenants.index')->with('success', __('tenant.delete_success'));
+        try {
+            // Cancelar suscripciones activas
+            $activeSubscriptions = $tenant->subscriptions()->where('is_active', true)->get();
+            foreach ($activeSubscriptions as $subscription) {
+                $this->cancelPreapproval($subscription);
+            }
+
+            $tenant->delete();
+
+            return redirect()->route('tenants.index')->with('success', __('tenant.delete_success'));
+        } catch (\Exception $e) {
+            Log::error("Error deleting tenant", [
+                'tenant_id' => $tenant->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('tenants.index')->with('error', __('tenant.delete_error'));
+        }
     }
 
     /* 
@@ -195,16 +263,17 @@ class TenantController extends Controller
     * Create a subscription for a tenant
     * @param Tenant $tenant
     * @param Plan $plan
-    * @return void
+    * @param string $billing
+    * @return \App\Models\Subscription
     */
     private function createSubscription(Tenant $tenant, Plan $plan, string $billing)
     {
         $trial_days = now()->addDays($plan->trial_days);
         $ends_at = now()->addDays($plan->trial_days)->addMonths($billing === 'monthly' ? 1 : 12);
 
-        $tenant->subscriptions()->create([
+        return $tenant->subscriptions()->create([
             'plan_id' => $plan->id,
-            'price' => $plan->price_monthly,
+            'price' => $billing === 'monthly' ? $plan->price_monthly : $plan->price_annual,
             'currency' => $plan->currency,
             'trial_ends_at' => $trial_days,
             'ends_at' => $ends_at,
@@ -214,13 +283,26 @@ class TenantController extends Controller
         ]);
     }
 
+    /* 
+    * Schedule preapproval creation for near trial end
+    * @param \App\Models\Subscription $subscription
+    * @return void
+    */
+    private function schedulePreapprovalCreation($subscription)
+    {
+        // Si el trial termina en menos de 7 días, crear preaprobación inmediatamente
+        if ($subscription->trial_ends_at <= now()->addDays(7)) {
+            $this->createPreapproval($subscription);
+        }
+        // Si no, el comando programado se encargará de crearla cuando sea necesario
+    }
+
     private function createCompany(Tenant $tenant)
     {
         $tenant->run(function () use ($tenant) {
             $company = Company::create([
                 'name' => $tenant->name,
                 'email' => $tenant->email,
-
             ]);
             $this->createCompanySchedule($company);
         });
