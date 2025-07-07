@@ -51,6 +51,10 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete bookings']);
         Permission::create(['name' => 'create bookings']);
 
+        Permission::create(['name' => 'view subscription']);
+        Permission::create(['name' => 'edit subscription']);
+        Permission::create(['name' => 'delete subscription']);
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
 
@@ -59,7 +63,11 @@ class RolesAndPermissionsSeeder extends Seeder
             ->givePermissionTo(Permission::all());
 
         $role = Role::create(['name' => 'admin']);
-        $role->givePermissionTo(Permission::all());
+        $role->givePermissionTo(Permission::whereNotIn('name', [
+            'view subscriptions',
+            'edit subscriptions',
+            'delete subscriptions'
+        ])->pluck('name')->toArray());
 
         $role = Role::create(['name' => 'client']);
         $role->givePermissionTo(['view company', 'view bookings', 'create bookings', 'edit bookings', 'delete bookings']);

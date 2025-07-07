@@ -249,6 +249,17 @@
 }
 
 /* calendar */
+.fc-scroller{
+    background: var(--background);
+    border-color: var(--color-border);
+}
+.fc-timeGridWeek-view .fc-view .fc-timegrid{
+    border-color: var(--color-border);
+}
+.fc .fc-scroller-harness{
+    background: var(--background);
+    border-color: var(--color-border);
+}
 .fc .fc-toolbar-title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -261,8 +272,8 @@
     font-size: 0.85rem;
     font-weight: 800;
     color: var(--color-foreground);
-    border-color: var(--color-border);
-    border-width: 0px;
+    border-right-color: var(--color-border);
+    border-width: 1px;
 }
 
 .fc-theme-standard td {

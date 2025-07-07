@@ -5,9 +5,10 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Building2, Calendar, CalendarClock, Globe, LayoutGrid, Package, Tags, Users } from 'lucide-react';
+import { BookOpen, Building2, Calendar, CalendarClock, CreditCard, Globe, LayoutGrid, Package, Tags, Users } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
+import { ScrollArea } from './ui/scroll-area';
 
 export default withTranslation()(AppSidebar);
 function AppSidebar({ t }: { t: any }) {
@@ -90,6 +91,13 @@ function AppSidebar({ t }: { t: any }) {
             icon: Tags,
             permission: PERMISSIONS.categories.view,
         },
+
+        {
+            title: t('ui.menu.subscription'),
+            href: route('tenant.subscription.index'),
+            icon: CreditCard,
+            permission: PERMISSIONS.subscription.view,
+        },
     ];
     const footerNavItems: NavItem[] = [
         {
@@ -123,7 +131,9 @@ function AppSidebar({ t }: { t: any }) {
             </SidebarContent>
             {adminNavItems.length > 0 && (
                 <SidebarContent>
-                    <NavMain items={adminNavItems} navTitle={t('ui.menu.admin')} />
+                    <ScrollArea className="h-full">
+                        <NavMain items={adminNavItems} navTitle={t('ui.menu.admin')} />
+                    </ScrollArea>
                 </SidebarContent>
             )}
 

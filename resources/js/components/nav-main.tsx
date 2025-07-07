@@ -12,6 +12,7 @@ function NavMain({ items = [], t, navTitle }: { items: NavItem[]; t: any; navTit
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>{navTitle}</SidebarGroupLabel>
+
             <SidebarMenu>
                 {items.map((item) => {
                     if (item.permission && !hasPermission(item.permission) && !hasRole(item.permission)) {

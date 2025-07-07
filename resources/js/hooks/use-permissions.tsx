@@ -72,6 +72,11 @@ export const PERMISSIONS = {
         delete: 'delete bookings',
         create: 'create bookings',
     },
+    subscription: {
+        view: 'view subscription',
+        edit: 'edit subscription',
+        delete: 'delete subscription',
+    },
 };
 
 export const ROLES = {

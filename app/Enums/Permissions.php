@@ -49,6 +49,10 @@ class Permissions
     public const COMPANY_VIEW = 'view company';
     public const COMPANY_EDIT = 'edit company';
 
+    public const SUBSCRIPTION_VIEW = 'view subscription';
+    public const SUBSCRIPTION_EDIT = 'edit subscription';
+    public const SUBSCRIPTION_DELETE = 'delete subscription';
+
     public static function plans(): array
     {
         return [

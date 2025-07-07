@@ -39,6 +39,7 @@ Route::middleware([
     Route::middleware('auth')->group(function () {
         Route::get('dashboard', [TenantDashboardController::class, 'index'])->name('dashboard');
         require __DIR__ . '/tenants/company.php';
+        require __DIR__ . '/tenants/subscription.php';
         require __DIR__ . '/tenants/templates.php';
         require __DIR__ . '/settings.php';
         require __DIR__ . '/common/invitations.php';
