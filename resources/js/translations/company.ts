@@ -4,6 +4,8 @@ export const company = {
             title: 'Company',
             information: 'Information',
             business_hours: 'Business Hours',
+            business_settings: 'Business Settings',
+            contact_information: 'Contact Information',
             save_changes: 'Save Changes',
             saving: 'Saving...',
             days: {
@@ -35,6 +37,7 @@ export const company = {
                 break_end: 'Break End',
                 has_break: 'Has Break',
                 locale: 'Locale',
+                closed: 'Closed',
             },
         },
     },
@@ -43,6 +46,8 @@ export const company = {
             title: 'Empresa',
             information: 'Información',
             business_hours: 'Horario de Atención',
+            business_settings: 'Configuración del Negocio',
+            contact_information: 'Información de Contacto',
             save_changes: 'Guardar Cambios',
             saving: 'Guardando...',
             days: {
@@ -74,6 +79,7 @@ export const company = {
                 break_end: 'Fin de Pausa',
                 has_break: 'Tiene Pausa',
                 locale: 'Idioma',
+                closed: 'Cerrado',
             },
         },
     },

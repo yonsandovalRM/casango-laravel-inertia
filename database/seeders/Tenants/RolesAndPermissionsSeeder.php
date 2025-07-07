@@ -65,6 +65,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo(['view company', 'view bookings', 'create bookings', 'edit bookings', 'delete bookings']);
 
         $role = Role::create(['name' => 'professional']);
-        $role->givePermissionTo(['view company', 'view services', 'view professional profile', 'edit professional profile', 'view professional exceptions', 'create professional exceptions', 'delete professional exceptions', 'view bookings', 'create bookings', 'edit bookings', 'delete bookings']);
+        $role->givePermissionTo(['view services', 'view company', 'view professional profile', 'edit professional profile', 'view professional exceptions', 'create professional exceptions', 'delete professional exceptions', 'view bookings', 'create bookings', 'edit bookings', 'delete bookings']);
     }
 }

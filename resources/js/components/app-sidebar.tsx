@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Building2, Calendar, Globe, LayoutGrid, Package, Tags, Users } from 'lucide-react';
+import { BookOpen, Building2, Calendar, CalendarClock, Globe, LayoutGrid, Package, Tags, Users } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
@@ -30,33 +30,35 @@ function AppSidebar({ t }: { t: any }) {
             icon: Building2,
             permission: PERMISSIONS.tenants.view,
         },
+
+        {
+            title: t('ui.menu.history_client_bookings'),
+            href: route('bookings.client'),
+            icon: Calendar,
+            permission: ROLES.client,
+        },
+
+        {
+            title: t('ui.menu.bookings'),
+            href: route('bookings.index'),
+            icon: Calendar,
+            permission: ROLES.professional,
+        },
+        {
+            title: t('ui.menu.history_professional_bookings'),
+            href: route('bookings.professional'),
+            icon: CalendarClock,
+            permission: ROLES.professional,
+        },
+    ];
+
+    const adminNavItems: NavItem[] = [
         {
             title: t('ui.menu.professional_profile'),
             href: route('professional.me'),
             icon: Users,
             permission: ROLES.professional,
         },
-        {
-            title: t('ui.menu.history_client_bookings'),
-            href: route('bookings.client'),
-            icon: Calendar,
-            permission: null,
-        },
-        {
-            title: t('ui.menu.history_professional_bookings'),
-            href: route('bookings.professional'),
-            icon: Calendar,
-            permission: null,
-        },
-        {
-            title: t('ui.menu.bookings'),
-            href: route('bookings.index'),
-            icon: Calendar,
-            permission: null,
-        },
-    ];
-
-    const adminNavItems: NavItem[] = [
         {
             title: t('ui.menu.company'),
             href: route('company.index'),

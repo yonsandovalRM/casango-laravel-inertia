@@ -46,6 +46,9 @@ class Permissions
     public const BOOKINGS_DELETE = 'delete bookings';
     public const BOOKINGS_CREATE = 'create bookings';
 
+    public const COMPANY_VIEW = 'view company';
+    public const COMPANY_EDIT = 'edit company';
+
     public static function plans(): array
     {
         return [
@@ -130,6 +133,14 @@ class Permissions
             self::BOOKINGS_EDIT,
             self::BOOKINGS_DELETE,
             self::BOOKINGS_CREATE,
+        ];
+    }
+
+    public static function company(): array
+    {
+        return [
+            self::COMPANY_VIEW,
+            self::COMPANY_EDIT,
         ];
     }
 }
