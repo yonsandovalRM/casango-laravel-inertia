@@ -40,63 +40,169 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        // Obtener templates activos
-        $user_profile_template = FormTemplate::where('type', 'user_profile')
-            ->where('is_active', true)
-            ->with(['fields' => function ($query) {
-                $query->orderBy('order');
-            }])
-            ->first();
+        // Obtener templates activos con sus campos ordenados
+        $templates = $this->getActiveTemplates();
 
-        $booking_form_template = FormTemplate::where('type', 'booking_form')
-            ->where('is_active', true)
-            ->with(['fields' => function ($query) {
-                $query->orderBy('order');
-            }])
-            ->first();
+        // Verificar que ambos templates existen
+        $this->validateTemplatesExist($templates);
 
-        if (!$user_profile_template || !$booking_form_template) {
-            abort(404, 'Required form templates not found');
-        }
+        // Preparar datos del cliente
+        $clientData = $this->prepareClientData($booking, $templates['user_profile']);
 
-        // Datos del CLIENTE
-        $client = $booking->client;
-        $user_profile_data = UserProfileData::firstOrCreate([
-            'user_id' => $client->id,
-            'form_template_id' => $user_profile_template->id,
-        ], [
-            'data' => $this->initializeFormData($user_profile_template)
-        ]);
+        // Preparar datos de la reserva
+        $bookingData = $this->prepareBookingData($booking, $templates['booking_form']);
 
-        // Datos específicos de esta reserva
-        $booking_form_data = BookingFormData::firstOrCreate([
-            'booking_id' => $booking->id,
-            'form_template_id' => $booking_form_template->id,
-        ], [
-            'data' => $this->initializeFormData($booking_form_template),
-            'is_visible_to_team' => true,
-        ]);
-
-        // Historial de formularios de reserva para este cliente
-        $booking_history = Booking::where('client_id', $client->id)
-            ->where('id', '!=', $booking->id)
-            ->where('status', '!=', BookingStatus::STATUS_CANCELLED)
-            ->where('date', '<', $booking->date)
-            ->with(['bookingFormData' => function ($query) use ($booking_form_template) {
-                $query->where('form_template_id', $booking_form_template->id);
-            }])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Obtener historial de reservas del cliente
+        $bookingHistory = $this->getClientBookingHistory($booking, $templates['booking_form']);
 
         return Inertia::render('bookings/show', [
-            'user_profile_data' => $user_profile_data,
-            'booking_form_data' => $booking_form_data,
-            'user_profile_template' => $user_profile_template,
-            'booking_form_template' => $booking_form_template,
-            'booking_history' => $booking_history,
+            'user_profile_data' => $clientData['user_profile_data'],
+            'booking_form_data' => $bookingData['booking_form_data'],
+            'user_profile_template' => $templates['user_profile'],
+            'booking_form_template' => $templates['booking_form'],
+            'booking_history' => $bookingHistory,
             'booking' => BookingResource::make($booking)->toArray(request()),
         ]);
     }
+
+    /**
+     * Obtiene los templates activos con sus campos ordenados
+     */
+    protected function getActiveTemplates(): array
+    {
+        $withOrderedFields = function ($query) {
+            $query->orderBy('order');
+        };
+
+        return [
+            'user_profile' => FormTemplate::userProfile()
+                ->active()
+                ->with(['fields' => $withOrderedFields])
+                ->first(),
+
+            'booking_form' => FormTemplate::bookingForm()
+                ->active()
+                ->with(['fields' => $withOrderedFields])
+                ->first()
+        ];
+    }
+
+    /**
+     * Valida que ambos templates existan
+     */
+    protected function validateTemplatesExist(array $templates): void
+    {
+        if (!$templates['user_profile'] || !$templates['booking_form']) {
+            abort(404, __('booking.templates_not_found'));
+        }
+    }
+
+    /**
+     * Prepara los datos del cliente
+     */
+    protected function prepareClientData(Booking $booking, FormTemplate $userProfileTemplate): array
+    {
+        $client = $booking->client;
+
+        $userProfileData = UserProfileData::firstOrCreate([
+            'user_id' => $client->id,
+            'form_template_id' => $userProfileTemplate->id,
+        ], [
+            'data' => $this->initializeFormData($userProfileTemplate)
+        ]);
+
+        return [
+            'user_profile_data' => $userProfileData,
+            'client' => $client
+        ];
+    }
+
+    /**
+     * Prepara los datos de la reserva
+     */
+    protected function prepareBookingData(Booking $booking, FormTemplate $bookingFormTemplate): array
+    {
+        $bookingFormData = BookingFormData::firstOrCreate([
+            'booking_id' => $booking->id,
+            'form_template_id' => $bookingFormTemplate->id,
+        ], [
+            'data' => $this->initializeFormData($bookingFormTemplate),
+            'is_visible_to_team' => true,
+        ]);
+
+        return [
+            'booking_form_data' => $bookingFormData
+        ];
+    }
+
+    /**
+     * Obtiene el historial de reservas del cliente
+     */
+    protected function getClientBookingHistory(Booking $currentBooking, FormTemplate $bookingFormTemplate)
+    {
+        $bookingHistory = Booking::where('client_id', $currentBooking->client_id)
+            ->where('id', '!=', $currentBooking->id)
+            ->where('status', '!=', BookingStatus::STATUS_CANCELLED)
+            ->where('date', '<', $currentBooking->date)
+            ->with([
+                'service',
+                'professional.user',
+                'bookingFormData' => function ($query) use ($bookingFormTemplate) {
+                    $query->where('form_template_id', $bookingFormTemplate->id);
+                }
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return $bookingHistory->map(function ($historyBooking) use ($bookingFormTemplate) {
+            return $this->mapBookingHistoryItem($historyBooking, $bookingFormTemplate);
+        });
+    }
+
+    /**
+     * Mapea un item del historial de reservas
+     */
+    protected function mapBookingHistoryItem(Booking $historyBooking, FormTemplate $bookingFormTemplate): array
+    {
+        $historyData = $historyBooking->toArray();
+        $historyData['mapped_form_data'] = $this->mapFormData($historyBooking, $bookingFormTemplate);
+
+
+        return $historyData;
+    }
+
+    /**
+     * Mapea los datos del formulario de una reserva
+     */
+    protected function mapFormData(Booking $booking, FormTemplate $template): array
+    {
+        if (!$booking->bookingFormData || !$booking->bookingFormData->data) {
+            return [];
+        }
+
+        $formData = $booking->bookingFormData->data;
+        $mappedData = [];
+
+        if (is_array($formData) && !empty($formData)) {
+            foreach ($formData as $fieldName => $fieldValue) {
+                if (!is_numeric($fieldName)) {
+                    $field = $template->fields->firstWhere('name', $fieldName);
+                    $value = is_array($fieldValue) ? ($fieldValue['value'] ?? $fieldValue) : $fieldValue;
+
+                    $mappedData[] = [
+                        'name' => $fieldName,
+                        'label' => $field ? $field->label : $fieldName,
+                        'value' => $value,
+                        'type' => $field ? $field->type : 'text'
+                    ];
+                }
+            }
+        }
+
+        return $mappedData;
+    }
+
+
 
     public function storeFormDataUserProfile(Request $request, Booking $booking)
     {

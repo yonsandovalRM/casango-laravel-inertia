@@ -1,6 +1,7 @@
 import { AppHeaderPage } from '@/components/app-header-page';
 import DynamicForm from '@/components/bookings/dynamic-form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -10,7 +11,7 @@ import { BookingResource } from '@/interfaces/booking';
 import { FormTemplate } from '@/interfaces/form-template';
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
-import { format } from 'date-fns';
+// Removed date-fns import as it's not available
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -30,16 +31,16 @@ interface BookingFormData {
     is_visible_to_team: boolean;
 }
 
+interface MappedFieldData {
+    name: string;
+    label: string;
+    value: any;
+    type: string;
+}
+
 interface BookingHistory extends BookingResource {
-    booking_form_data: {
-        id: string;
-        booking_id: string;
-        form_template_id: string;
-        data: any;
-        is_visible_to_team: boolean;
-        created_at: string;
-        updated_at: string;
-    };
+    mapped_form_data: MappedFieldData[];
+    basic_info: MappedFieldData[];
 }
 
 type BookingShowProps = {
@@ -65,9 +66,36 @@ export default function BookingShow({
     booking_history,
 }: BookingShowProps) {
     const { t } = useTranslation();
+    const formatDate = (dateString: string): string => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            });
+        } catch {
+            return dateString;
+        }
+    };
+
+    const formatDateTime = (dateString: string): string => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+        } catch {
+            return dateString;
+        }
+    };
     const formUserProfile = useForm<Record<string, any>>({});
     const formBooking = useForm<Record<string, any>>({});
-    const [bookingDetails, setBookingDetails] = useState<{ label: string; value: string }[] | null>([]);
+    const [selectedBookingHistory, setSelectedBookingHistory] = useState<BookingHistory | null>(null);
     const [openDialog, setOpenDialog] = useState(false);
 
     useEffect(() => {
@@ -97,22 +125,54 @@ export default function BookingShow({
         }
     };
 
-    const handleBookingDetails = (booking: BookingHistory) => {
-        console.log(enhanceBookingData(booking, booking_form_template));
-        setBookingDetails(enhanceBookingData(booking, booking_form_template) as any);
-        // Aquí podrías hacer una llamada a la API para obtener más detalles si es necesario
+    const handleBookingDetails = (historyBooking: BookingHistory) => {
+        setSelectedBookingHistory(historyBooking);
         setOpenDialog(true);
     };
 
-    const enhanceBookingData = (bookingHistory: BookingHistory, formTemplate: FormTemplate) => {
-        return Object.entries(bookingHistory.booking_form_data.data).map(([key, value]) => {
-            const field = formTemplate.fields.find((f) => f.name === key);
+    const formatFieldValue = (field: MappedFieldData): string => {
+        if (!field.value) return 'N/A';
 
-            return {
-                label: field?.label || key,
-                value: value,
-            };
-        });
+        switch (field.type) {
+            case 'date':
+                try {
+                    return formatDate(field.value);
+                } catch {
+                    return field.value;
+                }
+            case 'time':
+                return field.value;
+            case 'currency':
+                return `${field.value}`;
+            case 'email':
+                return field.value;
+            case 'tel':
+                return field.value;
+            case 'textarea':
+                return field.value;
+            case 'select':
+            case 'radio':
+                return field.value;
+            case 'checkbox':
+                return field.value ? 'Sí' : 'No';
+            default:
+                return String(field.value);
+        }
+    };
+
+    const renderFieldsBySection = (fields: MappedFieldData[]) => {
+        if (!fields || fields.length === 0) return null;
+
+        return (
+            <div className="space-y-3">
+                {fields.map((field, index) => (
+                    <div key={`${field.name}-${index}`} className="flex flex-col space-y-1">
+                        <span className="text-sm font-medium text-muted-foreground">{field.label}:</span>
+                        <span className="text-foreground">{formatFieldValue(field)}</span>
+                    </div>
+                ))}
+            </div>
+        );
     };
 
     return (
@@ -141,11 +201,13 @@ export default function BookingShow({
                                 </div>
                                 <div>
                                     <Label>{t('bookings.show.client_section.date')}</Label>
-                                    <p className="font-medium">{format(new Date(booking.date), 'PPp')}</p>
+                                    <p className="font-medium">{formatDateTime(booking.date)}</p>
                                 </div>
                                 <div>
                                     <Label>{t('bookings.show.client_section.status')}</Label>
-                                    <p className="font-medium capitalize">{booking.status}</p>
+                                    <Badge variant="outline" className="capitalize">
+                                        {booking.status}
+                                    </Badge>
                                 </div>
                                 <div>
                                     <Label>{t('bookings.show.client_section.notes')}</Label>
@@ -167,9 +229,16 @@ export default function BookingShow({
                                             {booking_history.map((pastBooking) => (
                                                 <div key={pastBooking.id} className="border-b pb-4 last:border-0">
                                                     <div className="flex items-start justify-between">
-                                                        <div>
-                                                            <p className="font-medium">{format(new Date(pastBooking.date), 'PPp')}</p>
-                                                            <p className="text-sm text-muted-foreground">{pastBooking.status}</p>
+                                                        <div className="flex-1 space-y-1">
+                                                            <div className="flex items-center gap-2">
+                                                                <p className="text-sm font-medium">{formatDate(pastBooking.date)}</p>
+                                                                <Badge variant="secondary" className="text-xs">
+                                                                    {pastBooking.status}
+                                                                </Badge>
+                                                            </div>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {pastBooking.service?.name || 'Servicio no especificado'}
+                                                            </p>
                                                         </div>
                                                         <Button variant="ghost" size="sm" onClick={() => handleBookingDetails(pastBooking)}>
                                                             {t('bookings.view_details')}
@@ -180,7 +249,7 @@ export default function BookingShow({
                                         </div>
                                     </ScrollArea>
                                 ) : (
-                                    <Alert variant={'info'}>
+                                    <Alert>
                                         <AlertDescription>{t('bookings.show.history_section.no_history')}</AlertDescription>
                                     </Alert>
                                 )}
@@ -233,20 +302,28 @@ export default function BookingShow({
                     </div>
                 </div>
             </div>
+
+            {/* Dialog para mostrar detalles del historial */}
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogContent>
+                <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle>{t('bookings.show.history_section.title')}</DialogTitle>
+                        <DialogTitle className="flex items-center gap-2">Detalles de la Reserva</DialogTitle>
+                        <DialogDescription>Información completa de la reserva seleccionada</DialogDescription>
                     </DialogHeader>
-                    <DialogDescription>{t('bookings.show.history_section.booking_details_description')}</DialogDescription>
-                    <div className="space-y-4">
-                        {bookingDetails?.map((detail, index) => (
-                            <div key={index} className="flex flex-col space-y-1">
-                                <span className="font-medium text-muted-foreground">{detail.label}:</span>
-                                <span className="text-foreground">{detail.value}</span>
-                            </div>
-                        ))}
-                    </div>
+
+                    {selectedBookingHistory && (
+                        <div className="space-y-6">
+                            {/* Datos del formulario */}
+                            {renderFieldsBySection(selectedBookingHistory.mapped_form_data)}
+
+                            {/* Mensaje si no hay datos */}
+                            {selectedBookingHistory.mapped_form_data.length === 0 && (
+                                <Alert>
+                                    <AlertDescription>No hay información adicional disponible para esta reserva.</AlertDescription>
+                                </Alert>
+                            )}
+                        </div>
+                    )}
                 </DialogContent>
             </Dialog>
         </AppLayout>
