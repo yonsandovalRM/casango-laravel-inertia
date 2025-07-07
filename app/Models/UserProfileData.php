@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserProfileData extends Model
 {
+    use HasUuid;
     protected $fillable = [
         'user_id',
         'form_template_id',
-        'data' // JSON con todas las respuestas
+        'data'
     ];
 
     protected $casts = [

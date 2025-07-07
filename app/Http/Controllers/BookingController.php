@@ -9,9 +9,12 @@ use App\Http\Requests\Bookings\UpdateBookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Http\Resources\ProfessionalResource;
 use App\Models\Booking;
+use App\Models\BookingFormData;
+use App\Models\FormTemplate;
 use App\Models\Professional;
 use App\Models\Service;
 use App\Models\User;
+use App\Models\UserProfileData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -36,9 +39,66 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
+        // Obtener templates activos
+        $user_profile_template = FormTemplate::where('type', 'user_profile')->where('is_active', true)->first();
+        $booking_form_template = FormTemplate::where('type', 'booking_form')->where('is_active', true)->first();
+
+        if (!$user_profile_template || !$booking_form_template) {
+            abort(404, 'Required form templates not found');
+        }
+
+        // Datos del CLIENTE
+        $client = $booking->client; // Asumo que hay una relación client en Booking
+        $user_profile_data = UserProfileData::firstOrCreate([
+            'user_id' => $client->id,
+            'form_template_id' => $user_profile_template->id,
+        ], [
+            'data' => $user_profile_template->fields->map(function ($field) {
+                return [
+                    'id' => $field->id,
+                    'value' => $field->default_value ?? '',
+                ];
+            })->toArray()
+        ]);
+
+        // Datos específicos de esta reserva
+        $booking_form_data = BookingFormData::firstOrCreate([
+            'booking_id' => $booking->id,
+            'form_template_id' => $booking_form_template->id,
+        ], [
+            'data' => $booking_form_template->fields->map(function ($field) {
+                return [
+                    'id' => $field->id,
+                    'value' => $field->default_value ?? '',
+                ];
+            })->toArray(),
+            'is_visible_to_team' => true,
+        ]);
+
+        // Historial de formularios de reserva para este cliente
+        $booking_history = Booking::where('client_id', $client->id)
+            ->where('id', '!=', $booking->id) // Excluir la reserva actual
+            ->with(['bookingFormData' => function ($query) use ($booking_form_template) {
+                $query->where('form_template_id', $booking_form_template->id);
+            }])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return Inertia::render('bookings/show', [
+            'user_profile_data' => $user_profile_data,
+            'booking_form_data' => $booking_form_data,
+            'user_profile_template' => $user_profile_template,
+            'booking_form_template' => $booking_form_template,
+            'booking_history' => $booking_history,
             'booking' => BookingResource::make($booking)->toArray(request()),
         ]);
+    }
+
+    public function storeFormDataUserProfile(Request $request, Booking $booking) {}
+
+    public function storeFormDataBookingForm(Request $request, Booking $booking)
+    {
+        dd($request->all(), $booking);
     }
 
     /**

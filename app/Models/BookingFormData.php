@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BookingFormData extends Model
 {
+    use HasUuid;
     protected $fillable = [
         'booking_id',
         'form_template_id',
-        'data', // JSON con todas las respuestas
+        'data',
         'is_visible_to_team'
     ];
 

@@ -13,4 +13,7 @@ Route::group(['prefix' => 'dashboard/bookings'], function () {
     Route::post('/', [BookingController::class, 'store'])->name('bookings.store')->middleware('can:' . Permissions::BOOKINGS_CREATE);
     Route::put('/{booking}', [BookingController::class, 'update'])->name('bookings.update')->middleware('can:' . Permissions::BOOKINGS_EDIT);
     Route::delete('/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy')->middleware('can:' . Permissions::BOOKINGS_DELETE);
+
+    Route::post('/{booking}/form-data/user-profile', [BookingController::class, 'storeFormDataUserProfile'])->name('bookings.form-data.store.user-profile')->middleware('can:' . Permissions::BOOKINGS_CREATE);
+    Route::post('/{booking}/form-data/booking-form', [BookingController::class, 'storeFormDataBookingForm'])->name('bookings.form-data.store.booking-form')->middleware('can:' . Permissions::BOOKINGS_CREATE);
 });
