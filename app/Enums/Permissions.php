@@ -52,6 +52,7 @@ class Permissions
     public const SUBSCRIPTION_VIEW = 'view subscription';
     public const SUBSCRIPTION_EDIT = 'edit subscription';
     public const SUBSCRIPTION_DELETE = 'delete subscription';
+    public const SUBSCRIPTION_MANAGE = 'manage subscription';
 
     public static function plans(): array
     {

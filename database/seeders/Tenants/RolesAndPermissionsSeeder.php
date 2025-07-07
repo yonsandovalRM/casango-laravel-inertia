@@ -54,6 +54,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'view subscription']);
         Permission::create(['name' => 'edit subscription']);
         Permission::create(['name' => 'delete subscription']);
+        Permission::create(['name' => 'manage subscription']);
 
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
@@ -66,7 +67,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $role->givePermissionTo(Permission::whereNotIn('name', [
             'view subscriptions',
             'edit subscriptions',
-            'delete subscriptions'
+            'delete subscriptions',
+            'manage subscriptions',
         ])->pluck('name')->toArray());
 
         $role = Role::create(['name' => 'client']);

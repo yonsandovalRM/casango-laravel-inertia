@@ -6,17 +6,21 @@ use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Carbon;
+use App\Traits\HandlesMercadoPago;
 
 class PaymentSetupReminder extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, HandlesMercadoPago;
 
     public $subscription;
     public $tenant;
     public $plan;
+    public $paymentUrl;
     public $daysRemaining;
     public $trialEndDate;
+    public $planFeatures;
+    public $companyLogo;
+    public $supportEmail;
 
     /**
      * Create a new message instance.
@@ -26,8 +30,20 @@ class PaymentSetupReminder extends Mailable
         $this->subscription = $subscription;
         $this->tenant = $subscription->tenant;
         $this->plan = $subscription->plan;
-        $this->daysRemaining = Carbon::now()->diffInDays($subscription->trial_ends_at);
+
+        // Generar URL de pago (crear preapproval si no existe)
+        $this->paymentUrl = $this->getPaymentUrl($subscription);
+
+        // Calcular días restantes
+        $this->daysRemaining = $subscription->getTrialDaysRemaining();
         $this->trialEndDate = $subscription->trial_ends_at->format('d/m/Y');
+
+        // Obtener características del plan
+        $this->planFeatures = $this->plan->features ?? [];
+
+        // Configuración de la empresa
+        $this->companyLogo = config('app.logo_url', asset('images/logo.png'));
+        $this->supportEmail = config('app.support_email', 'support@example.com');
     }
 
     /**
@@ -35,21 +51,34 @@ class PaymentSetupReminder extends Mailable
      */
     public function build()
     {
-        return $this->subject(
-            $this->daysRemaining > 3
-                ? "Completa tu configuración de pago - {$this->tenant->name}"
-                : "¡Últimos días para configurar tu pago! - {$this->tenant->name}"
-        )
-            ->markdown('emails.payment-setup-reminder', [
-                'tenant' => $this->tenant,
+        return $this->markdown('emails.payment-setup-reminder')
+            ->subject($this->getSubject())
+            ->with([
                 'subscription' => $this->subscription,
+                'tenant' => $this->tenant,
                 'plan' => $this->plan,
-                'paymentUrl' => $this->subscription->mp_init_point,
-                'trialEndDate' => $this->trialEndDate,
+                'paymentUrl' => $this->paymentUrl,
                 'daysRemaining' => $this->daysRemaining,
-                'supportEmail' => config('mail.support.address'),
-                'companyLogo' => asset('images/logo-email.png'),
-                'planFeatures' => $this->plan->features ?? [],
+                'trialEndDate' => $this->trialEndDate,
+                'planFeatures' => $this->planFeatures,
+                'companyLogo' => $this->companyLogo,
+                'supportEmail' => $this->supportEmail,
             ]);
+    }
+
+    /**
+     * Get the subject line based on days remaining
+     */
+    private function getSubject(): string
+    {
+        if ($this->daysRemaining <= 1) {
+            return "🚨 ¡Última oportunidad! Configura tu pago hoy";
+        }
+
+        if ($this->daysRemaining <= 3) {
+            return "⏰ Solo {$this->daysRemaining} días para configurar tu pago";
+        }
+
+        return "📋 Completa tu configuración de pago - {$this->daysRemaining} días restantes";
     }
 }

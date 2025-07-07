@@ -6,16 +6,20 @@ use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\HtmlString;
+use App\Traits\HandlesMercadoPago;
 
 class PaymentDueReminder extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, HandlesMercadoPago;
 
     public $subscription;
     public $tenant;
     public $plan;
+    public $paymentUrl;
     public $daysRemaining;
+    public $trialEndsAt;
+    public $companyLogo;
+    public $supportEmail;
 
     /**
      * Create a new message instance.
@@ -25,7 +29,17 @@ class PaymentDueReminder extends Mailable
         $this->subscription = $subscription;
         $this->tenant = $subscription->tenant;
         $this->plan = $subscription->plan;
-        $this->daysRemaining = now()->diffInDays($subscription->trial_ends_at);
+
+        // Generar URL de pago
+        $this->paymentUrl = $this->getPaymentUrl($subscription);
+
+        // Calcular días restantes
+        $this->daysRemaining = $subscription->getTrialDaysRemaining();
+        $this->trialEndsAt = $subscription->trial_ends_at->format('d/m/Y');
+
+        // Configuración de la empresa
+        $this->companyLogo = config('app.logo_url', asset('images/logo.png'));
+        $this->supportEmail = config('app.support_email', 'support@example.com');
     }
 
     /**
@@ -33,20 +47,29 @@ class PaymentDueReminder extends Mailable
      */
     public function build()
     {
-        return $this->subject(
-            $this->daysRemaining > 0
-                ? "Tu período de prueba termina en {$this->daysRemaining} días - {$this->tenant->name}"
-                : "Tu período de prueba ha finalizado - {$this->tenant->name}"
-        )
-            ->markdown('emails.payment-due-reminder', [
-                'tenant' => $this->tenant,
+        return $this->markdown('emails.payment-due-reminder')
+            ->subject($this->getSubject())
+            ->with([
                 'subscription' => $this->subscription,
+                'tenant' => $this->tenant,
                 'plan' => $this->plan,
-                'paymentUrl' => $this->subscription->mp_init_point,
-                'trialEndsAt' => $this->subscription->trial_ends_at->format('d/m/Y'),
+                'paymentUrl' => $this->paymentUrl,
                 'daysRemaining' => $this->daysRemaining,
-                'supportEmail' => config('mail.support.address'),
-                'companyLogo' => asset('images/logo-email.png'),
+                'trialEndsAt' => $this->trialEndsAt,
+                'companyLogo' => $this->companyLogo,
+                'supportEmail' => $this->supportEmail,
             ]);
+    }
+
+    /**
+     * Get the subject line based on days remaining
+     */
+    private function getSubject(): string
+    {
+        if ($this->daysRemaining > 0) {
+            return "⏰ Tu período de prueba termina en {$this->daysRemaining} días";
+        }
+
+        return "⚠️ Tu período de prueba ha finalizado - Configura tu pago";
     }
 }
