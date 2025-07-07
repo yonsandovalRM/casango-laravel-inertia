@@ -1,5 +1,6 @@
 import { AppHeaderPage } from '@/components/app-header-page';
 import DynamicForm from '@/components/bookings/dynamic-form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -97,6 +98,7 @@ export default function BookingShow({
     };
 
     const handleBookingDetails = (booking: BookingHistory) => {
+        console.log(enhanceBookingData(booking, booking_form_template));
         setBookingDetails(enhanceBookingData(booking, booking_form_template) as any);
         // Aquí podrías hacer una llamada a la API para obtener más detalles si es necesario
         setOpenDialog(true);
@@ -105,6 +107,7 @@ export default function BookingShow({
     const enhanceBookingData = (bookingHistory: BookingHistory, formTemplate: FormTemplate) => {
         return Object.entries(bookingHistory.booking_form_data.data).map(([key, value]) => {
             const field = formTemplate.fields.find((f) => f.name === key);
+
             return {
                 label: field?.label || key,
                 value: value,
@@ -113,7 +116,13 @@ export default function BookingShow({
     };
 
     return (
-        <AppLayout breadcrumbs={[{ title: t('bookings.index.title'), href: '/bookings' }]}>
+        <AppLayout
+            breadcrumbs={[
+                { title: 'Dashboard', href: route('dashboard') },
+                { title: t('bookings.index.title'), href: route('bookings.index') },
+                { title: t('bookings.show.title'), href: route('bookings.show', { booking: booking.id }) },
+            ]}
+        >
             <Head title={t('bookings.show.title')} />
             <AppHeaderPage title={t('bookings.show.title')} description={t('bookings.show.description')} />
 
@@ -171,7 +180,9 @@ export default function BookingShow({
                                         </div>
                                     </ScrollArea>
                                 ) : (
-                                    <p className="py-4 text-center text-muted-foreground">{t('bookings.no_history')}</p>
+                                    <Alert variant={'info'}>
+                                        <AlertDescription>{t('bookings.show.history_section.no_history')}</AlertDescription>
+                                    </Alert>
                                 )}
                             </CardContent>
                         </Card>

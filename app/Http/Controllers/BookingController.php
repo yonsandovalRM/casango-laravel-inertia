@@ -80,6 +80,8 @@ class BookingController extends Controller
         // Historial de formularios de reserva para este cliente
         $booking_history = Booking::where('client_id', $client->id)
             ->where('id', '!=', $booking->id)
+            ->where('status', '!=', BookingStatus::STATUS_CANCELLED)
+            ->where('date', '<', $booking->date)
             ->with(['bookingFormData' => function ($query) use ($booking_form_template) {
                 $query->where('form_template_id', $booking_form_template->id);
             }])

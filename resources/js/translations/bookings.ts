@@ -30,6 +30,7 @@ export const bookings = {
                     title: 'Booking History',
                     description: 'View booking history',
                     booking_details_description: 'View the details of your booking history',
+                    no_history: 'No booking history available',
                 },
                 client_profile: {
                     title: 'Client Profile',
@@ -73,6 +74,7 @@ export const bookings = {
                     title: 'Historial de Reservas',
                     description: 'Ver el historial de reservas',
                     booking_details_description: 'Ver los detalles de tu historial de reservas',
+                    no_history: 'No hay historial de reservas disponible',
                 },
                 client_profile: {
                     title: 'Ficha del Cliente',
