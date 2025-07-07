@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Mercado Pago Configuration
@@ -53,5 +52,4 @@ return [
         'access_token' => env('MP_SANDBOX_ACCESS_TOKEN', ''),
         'preapproval_url' => env('MP_SANDBOX_PREAPPROVAL_URL', 'https://api.mercadopago.com/preapproval'),
     ],
-
 ];

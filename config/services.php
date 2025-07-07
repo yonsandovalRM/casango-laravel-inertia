@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'mail' => [
+        'support' => [
+            'address' => env('MAIL_SUPPORT_ADDRESS', 'soporte@tudominio.com'),
+            'name' => env('MAIL_SUPPORT_NAME', 'Soporte'),
+        ],
+    ],
+
+
 ];
