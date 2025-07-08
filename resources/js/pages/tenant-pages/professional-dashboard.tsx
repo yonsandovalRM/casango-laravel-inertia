@@ -59,14 +59,6 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: route('dashboard') }]}>
             <Head title="Dashboard" />
             <div className="flex flex-col gap-6 p-4">
-                {/* Welcome Section */}
-                <div className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
-                    <h1 className="mb-2 font-outfit text-2xl font-bold">Bienvenido, {professional.user.name}</h1>
-                    <p className="text-blue-100">
-                        {professional.title} • {professional.specialty}
-                    </p>
-                </div>
-
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard title="Total Reservas" value={stats.totalBookings} icon={Calendar} description="Todas las reservas" />

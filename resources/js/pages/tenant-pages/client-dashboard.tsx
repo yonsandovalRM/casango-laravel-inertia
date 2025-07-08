@@ -41,12 +41,6 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: route('dashboard') }]}>
             <Head title="Dashboard" />
             <div className="space-y-6 p-4">
-                {/* Welcome Section */}
-                <div className="rounded-lg bg-gradient-to-r from-green-600 to-teal-600 p-6 text-white">
-                    <h1 className="mb-2 font-outfit text-2xl font-bold">Hola, {client.name}</h1>
-                    <p className="text-green-100">Gestiona tus reservas y descubre nuevos servicios</p>
-                </div>
-
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard title="Total de Reservas" value={stats.totalBookings} icon={Calendar} description="Todas las reservas" />

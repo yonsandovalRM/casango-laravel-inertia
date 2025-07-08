@@ -1,3 +1,4 @@
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -350,17 +351,17 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                         )}
 
                         {currentStatus.is_in_trial && (
-                            <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-4 text-blue-800">
+                            <Alert variant={'info'}>
                                 <Clock className="h-5 w-5" />
                                 <span>Estás en período de prueba. Te quedan {currentStatus.trial_days_remaining} días.</span>
-                            </div>
+                            </Alert>
                         )}
 
                         {subscription.payment_status === 'cancelled' && (
-                            <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-4 text-gray-800">
+                            <Alert variant={'destructive'}>
                                 <X className="h-5 w-5" />
                                 <span>Tu suscripción está cancelada. Puedes reactivarla en cualquier momento.</span>
-                            </div>
+                            </Alert>
                         )}
 
                         {/* Plan Info */}
@@ -520,7 +521,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                         </div>
 
                         {data.plan_id && (
-                            <div className="rounded-lg bg-gray-50 p-4">
+                            <div className="rounded-lg bg-accent p-4">
                                 <p className="font-medium">
                                     Precio: {formatCurrency(getSelectedPlanPrice(), getSelectedPlan()?.currency || 'CLP')}
                                     {data.is_monthly ? '/mes' : '/año'}

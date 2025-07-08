@@ -49,12 +49,6 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: route('dashboard') }]}>
             <Head title="Dashboard - Owner" />
             <div className="flex flex-col gap-6 p-6">
-                {/* Welcome Section */}
-                <div className="rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 p-6 text-white">
-                    <h1 className="mb-2 font-outfit text-3xl font-bold">Panel de Control</h1>
-                    <p className="text-purple-100">Bienvenido, {owner.name} • Visión general de tu negocio</p>
-                </div>
-
                 {/* Main Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard
