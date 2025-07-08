@@ -6,36 +6,13 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlanResource } from '@/interfaces/plan';
-import { SubscriptionResource } from '@/interfaces/subscription';
+import { SubscriptionResource, SubscriptionStatusData } from '@/interfaces/subscription';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency } from '@/lib/utils';
 import { Head, router, useForm } from '@inertiajs/react';
 import { AlertCircle, ArrowDown, ArrowUp, Calendar, CheckCircle, Clock, CreditCard, Loader2, Play, RefreshCw, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-
-interface SubscriptionStatusData {
-    status: string;
-    status_label: string;
-    status_color: string;
-    mp_status?: string;
-    is_active: boolean;
-    is_in_trial: boolean;
-    is_trial_expired: boolean;
-    is_expired: boolean;
-    needs_payment_setup: boolean;
-    trial_days_remaining: number;
-    trial_ends_at: string;
-    ends_at: string;
-    next_billing_date: string;
-    current_price: number;
-    plan_name: string;
-    is_monthly: boolean;
-    can_cancel: boolean;
-    can_upgrade: boolean;
-    can_downgrade: boolean;
-    can_reactivate: boolean;
-}
 
 interface SubscriptionProps {
     subscription: SubscriptionResource | null;
@@ -71,33 +48,33 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
             return;
         }
 
-        let route_name = '';
-        let success_message = '';
+        let routeName = '';
+        let successMessage = '';
 
         switch (actionType) {
             case 'create':
-                route_name = 'tenant.subscription.create';
-                success_message = 'Suscripción creada exitosamente';
+                routeName = 'tenant.subscription.create';
+                successMessage = 'Suscripción creada exitosamente';
                 break;
             case 'update':
-                route_name = 'tenant.subscription.update';
-                success_message = 'Suscripción actualizada exitosamente';
+                routeName = 'tenant.subscription.update';
+                successMessage = 'Suscripción actualizada exitosamente';
                 break;
             case 'upgrade':
-                route_name = 'tenant.subscription.upgrade';
-                success_message = 'Upgrade realizado exitosamente';
+                routeName = 'tenant.subscription.upgrade';
+                successMessage = 'Upgrade realizado exitosamente';
                 break;
             case 'downgrade':
-                route_name = 'tenant.subscription.downgrade';
-                success_message = 'Downgrade realizado exitosamente';
+                routeName = 'tenant.subscription.downgrade';
+                successMessage = 'Downgrade realizado exitosamente';
                 break;
             default:
                 return;
         }
 
-        post(route(route_name), {
+        post(route(routeName), {
             onSuccess: () => {
-                toast.success(success_message);
+                toast.success(successMessage);
                 setIsDialogOpen(false);
                 reset();
             },
@@ -109,7 +86,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
     };
 
     const handleAction = (action: string) => {
-        const actions = {
+        const actions: Record<string, () => void> = {
             'setup-payment': () => {
                 router.post(
                     route('tenant.subscription.setup-payment'),
@@ -192,7 +169,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
     const getStatusBadge = (status: string, isActive: boolean) => {
         if (!isActive) return <Badge variant="destructive">Inactiva</Badge>;
 
-        const statusConfig = {
+        const statusConfig: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string; className: string }> = {
             paid: { variant: 'default', label: 'Activa', className: 'bg-green-500 hover:bg-green-600' },
             active: { variant: 'default', label: 'Activa', className: 'bg-green-500 hover:bg-green-600' },
             pending: { variant: 'secondary', label: 'Pendiente', className: '' },
@@ -201,7 +178,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
             cancelled: { variant: 'outline', label: 'Cancelada', className: '' },
         };
 
-        const config = statusConfig[status] || { variant: 'secondary', label: status, className: '' };
+        const config = statusConfig[status] || { variant: 'secondary' as const, label: status, className: '' };
 
         return (
             <Badge variant={config.variant} className={config.className}>
@@ -230,12 +207,21 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
     };
 
     const currentStatus = statusData || {
+        status: subscription?.payment_status || 'pending',
+        status_label: subscription?.payment_status || 'Pendiente',
+        status_color: 'secondary',
         is_active: subscription?.is_active || false,
         is_in_trial: false,
         is_trial_expired: false,
         is_expired: false,
         needs_payment_setup: false,
         trial_days_remaining: 0,
+        trial_ends_at: '',
+        ends_at: '',
+        next_billing_date: '',
+        current_price: 0,
+        plan_name: '',
+        is_monthly: true,
         can_cancel: false,
         can_upgrade: false,
         can_downgrade: false,
@@ -277,7 +263,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                                     </SelectTrigger>
                                     <SelectContent>
                                         {plans.map((plan) => (
-                                            <SelectItem key={plan.id} value={plan.id.toString()}>
+                                            <SelectItem key={plan.id} value={plan.id}>
                                                 {plan.name} - {formatCurrency(plan.price_monthly, plan.currency)}/mes
                                             </SelectItem>
                                         ))}
@@ -399,7 +385,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                                 <Calendar className="h-5 w-5 text-muted-foreground" />
                                 <div>
                                     {subscription.ends_at && <p className="font-medium">Vence: {formatDate(subscription.ends_at)}</p>}
-                                    {isTrialActive && (
+                                    {isTrialActive && subscription.trial_ends_at && (
                                         <p className="text-sm text-muted-foreground">Prueba hasta: {formatDate(subscription.trial_ends_at)}</p>
                                     )}
                                 </div>
@@ -507,7 +493,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                                 </SelectTrigger>
                                 <SelectContent>
                                     {plans.map((plan) => (
-                                        <SelectItem key={plan.id} value={plan.id.toString()}>
+                                        <SelectItem key={plan.id} value={plan.id}>
                                             {plan.name} - {formatCurrency(plan.price_monthly, plan.currency)}/mes
                                         </SelectItem>
                                     ))}

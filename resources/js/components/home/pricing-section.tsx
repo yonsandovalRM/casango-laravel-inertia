@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { Check } from 'lucide-react';
 import { useState } from 'react';
@@ -21,14 +21,6 @@ interface PlanResource {
     created_at: string;
     updated_at: string;
 }
-
-// Mock function for currency formatting
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('es-CL', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(amount);
-};
 
 export function PricingSection({ plans }: { plans: PlanResource[] }) {
     const [isAnnual, setIsAnnual] = useState(false);

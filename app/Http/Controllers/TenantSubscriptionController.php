@@ -47,7 +47,7 @@ class TenantSubscriptionController extends Controller
     public function setupPayment(Request $request)
     {
         $tenant = tenant();
-        $subscription = Subscription::where('tenant_id', $tenant->id)->first();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
             return back()->with('error', 'Suscripción no encontrada');
@@ -166,7 +166,7 @@ class TenantSubscriptionController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'plan_id' => 'required|exists:plans,id',
+            'plan_id' => 'required',
             'is_monthly' => 'boolean',
         ]);
 
