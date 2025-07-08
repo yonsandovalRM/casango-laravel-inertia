@@ -235,7 +235,7 @@ class BookingController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Perfil de usuario actualizado correctamente');
+        return back()->with('success', __('booking.user_profile_updated'));
     }
 
     public function storeFormDataBookingForm(Request $request, Booking $booking)
@@ -269,7 +269,7 @@ class BookingController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Datos de reserva actualizados correctamente');
+        return back()->with('success', __('booking.updated'));
     }
 
     /**

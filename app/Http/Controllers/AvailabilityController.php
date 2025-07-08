@@ -77,7 +77,7 @@ class AvailabilityController extends Controller
             ->first();
 
         if (!$professionalService) {
-            return response()->json(['error' => 'Professional does not offer this service'], 404);
+            return response()->json(['error' => __('availability.professional_service_not_found')], 404);
         }
 
         $duration = $professionalService->pivot->duration ?? $service->duration;
@@ -87,7 +87,7 @@ class AvailabilityController extends Controller
         $workingHours = $this->getWorkingHours($professional, $dayOfWeek);
 
         if (!$workingHours) {
-            return response()->json(['time_blocks' => [], 'message' => 'Professional not available on this day']);
+            return response()->json(['time_blocks' => [], 'message' => __('availability.professional_not_available_for_date')], 404);
         }
 
         // Generar todos los bloques de tiempo posibles (disponibles y no disponibles)
