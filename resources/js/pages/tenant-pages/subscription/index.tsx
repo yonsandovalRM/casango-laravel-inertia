@@ -121,7 +121,7 @@ export default function Subscription({ subscription, plans }: SubscriptionProps)
 
                         {/* Actions */}
                         <div className="flex flex-wrap gap-3 border-t pt-4">
-                            {subscription.payment_status === 'pending' && (
+                            {subscription.payment_status === 'pending_payment_method' && (
                                 <Button onClick={onPay}>
                                     <CreditCard className="mr-2 h-4 w-4" />
                                     Pagar Ahora

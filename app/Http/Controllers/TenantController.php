@@ -68,7 +68,6 @@ class TenantController extends Controller
         $subscription = $tenant->subscriptions->first();
         $needsPaymentSetup = $subscription ? $this->needsPaymentSetup($subscription) : false;
         $paymentUrl = null;
-
         if ($needsPaymentSetup && $subscription) {
             $paymentUrl = $this->getPaymentUrl($subscription);
         }

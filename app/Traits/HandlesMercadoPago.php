@@ -22,16 +22,21 @@ trait HandlesMercadoPago
             $preapprovalData = [
                 'reason' => "Suscripción {$plan->name} - {$tenant->name}",
                 'external_reference' => $subscription->id,
-                'payer_email' => $tenant->email,
+                'payer_email' => app()->isProduction()
+                    ? $tenant->email
+                    : 'test_user_1821087495@testuser.com', // Email de prueba, se debe reemplazar por el email real del usuario
                 'card_token_id' => null, // Se puede implementar después para tarjetas guardadas
                 'auto_recurring' => [
                     'frequency' => $subscription->is_monthly ? 1 : 12,
                     'frequency_type' => 'months',
-                    'start_date' => $subscription->trial_ends_at->format('Y-m-d\TH:i:s.v\Z'),
-                    'end_date' => null, // Suscripción indefinida
+                    'start_date' => $subscription->trial_ends_at && $subscription->trial_ends_at->isFuture()
+                        ? $subscription->trial_ends_at->format('Y-m-d\TH:i:s.v\Z')  // Si hay trial futuro
+                        : now()->addDay()->format('Y-m-d\TH:i:s.v\Z'),  // Si no hay trial o ya pasó
+                    'end_date' => null,
                     'transaction_amount' => $subscription->is_monthly ? $plan->price_monthly : $plan->price_annual,
                     'currency_id' => strtoupper($plan->currency),
                 ],
+                'back_url' => route('tenants.payment.success', ['subscription' => $subscription->id]),
                 'back_urls' => [
                     'success' => route('tenants.payment.success', ['subscription' => $subscription->id]),
                     'failure' => route('tenants.payment.failure', ['subscription' => $subscription->id]),
