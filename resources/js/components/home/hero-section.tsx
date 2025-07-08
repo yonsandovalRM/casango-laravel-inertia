@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { router } from '@inertiajs/react';
 import AnimatedBackground from './animated-background';
 
 const HeroSection = () => {
@@ -18,6 +19,7 @@ const HeroSection = () => {
                     <Button
                         size="lg"
                         className="bg-blue-600 px-8 py-4 text-lg font-medium transition-all duration-300 hover:scale-105 hover:bg-blue-700"
+                        onClick={() => router.visit(route('tenants.create'))}
                     >
                         Comenzar gratis
                     </Button>

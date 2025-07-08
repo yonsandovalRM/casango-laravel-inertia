@@ -41,8 +41,8 @@ export default function Home({ plans }: { plans: PlanResource[] }) {
                             {appearance === 'light' ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
                         </Button>
                         {auth.user ? (
-                            <Button variant="outline" onClick={() => router.visit(route('logout'), { method: 'post' })}>
-                                Cerrar sesión
+                            <Button variant="outline" onClick={() => router.visit(route('dashboard'))}>
+                                Dashboard
                             </Button>
                         ) : (
                             <Button variant="outline" onClick={() => router.visit(route('login'))}>
