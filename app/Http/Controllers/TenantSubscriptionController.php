@@ -10,6 +10,7 @@ use App\Traits\HandlesMercadoPago;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TenantSubscriptionController extends Controller
 {
@@ -52,6 +53,17 @@ class TenantSubscriptionController extends Controller
             return response()->json(['error' => 'Subscription not found'], 404);
         }
 
+        // Verificar el estado actual antes de crear nueva preaprobación
+        if ($subscription->mp_preapproval_id) {
+            $currentStatus = $this->checkPreapprovalStatus($subscription);
+            if ($currentStatus === 'authorized') {
+                return response()->json([
+                    'message' => 'Payment method already configured',
+                    'subscription_id' => $subscription->id,
+                ]);
+            }
+        }
+
         $paymentUrl = $this->getPaymentUrl($subscription);
 
         if (!$paymentUrl) {
@@ -79,7 +91,10 @@ class TenantSubscriptionController extends Controller
         }
 
         // Verificar estado actual en MercadoPago
-        $mpStatus = $this->checkPreapprovalStatus($subscription);
+        $mpStatus = null;
+        if ($subscription->mp_preapproval_id) {
+            $mpStatus = $this->checkPreapprovalStatus($subscription);
+        }
 
         return response()->json($this->getSubscriptionStatusData($subscription, $mpStatus));
     }
@@ -95,7 +110,7 @@ class TenantSubscriptionController extends Controller
         ]);
 
         $tenant = tenant();
-        $plan = Plan::findOrFail($request->plan_id);
+        $plan = Plan::on('pgsql')->findOrFail($request->plan_id);
 
         // Verificar si ya tiene una suscripción activa
         $existingSubscription = Subscription::where('tenant_id', $tenant->id)
@@ -106,26 +121,161 @@ class TenantSubscriptionController extends Controller
             return response()->json(['error' => 'You already have an active subscription'], 400);
         }
 
-        // Crear nueva suscripción
-        $subscription = Subscription::create([
-            'tenant_id' => $tenant->id,
-            'plan_id' => $plan->id,
-            'price' => $request->is_monthly ? $plan->price_monthly : $plan->price_annual,
-            'currency' => $plan->currency,
-            'trial_ends_at' => now()->addDays($plan->trial_days ?? 14),
-            'is_monthly' => $request->is_monthly ?? true,
-            'is_active' => true,
-            'payment_status' => Subscription::STATUS_PENDING,
+        DB::beginTransaction();
+        try {
+            // Crear nueva suscripción
+            $subscription = Subscription::create([
+                'tenant_id' => $tenant->id,
+                'plan_id' => $plan->id,
+                'price' => $request->is_monthly ? $plan->price_monthly : $plan->price_annual,
+                'currency' => $plan->currency,
+                'trial_ends_at' => now()->addDays($plan->trial_days ?? 14),
+                'is_monthly' => $request->is_monthly ?? true,
+                'is_active' => true,
+                'payment_status' => Subscription::STATUS_PENDING,
+            ]);
+
+            // Generar URL de pago solo si no es un plan gratuito
+            $paymentUrl = null;
+            if (!$plan->is_free) {
+                $paymentUrl = $this->getPaymentUrl($subscription);
+                if (!$paymentUrl) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Failed to create payment URL'], 500);
+                }
+            } else {
+                // Para planes gratuitos, activar inmediatamente
+                $subscription->update([
+                    'payment_status' => Subscription::STATUS_ACTIVE,
+                    'ends_at' => null, // Sin fecha de vencimiento para planes gratuitos
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'subscription' => SubscriptionResource::make($subscription->load('plan'))->toArray(request()),
+                'payment_url' => $paymentUrl,
+                'message' => 'Subscription created successfully',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error creating subscription', [
+                'tenant_id' => $tenant->id,
+                'plan_id' => $plan->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Failed to create subscription'], 500);
+        }
+    }
+
+    /**
+     * Actualizar suscripción (cambiar plan)
+     */
+    public function update(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+            'is_monthly' => 'boolean',
         ]);
 
-        // Generar URL de pago
-        $paymentUrl = $this->getPaymentUrl($subscription);
+        $tenant = tenant();
+        $subscription = Subscription::where('tenant_id', $tenant->id)->first();
 
-        return response()->json([
-            'subscription' => SubscriptionResource::make($subscription)->toArray(request()),
-            'payment_url' => $paymentUrl,
-            'message' => 'Subscription created successfully',
-        ]);
+        if (!$subscription) {
+            return response()->json(['error' => 'Subscription not found'], 404);
+        }
+
+        $newPlan = Plan::on('pgsql')->findOrFail($request->plan_id);
+        $isMonthly = $request->is_monthly ?? $subscription->is_monthly;
+
+        DB::beginTransaction();
+        try {
+            // Cancelar preaprobación actual si existe
+            if ($subscription->mp_preapproval_id && !$newPlan->is_free) {
+                $this->cancelPreapproval($subscription);
+            }
+
+            // Actualizar suscripción
+            $subscription->update([
+                'plan_id' => $newPlan->id,
+                'price' => $isMonthly ? $newPlan->price_monthly : $newPlan->price_annual,
+                'is_monthly' => $isMonthly,
+                'payment_status' => $newPlan->is_free ? Subscription::STATUS_ACTIVE : Subscription::STATUS_PENDING,
+                'mp_preapproval_id' => null,
+                'mp_init_point' => null,
+            ]);
+
+            // Crear nueva preaprobación si no es gratuito
+            $paymentUrl = null;
+            if (!$newPlan->is_free) {
+                $paymentUrl = $this->getPaymentUrl($subscription);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'subscription' => SubscriptionResource::make($subscription->load('plan'))->toArray(request()),
+                'payment_url' => $paymentUrl,
+                'message' => 'Subscription updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating subscription', [
+                'subscription_id' => $subscription->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Failed to update subscription'], 500);
+        }
+    }
+
+    /**
+     * Renovar suscripción
+     */
+    public function renew(Request $request)
+    {
+        $tenant = tenant();
+        $subscription = Subscription::where('tenant_id', $tenant->id)->first();
+
+        if (!$subscription) {
+            return response()->json(['error' => 'Subscription not found'], 404);
+        }
+
+        // Si la suscripción está activa y no ha expirado, no se puede renovar
+        if ($subscription->isActive() && !$subscription->isExpired()) {
+            return response()->json(['error' => 'Subscription is already active'], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            // Reactivar suscripción
+            $subscription->update([
+                'is_active' => true,
+                'payment_status' => $subscription->plan->is_free ? Subscription::STATUS_ACTIVE : Subscription::STATUS_PENDING,
+                'ends_at' => null,
+            ]);
+
+            // Generar URL de pago si no es gratuito
+            $paymentUrl = null;
+            if (!$subscription->plan->is_free) {
+                $paymentUrl = $this->getPaymentUrl($subscription);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'subscription' => SubscriptionResource::make($subscription->load('plan'))->toArray(request()),
+                'payment_url' => $paymentUrl,
+                'message' => 'Subscription renewed successfully',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error renewing subscription', [
+                'subscription_id' => $subscription->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Failed to renew subscription'], 500);
+        }
     }
 
     /**
@@ -140,11 +290,38 @@ class TenantSubscriptionController extends Controller
             return response()->json(['error' => 'Subscription not found'], 404);
         }
 
-        if ($this->cancelPreapproval($subscription)) {
-            return response()->json(['message' => 'Subscription cancelled successfully']);
+        if (!$subscription->canBeCancelled()) {
+            return response()->json(['error' => 'Subscription cannot be cancelled'], 400);
         }
 
-        return response()->json(['error' => 'Failed to cancel subscription'], 500);
+        DB::beginTransaction();
+        try {
+            // Cancelar preaprobación en MercadoPago
+            if ($subscription->mp_preapproval_id) {
+                $cancelled = $this->cancelPreapproval($subscription);
+                if (!$cancelled) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Failed to cancel payment method'], 500);
+                }
+            }
+
+            // Actualizar suscripción
+            $subscription->update([
+                'payment_status' => Subscription::STATUS_CANCELLED,
+                'is_active' => false,
+            ]);
+
+            DB::commit();
+
+            return response()->json(['message' => 'Subscription cancelled successfully']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error cancelling subscription', [
+                'subscription_id' => $subscription->id,
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Failed to cancel subscription'], 500);
+        }
     }
 
     /**
@@ -169,16 +346,9 @@ class TenantSubscriptionController extends Controller
             'current_price' => $subscription->getCurrentPrice(),
             'plan_name' => $subscription->plan->name,
             'is_monthly' => $subscription->is_monthly,
+            'can_cancel' => $subscription->canBeCancelled(),
+            'can_upgrade' => $subscription->canBeUpgraded(),
+            'can_downgrade' => $subscription->canBeDowngraded(),
         ];
-    }
-
-    public function show()
-    {
-        return view('tenants.subscription.show');
-    }
-
-    public function edit()
-    {
-        return view('tenants.subscription.edit');
     }
 }
