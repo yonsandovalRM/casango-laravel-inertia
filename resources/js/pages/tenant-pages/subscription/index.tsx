@@ -1,13 +1,16 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlanResource } from '@/interfaces/plan';
 import { SubscriptionResource } from '@/interfaces/subscription';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency } from '@/lib/utils';
-import { Head, router } from '@inertiajs/react';
-import axios from 'axios';
-import { AlertCircle, Calendar, CheckCircle, Clock, CreditCard, Loader2 } from 'lucide-react';
+import { Head, router, useForm } from '@inertiajs/react';
+import { AlertCircle, ArrowDown, ArrowUp, Calendar, CheckCircle, Clock, CreditCard, Loader2, Play, RefreshCw, X } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -31,18 +34,26 @@ interface SubscriptionStatusData {
     can_cancel: boolean;
     can_upgrade: boolean;
     can_downgrade: boolean;
+    can_reactivate: boolean;
 }
 
 interface SubscriptionProps {
-    subscription: SubscriptionResource;
+    subscription: SubscriptionResource | null;
     plans: PlanResource[];
     paymentUrl?: string;
     subscriptionStatus?: SubscriptionStatusData;
 }
 
 export default function Subscription({ subscription, plans, paymentUrl, subscriptionStatus }: SubscriptionProps) {
-    const [loading, setLoading] = useState<string | null>(null);
     const [statusData, setStatusData] = useState<SubscriptionStatusData | null>(subscriptionStatus || null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [actionType, setActionType] = useState<'create' | 'update' | 'upgrade' | 'downgrade' | null>(null);
+
+    // Form para crear/actualizar suscripción
+    const { data, setData, post, processing, errors, reset } = useForm({
+        plan_id: subscription?.plan_id || '',
+        is_monthly: subscription?.is_monthly ?? true,
+    });
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('es-CL', {
@@ -52,126 +63,151 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
         });
     };
 
-    const handlePayment = async () => {
-        if (paymentUrl) {
-            // Redirigir directamente a la URL de pago
-            window.location.href = paymentUrl;
-        } else {
-            // Configurar método de pago
-            setLoading('payment');
-            try {
-                const response = await axios.post(route('tenant.subscription.setup-payment'));
+    const handleFormSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-                const data = await response.data;
-
-                if (response.status === 200) {
-                    if (data.payment_url) {
-                        window.location.href = data.payment_url;
-                    } else {
-                        toast.success('Método de pago ya configurado');
-                        router.reload();
-                    }
-                } else {
-                    toast.error(data.error || 'Error al configurar el pago');
-                }
-            } catch (error) {
-                toast.error('Error al configurar el pago');
-            } finally {
-                setLoading(null);
-            }
-        }
-    };
-
-    const handleRenew = async () => {
-        setLoading('renew');
-        try {
-            const response = await axios.post(route('tenant.subscription.renew'));
-
-            const data = await response.data;
-
-            if (response.status === 200) {
-                toast.success('Suscripción renovada exitosamente');
-                if (data.payment_url) {
-                    // Redirigir a configurar pago si es necesario
-                    window.location.href = data.payment_url;
-                } else {
-                    router.reload();
-                }
-            } else {
-                toast.error(data.error || 'Error al renovar la suscripción');
-            }
-        } catch (error) {
-            toast.error('Error al renovar la suscripción');
-        } finally {
-            setLoading(null);
-        }
-    };
-
-    const handleCancel = async () => {
-        if (!confirm('¿Estás seguro de que quieres cancelar tu suscripción?')) {
+        if (!data.plan_id) {
+            toast.error('Por favor selecciona un plan');
             return;
         }
 
-        setLoading('cancel');
-        try {
-            const response = await axios.post(route('tenant.subscription.cancel'));
+        let route_name = '';
+        let success_message = '';
 
-            const data = await response.data;
-
-            if (response.status === 200) {
-                toast.success('Suscripción cancelada exitosamente');
-                router.reload();
-            } else {
-                toast.error(data.error || 'Error al cancelar la suscripción');
-            }
-        } catch (error) {
-            toast.error('Error al cancelar la suscripción');
-        } finally {
-            setLoading(null);
+        switch (actionType) {
+            case 'create':
+                route_name = 'tenant.subscription.create';
+                success_message = 'Suscripción creada exitosamente';
+                break;
+            case 'update':
+                route_name = 'tenant.subscription.update';
+                success_message = 'Suscripción actualizada exitosamente';
+                break;
+            case 'upgrade':
+                route_name = 'tenant.subscription.upgrade';
+                success_message = 'Upgrade realizado exitosamente';
+                break;
+            case 'downgrade':
+                route_name = 'tenant.subscription.downgrade';
+                success_message = 'Downgrade realizado exitosamente';
+                break;
+            default:
+                return;
         }
+
+        post(route(route_name), {
+            onSuccess: () => {
+                toast.success(success_message);
+                setIsDialogOpen(false);
+                reset();
+            },
+            onError: (errors) => {
+                const errorMessage = Object.values(errors)[0] as string;
+                toast.error(errorMessage || 'Error al procesar la solicitud');
+            },
+        });
     };
 
-    const handleRefreshStatus = async () => {
-        setLoading('status');
-        try {
-            const response = await fetch(route('tenant.subscription.status'));
-            const data = await response.json();
+    const handleAction = (action: string) => {
+        const actions = {
+            'setup-payment': () => {
+                router.post(
+                    route('tenant.subscription.setup-payment'),
+                    {},
+                    {
+                        onSuccess: () => toast.success('Redirigiendo a configurar pago...'),
+                        onError: (errors) => {
+                            const errorMessage = Object.values(errors)[0] as string;
+                            toast.error(errorMessage || 'Error al configurar el pago');
+                        },
+                    },
+                );
+            },
+            renew: () => {
+                router.post(
+                    route('tenant.subscription.renew'),
+                    {},
+                    {
+                        onSuccess: () => toast.success('Suscripción renovada exitosamente'),
+                        onError: (errors) => {
+                            const errorMessage = Object.values(errors)[0] as string;
+                            toast.error(errorMessage || 'Error al renovar la suscripción');
+                        },
+                    },
+                );
+            },
+            reactivate: () => {
+                router.post(
+                    route('tenant.subscription.reactivate'),
+                    {},
+                    {
+                        onSuccess: () => toast.success('Suscripción reactivada exitosamente'),
+                        onError: (errors) => {
+                            const errorMessage = Object.values(errors)[0] as string;
+                            toast.error(errorMessage || 'Error al reactivar la suscripción');
+                        },
+                    },
+                );
+            },
+            cancel: () => {
+                if (confirm('¿Estás seguro de que quieres cancelar tu suscripción?')) {
+                    router.post(
+                        route('tenant.subscription.cancel'),
+                        {},
+                        {
+                            onSuccess: () => toast.success('Suscripción cancelada exitosamente'),
+                            onError: (errors) => {
+                                const errorMessage = Object.values(errors)[0] as string;
+                                toast.error(errorMessage || 'Error al cancelar la suscripción');
+                            },
+                        },
+                    );
+                }
+            },
+        };
 
-            if (response.ok) {
-                setStatusData(data);
-                toast.success('Estado actualizado');
-            } else {
-                toast.error('Error al obtener el estado');
-            }
-        } catch (error) {
-            toast.error('Error al obtener el estado');
-        } finally {
-            setLoading(null);
-        }
+        actions[action]?.();
+    };
+
+    const handleRefreshStatus = () => {
+        router.get(
+            route('tenant.subscription.status'),
+            {},
+            {
+                only: ['subscriptionStatus'],
+                onSuccess: (page) => {
+                    setStatusData(page.props.subscriptionStatus as SubscriptionStatusData);
+                    toast.success('Estado actualizado');
+                },
+                onError: () => toast.error('Error al obtener el estado'),
+            },
+        );
+    };
+
+    const openDialog = (type: 'create' | 'update' | 'upgrade' | 'downgrade') => {
+        setActionType(type);
+        setIsDialogOpen(true);
     };
 
     const getStatusBadge = (status: string, isActive: boolean) => {
         if (!isActive) return <Badge variant="destructive">Inactiva</Badge>;
 
-        switch (status) {
-            case 'paid':
-            case 'active':
-                return (
-                    <Badge variant="default" className="bg-green-500 hover:bg-green-600">
-                        Activa
-                    </Badge>
-                );
-            case 'pending':
-                return <Badge variant="secondary">Pendiente</Badge>;
-            case 'pending_payment_method':
-                return <Badge variant="destructive">Requiere configuración de pago</Badge>;
-            case 'overdue':
-                return <Badge variant="destructive">Vencida</Badge>;
-            case 'cancelled':
-                return <Badge variant="outline">Cancelada</Badge>;
-            default:
-                return <Badge variant="secondary">{status}</Badge>;
-        }
+        const statusConfig = {
+            paid: { variant: 'default', label: 'Activa', className: 'bg-green-500 hover:bg-green-600' },
+            active: { variant: 'default', label: 'Activa', className: 'bg-green-500 hover:bg-green-600' },
+            pending: { variant: 'secondary', label: 'Pendiente', className: '' },
+            pending_payment_method: { variant: 'destructive', label: 'Requiere configuración', className: '' },
+            overdue: { variant: 'destructive', label: 'Vencida', className: '' },
+            cancelled: { variant: 'outline', label: 'Cancelada', className: '' },
+        };
+
+        const config = statusConfig[status] || { variant: 'secondary', label: status, className: '' };
+
+        return (
+            <Badge variant={config.variant} className={config.className}>
+                {config.label}
+            </Badge>
+        );
     };
 
     const parseFeatures = (features: string[] | string) => {
@@ -183,17 +219,114 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
         }
     };
 
+    const getSelectedPlan = () => {
+        return plans.find((plan) => plan.id === parseInt(data.plan_id));
+    };
+
+    const getSelectedPlanPrice = () => {
+        const plan = getSelectedPlan();
+        if (!plan) return 0;
+        return data.is_monthly ? plan.price_monthly : plan.price_annual;
+    };
+
     const currentStatus = statusData || {
-        is_active: subscription.is_active,
+        is_active: subscription?.is_active || false,
         is_in_trial: false,
         is_trial_expired: false,
         is_expired: false,
         needs_payment_setup: false,
         trial_days_remaining: 0,
-        can_cancel: true,
+        can_cancel: false,
         can_upgrade: false,
         can_downgrade: false,
+        can_reactivate: false,
     };
+
+    // Si no hay suscripción, mostrar creación
+    if (!subscription) {
+        return (
+            <AppLayout breadcrumbs={[{ title: 'Suscripción', href: '/subscription' }]}>
+                <Head title="Suscripción" />
+                <div className="p-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Crear Suscripción</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Button onClick={() => openDialog('create')}>
+                                <Play className="mr-2 h-4 w-4" />
+                                Crear Suscripción
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+
+                {/* Dialog para crear suscripción */}
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogContent className="sm:max-w-[600px]">
+                        <DialogHeader>
+                            <DialogTitle>Crear Suscripción</DialogTitle>
+                            <DialogDescription>Selecciona un plan y el tipo de facturación para crear tu suscripción.</DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleFormSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="plan">Seleccionar Plan</Label>
+                                <Select value={data.plan_id} onValueChange={(value) => setData('plan_id', value)}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecciona un plan" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {plans.map((plan) => (
+                                            <SelectItem key={plan.id} value={plan.id.toString()}>
+                                                {plan.name} - {formatCurrency(plan.price_monthly, plan.currency)}/mes
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {errors.plan_id && <p className="text-sm text-red-500">{errors.plan_id}</p>}
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Tipo de Facturación</Label>
+                                <RadioGroup
+                                    value={data.is_monthly ? 'monthly' : 'annual'}
+                                    onValueChange={(value) => setData('is_monthly', value === 'monthly')}
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="monthly" id="monthly" />
+                                        <Label htmlFor="monthly">Mensual</Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="annual" id="annual" />
+                                        <Label htmlFor="annual">Anual</Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+
+                            {data.plan_id && (
+                                <div className="rounded-lg bg-gray-50 p-4">
+                                    <p className="font-medium">
+                                        Precio: {formatCurrency(getSelectedPlanPrice(), getSelectedPlan()?.currency || 'CLP')}
+                                        {data.is_monthly ? '/mes' : '/año'}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="flex justify-end space-x-2">
+                                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                                    Cancelar
+                                </Button>
+                                <Button type="submit" disabled={processing}>
+                                    {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                    Crear Suscripción
+                                </Button>
+                            </div>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+            </AppLayout>
+        );
+    }
 
     const isTrialActive = subscription.trial_ends_at && new Date(subscription.trial_ends_at) > new Date();
     const features = parseFeatures(subscription.plan.features);
@@ -208,8 +341,8 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                             <CardTitle className="text-2xl font-bold">Suscripción Actual</CardTitle>
                             <div className="flex items-center gap-2">
                                 {getStatusBadge(subscription.payment_status, currentStatus.is_active)}
-                                <Button variant="outline" size="sm" onClick={handleRefreshStatus} disabled={loading === 'status'}>
-                                    {loading === 'status' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Actualizar'}
+                                <Button variant="outline" size="sm" onClick={handleRefreshStatus}>
+                                    <RefreshCw className="h-4 w-4" />
                                 </Button>
                             </div>
                         </div>
@@ -234,6 +367,13 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                             <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-4 text-blue-800">
                                 <Clock className="h-5 w-5" />
                                 <span>Estás en período de prueba. Te quedan {currentStatus.trial_days_remaining} días.</span>
+                            </div>
+                        )}
+
+                        {subscription.payment_status === 'cancelled' && (
+                            <div className="flex items-center gap-2 rounded-lg bg-gray-50 p-4 text-gray-800">
+                                <X className="h-5 w-5" />
+                                <span>Tu suscripción está cancelada. Puedes reactivarla en cualquier momento.</span>
                             </div>
                         )}
 
@@ -281,33 +421,142 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
 
                         {/* Actions */}
                         <div className="flex flex-wrap gap-3 border-t pt-4">
+                            {/* Configurar Pago */}
                             {(currentStatus.needs_payment_setup || subscription.payment_status === 'pending_payment_method') && (
-                                <Button onClick={handlePayment} disabled={loading === 'payment'}>
-                                    {loading === 'payment' ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <CreditCard className="mr-2 h-4 w-4" />
-                                    )}
+                                <Button onClick={() => handleAction('setup-payment')}>
+                                    <CreditCard className="mr-2 h-4 w-4" />
                                     Configurar Pago
                                 </Button>
                             )}
 
-                            {(currentStatus.is_expired || !currentStatus.is_active) && (
-                                <Button onClick={handleRenew} disabled={loading === 'renew'}>
-                                    {loading === 'renew' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Clock className="mr-2 h-4 w-4" />}
+                            {/* Renovar */}
+                            {(currentStatus.is_expired || !currentStatus.is_active) && subscription.payment_status !== 'cancelled' && (
+                                <Button onClick={() => handleAction('renew')}>
+                                    <Clock className="mr-2 h-4 w-4" />
                                     Renovar
                                 </Button>
                             )}
 
+                            {/* Reactivar */}
+                            {currentStatus.can_reactivate && (
+                                <Button onClick={() => handleAction('reactivate')}>
+                                    <Play className="mr-2 h-4 w-4" />
+                                    Reactivar
+                                </Button>
+                            )}
+
+                            {/* Actualizar Plan */}
+                            {currentStatus.is_active && (
+                                <Button variant="outline" onClick={() => openDialog('update')}>
+                                    <RefreshCw className="mr-2 h-4 w-4" />
+                                    Cambiar Plan
+                                </Button>
+                            )}
+
+                            {/* Upgrade */}
+                            {currentStatus.can_upgrade && (
+                                <Button variant="outline" onClick={() => openDialog('upgrade')}>
+                                    <ArrowUp className="mr-2 h-4 w-4" />
+                                    Upgrade
+                                </Button>
+                            )}
+
+                            {/* Downgrade */}
+                            {currentStatus.can_downgrade && (
+                                <Button variant="outline" onClick={() => openDialog('downgrade')}>
+                                    <ArrowDown className="mr-2 h-4 w-4" />
+                                    Downgrade
+                                </Button>
+                            )}
+
+                            {/* Cancelar */}
                             {currentStatus.can_cancel && currentStatus.is_active && (
-                                <Button onClick={handleCancel} variant="destructive" disabled={loading === 'cancel'}>
-                                    {loading === 'cancel' ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Cancelar Suscripción'}
+                                <Button onClick={() => handleAction('cancel')} variant="destructive">
+                                    <X className="mr-2 h-4 w-4" />
+                                    Cancelar Suscripción
                                 </Button>
                             )}
                         </div>
                     </CardContent>
                 </Card>
             </div>
+
+            {/* Dialog para actualizar/upgrade/downgrade */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                        <DialogTitle>
+                            {actionType === 'update' && 'Cambiar Plan'}
+                            {actionType === 'upgrade' && 'Upgrade de Plan'}
+                            {actionType === 'downgrade' && 'Downgrade de Plan'}
+                            {actionType === 'create' && 'Crear Suscripción'}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {actionType === 'update' && 'Selecciona un nuevo plan para tu suscripción.'}
+                            {actionType === 'upgrade' && 'Selecciona un plan superior para obtener más características.'}
+                            {actionType === 'downgrade' && 'Selecciona un plan inferior para reducir costos.'}
+                            {actionType === 'create' && 'Selecciona un plan para crear tu suscripción.'}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleFormSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="plan">Seleccionar Plan</Label>
+                            <Select value={data.plan_id} onValueChange={(value) => setData('plan_id', value)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Selecciona un plan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {plans.map((plan) => (
+                                        <SelectItem key={plan.id} value={plan.id.toString()}>
+                                            {plan.name} - {formatCurrency(plan.price_monthly, plan.currency)}/mes
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            {errors.plan_id && <p className="text-sm text-red-500">{errors.plan_id}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Tipo de Facturación</Label>
+                            <RadioGroup
+                                value={data.is_monthly ? 'monthly' : 'annual'}
+                                onValueChange={(value) => setData('is_monthly', value === 'monthly')}
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="monthly" id="monthly" />
+                                    <Label htmlFor="monthly">Mensual</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="annual" id="annual" />
+                                    <Label htmlFor="annual">Anual</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
+
+                        {data.plan_id && (
+                            <div className="rounded-lg bg-gray-50 p-4">
+                                <p className="font-medium">
+                                    Precio: {formatCurrency(getSelectedPlanPrice(), getSelectedPlan()?.currency || 'CLP')}
+                                    {data.is_monthly ? '/mes' : '/año'}
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end space-x-2">
+                            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={processing}>
+                                {processing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                {actionType === 'update' && 'Actualizar Plan'}
+                                {actionType === 'upgrade' && 'Realizar Upgrade'}
+                                {actionType === 'downgrade' && 'Realizar Downgrade'}
+                                {actionType === 'create' && 'Crear Suscripción'}
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

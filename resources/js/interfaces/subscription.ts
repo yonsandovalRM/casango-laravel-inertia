@@ -4,6 +4,7 @@ export interface SubscriptionResource {
     id: string;
     tenant_id: string;
     plan: PlanResource;
+    plan_id: string;
     price: number;
     currency: string;
     trial_ends_at: string;
