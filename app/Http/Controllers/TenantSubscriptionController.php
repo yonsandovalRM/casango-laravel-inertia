@@ -50,30 +50,24 @@ class TenantSubscriptionController extends Controller
         $subscription = Subscription::where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
-            return response()->json(['error' => 'Subscription not found'], 404);
+            return back()->with('error', 'Suscripción no encontrada');
         }
 
         // Verificar el estado actual antes de crear nueva preaprobación
         if ($subscription->mp_preapproval_id) {
             $currentStatus = $this->checkPreapprovalStatus($subscription);
             if ($currentStatus === 'authorized') {
-                return response()->json([
-                    'message' => 'Payment method already configured',
-                    'subscription_id' => $subscription->id,
-                ]);
+                return back()->with('success', 'Método de pago ya configurado');
             }
         }
 
         $paymentUrl = $this->getPaymentUrl($subscription);
 
         if (!$paymentUrl) {
-            return response()->json(['error' => 'Failed to create payment URL'], 500);
+            return back()->with('error', 'Error al crear la URL de pago');
         }
 
-        return response()->json([
-            'payment_url' => $paymentUrl,
-            'subscription_id' => $subscription->id,
-        ]);
+        return Inertia::location($paymentUrl);
     }
 
     /**
@@ -118,7 +112,7 @@ class TenantSubscriptionController extends Controller
             ->first();
 
         if ($existingSubscription) {
-            return response()->json(['error' => 'You already have an active subscription'], 400);
+            return back()->with('error', 'Ya tienes una suscripción activa');
         }
 
         DB::beginTransaction();
@@ -136,28 +130,25 @@ class TenantSubscriptionController extends Controller
             ]);
 
             // Generar URL de pago solo si no es un plan gratuito
-            $paymentUrl = null;
             if (!$plan->is_free) {
                 $paymentUrl = $this->getPaymentUrl($subscription);
                 if (!$paymentUrl) {
                     DB::rollBack();
-                    return response()->json(['error' => 'Failed to create payment URL'], 500);
+                    return back()->with('error', 'Error al crear la URL de pago');
                 }
+
+                DB::commit();
+                return Inertia::location($paymentUrl);
             } else {
                 // Para planes gratuitos, activar inmediatamente
                 $subscription->update([
                     'payment_status' => Subscription::STATUS_ACTIVE,
                     'ends_at' => null, // Sin fecha de vencimiento para planes gratuitos
                 ]);
+
+                DB::commit();
+                return back()->with('success', 'Suscripción creada exitosamente');
             }
-
-            DB::commit();
-
-            return response()->json([
-                'subscription' => SubscriptionResource::make($subscription->load('plan'))->toArray(request()),
-                'payment_url' => $paymentUrl,
-                'message' => 'Subscription created successfully',
-            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error creating subscription', [
@@ -165,7 +156,7 @@ class TenantSubscriptionController extends Controller
                 'plan_id' => $plan->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to create subscription'], 500);
+            return back()->with('error', 'Error al crear la suscripción');
         }
     }
 
@@ -183,7 +174,7 @@ class TenantSubscriptionController extends Controller
         $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
-            return response()->json(['error' => 'Subscription not found'], 404);
+            return back()->with('error', 'Suscripción no encontrada');
         }
 
         $newPlan = Plan::on('pgsql')->findOrFail($request->plan_id);
@@ -204,29 +195,85 @@ class TenantSubscriptionController extends Controller
                 'payment_status' => $newPlan->is_free ? Subscription::STATUS_ACTIVE : Subscription::STATUS_PENDING,
                 'mp_preapproval_id' => null,
                 'mp_init_point' => null,
+                'is_active' => true,
             ]);
 
             // Crear nueva preaprobación si no es gratuito
-            $paymentUrl = null;
             if (!$newPlan->is_free) {
                 $paymentUrl = $this->getPaymentUrl($subscription);
+                if (!$paymentUrl) {
+                    DB::rollBack();
+                    return back()->with('error', 'Error al crear la URL de pago');
+                }
+
+                DB::commit();
+                return Inertia::location($paymentUrl);
             }
 
             DB::commit();
-
-            return response()->json([
-                'subscription' => SubscriptionResource::make($subscription->load('plan'))->toArray(request()),
-                'payment_url' => $paymentUrl,
-                'message' => 'Subscription updated successfully',
-            ]);
+            return back()->with('success', 'Suscripción actualizada exitosamente');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating subscription', [
                 'subscription_id' => $subscription->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to update subscription'], 500);
+            return back()->with('error', 'Error al actualizar la suscripción');
         }
+    }
+
+    /**
+     * Upgrade de suscripción a un plan superior
+     */
+    public function upgrade(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+            'is_monthly' => 'boolean',
+        ]);
+
+        $tenant = tenant();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
+
+        if (!$subscription) {
+            return back()->with('error', 'Suscripción no encontrada');
+        }
+
+        $newPlan = Plan::on('pgsql')->findOrFail($request->plan_id);
+
+        // Verificar que sea un upgrade
+        if (!$this->isUpgrade($subscription->plan, $newPlan)) {
+            return back()->with('error', 'El plan seleccionado no es un upgrade');
+        }
+
+        return $this->performPlanChange($subscription, $newPlan, $request->is_monthly, 'upgrade');
+    }
+
+    /**
+     * Downgrade de suscripción a un plan inferior
+     */
+    public function downgrade(Request $request)
+    {
+        $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+            'is_monthly' => 'boolean',
+        ]);
+
+        $tenant = tenant();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
+
+        if (!$subscription) {
+            return back()->with('error', 'Suscripción no encontrada');
+        }
+
+        $newPlan = Plan::on('pgsql')->findOrFail($request->plan_id);
+
+        // Verificar que sea un downgrade
+        if (!$this->isDowngrade($subscription->plan, $newPlan)) {
+            return back()->with('error', 'El plan seleccionado no es un downgrade');
+        }
+
+        return $this->performPlanChange($subscription, $newPlan, $request->is_monthly, 'downgrade');
     }
 
     /**
@@ -238,12 +285,12 @@ class TenantSubscriptionController extends Controller
         $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
-            return response()->json(['error' => 'Subscription not found'], 404);
+            return back()->with('error', 'Suscripción no encontrada');
         }
 
         // Si la suscripción está activa y no ha expirado, no se puede renovar
         if ($subscription->isActive() && !$subscription->isExpired()) {
-            return response()->json(['error' => 'Subscription is already active'], 400);
+            return back()->with('error', 'La suscripción ya está activa');
         }
 
         DB::beginTransaction();
@@ -256,25 +303,75 @@ class TenantSubscriptionController extends Controller
             ]);
 
             // Generar URL de pago si no es gratuito
-            $paymentUrl = null;
             if (!$subscription->plan->is_free) {
                 $paymentUrl = $this->getPaymentUrl($subscription);
+                if (!$paymentUrl) {
+                    DB::rollBack();
+                    return back()->with('error', 'Error al crear la URL de pago');
+                }
+
+                DB::commit();
+                return Inertia::location($paymentUrl);
             }
 
             DB::commit();
-
-            return response()->json([
-                'subscription' => SubscriptionResource::make($subscription->load('plan'))->toArray(request()),
-                'payment_url' => $paymentUrl,
-                'message' => 'Subscription renewed successfully',
-            ]);
+            return back()->with('success', 'Suscripción renovada exitosamente');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error renewing subscription', [
                 'subscription_id' => $subscription->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to renew subscription'], 500);
+            return back()->with('error', 'Error al renovar la suscripción');
+        }
+    }
+
+    /**
+     * Reactivar suscripción cancelada
+     */
+    public function reactivate(Request $request)
+    {
+        $tenant = tenant();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
+
+        if (!$subscription) {
+            return back()->with('error', 'Suscripción no encontrada');
+        }
+
+        if ($subscription->payment_status !== Subscription::STATUS_CANCELLED) {
+            return back()->with('error', 'La suscripción no está cancelada');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Reactivar suscripción
+            $subscription->update([
+                'is_active' => true,
+                'payment_status' => $subscription->plan->is_free ? Subscription::STATUS_ACTIVE : Subscription::STATUS_PENDING,
+                'ends_at' => null,
+            ]);
+
+            // Generar URL de pago si no es gratuito
+            if (!$subscription->plan->is_free) {
+                $paymentUrl = $this->getPaymentUrl($subscription);
+                if (!$paymentUrl) {
+                    DB::rollBack();
+                    return back()->with('error', 'Error al crear la URL de pago');
+                }
+
+                DB::commit();
+                return Inertia::location($paymentUrl);
+            }
+
+            DB::commit();
+            return back()->with('success', 'Suscripción reactivada exitosamente');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error reactivating subscription', [
+                'subscription_id' => $subscription->id,
+                'error' => $e->getMessage(),
+            ]);
+            return back()->with('error', 'Error al reactivar la suscripción');
         }
     }
 
@@ -287,11 +384,11 @@ class TenantSubscriptionController extends Controller
         $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
-            return response()->json(['error' => 'Subscription not found'], 404);
+            return back()->with('error', 'Suscripción no encontrada');
         }
 
         if (!$subscription->canBeCancelled()) {
-            return response()->json(['error' => 'Subscription cannot be cancelled'], 400);
+            return back()->with('error', 'La suscripción no puede ser cancelada');
         }
 
         DB::beginTransaction();
@@ -301,7 +398,7 @@ class TenantSubscriptionController extends Controller
                 $cancelled = $this->cancelPreapproval($subscription);
                 if (!$cancelled) {
                     DB::rollBack();
-                    return response()->json(['error' => 'Failed to cancel payment method'], 500);
+                    return back()->with('error', 'Error al cancelar el método de pago');
                 }
             }
 
@@ -312,15 +409,14 @@ class TenantSubscriptionController extends Controller
             ]);
 
             DB::commit();
-
-            return response()->json(['message' => 'Subscription cancelled successfully']);
+            return back()->with('success', 'Suscripción cancelada exitosamente');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error cancelling subscription', [
                 'subscription_id' => $subscription->id,
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['error' => 'Failed to cancel subscription'], 500);
+            return back()->with('error', 'Error al cancelar la suscripción');
         }
     }
 
@@ -332,6 +428,7 @@ class TenantSubscriptionController extends Controller
         if (!$subscription) {
             return [];
         }
+
         $subscription = Subscription::on('pgsql')->find($subscription->id);
         return [
             'status' => $subscription->payment_status,
@@ -353,6 +450,79 @@ class TenantSubscriptionController extends Controller
             'can_cancel' => $subscription->canBeCancelled(),
             'can_upgrade' => $subscription->canBeUpgraded(),
             'can_downgrade' => $subscription->canBeDowngraded(),
+            'can_reactivate' => $subscription->payment_status === Subscription::STATUS_CANCELLED,
         ];
+    }
+
+    /**
+     * Realizar cambio de plan
+     */
+    private function performPlanChange($subscription, $newPlan, $isMonthly, $type)
+    {
+        $isMonthly = $isMonthly ?? $subscription->is_monthly;
+
+        DB::beginTransaction();
+        try {
+            // Cancelar preaprobación actual si existe
+            if ($subscription->mp_preapproval_id && !$newPlan->is_free) {
+                $this->cancelPreapproval($subscription);
+            }
+
+            // Actualizar suscripción
+            $subscription->update([
+                'plan_id' => $newPlan->id,
+                'price' => $isMonthly ? $newPlan->price_monthly : $newPlan->price_annual,
+                'is_monthly' => $isMonthly,
+                'payment_status' => $newPlan->is_free ? Subscription::STATUS_ACTIVE : Subscription::STATUS_PENDING,
+                'mp_preapproval_id' => null,
+                'mp_init_point' => null,
+                'is_active' => true,
+            ]);
+
+            // Crear nueva preaprobación si no es gratuito
+            if (!$newPlan->is_free) {
+                $paymentUrl = $this->getPaymentUrl($subscription);
+                if (!$paymentUrl) {
+                    DB::rollBack();
+                    return back()->with('error', 'Error al crear la URL de pago');
+                }
+
+                DB::commit();
+                return Inertia::location($paymentUrl);
+            }
+
+            DB::commit();
+
+            $message = $type === 'upgrade' ? 'Upgrade realizado exitosamente' : 'Downgrade realizado exitosamente';
+            return back()->with('success', $message);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error performing {$type}", [
+                'subscription_id' => $subscription->id,
+                'new_plan_id' => $newPlan->id,
+                'error' => $e->getMessage(),
+            ]);
+            return back()->with('error', "Error al realizar {$type}");
+        }
+    }
+
+    /**
+     * Verificar si es un upgrade
+     */
+    private function isUpgrade($currentPlan, $newPlan)
+    {
+        // Implementar lógica de comparación de planes
+        // Por ejemplo, comparar precios o nivel de plan
+        return $newPlan->price_monthly > $currentPlan->price_monthly;
+    }
+
+    /**
+     * Verificar si es un downgrade
+     */
+    private function isDowngrade($currentPlan, $newPlan)
+    {
+        // Implementar lógica de comparación de planes
+        // Por ejemplo, comparar precios o nivel de plan
+        return $newPlan->price_monthly < $currentPlan->price_monthly;
     }
 }
