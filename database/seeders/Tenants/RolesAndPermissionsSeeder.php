@@ -56,6 +56,11 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete subscription']);
         Permission::create(['name' => 'manage subscription']);
 
+        Permission::create(['name' => 'view form templates']);
+        Permission::create(['name' => 'edit form templates']);
+        Permission::create(['name' => 'delete form templates']);
+        Permission::create(['name' => 'manage form templates']);
+
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
 

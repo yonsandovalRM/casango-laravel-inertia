@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Building2, Calendar, CalendarClock, CreditCard, Globe, LayoutGrid, Package, Tags, Users } from 'lucide-react';
+import { Building2, Calendar, CalendarClock, CreditCard, Globe, LayoutGrid, LayoutTemplate, Package, Tags, Users } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 import { ScrollArea } from './ui/scroll-area';
@@ -91,6 +91,12 @@ function AppSidebar({ t }: { t: any }) {
             icon: Tags,
             permission: PERMISSIONS.categories.view,
         },
+        {
+            title: t('ui.menu.form_templates'),
+            href: route('form-templates.index'),
+            icon: LayoutTemplate,
+            permission: PERMISSIONS.formTemplates.view,
+        },
 
         {
             title: t('ui.menu.subscription'),
@@ -104,11 +110,6 @@ function AppSidebar({ t }: { t: any }) {
             title: t('ui.menu.website'),
             href: route('home'),
             icon: Globe,
-        },
-        {
-            title: t('ui.menu.documentation'),
-            href: 'https://laravel.com/docs/starter-kits#react',
-            icon: BookOpen,
         },
     ];
 
@@ -136,7 +137,7 @@ function AppSidebar({ t }: { t: any }) {
                     </ScrollArea>
                 </SidebarContent>
             )}
-
+            <div className="flex-1"></div>
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />

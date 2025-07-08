@@ -3,7 +3,8 @@ import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
-export default function TemplatesIndex() {
+export default function TemplatesIndex(props: any) {
+    console.log({ props });
     const { t } = useTranslation();
     return (
         <AppLayout breadcrumbs={[{ title: t('templates.index.title'), href: '/templates' }]}>

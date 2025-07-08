@@ -408,6 +408,7 @@ class BookingController extends Controller
     public function historyProfessional(Request $request)
     {
         $user = User::find(Auth::user()->id);
+        $professional = Professional::where('user_id', $user->id)->firstOrFail();
 
         // Obtener filtros de la query string
         $filters = $request->only([
@@ -425,15 +426,15 @@ class BookingController extends Controller
             'search' => '',
             'status' => 'all',
             'service' => 'all',
-            'date_from' => '',
-            'date_to' => '',
+            'date_from' => now()->format('Y-m-d'),
+            'date_to' => now()->format('Y-m-d'),
             'sort_by' => 'date',
             'sort_direction' => 'desc'
         ], $filters);
 
         // Construir query base
         $bookingsQuery = Booking::with(['client', 'service', 'professional.user'])
-            ->where('professional_id', $user->id);
+            ->where('professional_id', $professional->id);
 
         // Aplicar filtros
         $this->applyBookingFilters($bookingsQuery, $filters);
@@ -444,8 +445,8 @@ class BookingController extends Controller
         $bookings = $bookingsQuery->get();
 
         // Obtener servicios únicos para el filtro
-        $services = Service::whereHas('bookings', function ($query) use ($user) {
-            $query->where('professional_id', $user->id);
+        $services = Service::whereHas('bookings', function ($query) use ($professional) {
+            $query->where('professional_id', $professional->id);
         })->select('id', 'name')->get();
 
         return Inertia::render('bookings/history-professional', [

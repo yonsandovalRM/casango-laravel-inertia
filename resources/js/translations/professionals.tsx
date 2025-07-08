@@ -55,6 +55,10 @@ export const professionals = {
                     reason: 'Reason',
                     saving: 'Saving...',
                     save: 'Save',
+                    cancel: 'Cancel',
+                    edit: 'Edit',
+                    profession: 'Profession',
+                    specialty: 'Specialty',
                 },
             },
             profile: {
@@ -148,6 +152,10 @@ export const professionals = {
                     bio: 'Biografía',
                     title: 'Título',
                     save: 'Guardar',
+                    cancel: 'Cancelar',
+                    edit: 'Editar',
+                    profession: 'Profesión',
+                    specialty: 'Especialidad',
                 },
             },
             form: {

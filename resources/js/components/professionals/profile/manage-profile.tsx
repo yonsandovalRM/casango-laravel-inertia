@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -72,16 +71,13 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
         t('professional.form.title.prof'),
     ];
     return (
-        <Card className="order-last lg:order-first">
-            <CardHeader>
-                <CardTitle className="flex items-center justify-between gap-2">
-                    {t('professional.profile.title')}
-                    <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
-                        <Pencil className="h-4 w-4" />
-                    </Button>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
+        <div className="order-last lg:order-first">
+            <div className="flex justify-end">
+                <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
+                    <Pencil className="h-4 w-4" />
+                </Button>
+            </div>
+            <div className="p-4">
                 {isEditing ? (
                     <div>
                         <form onSubmit={handleSubmit}>
@@ -229,7 +225,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                         </div>
                     </div>
                 )}
-            </CardContent>
-        </Card>
+            </div>
+        </div>
     );
 }

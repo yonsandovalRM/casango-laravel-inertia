@@ -6,6 +6,7 @@ use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\TenantResource;
 use App\Models\Company;
+use App\Models\FormTemplate;
 use App\Models\Plan;
 use App\Models\Tenant;
 use App\Traits\HandlesMercadoPago;
@@ -148,6 +149,7 @@ class TenantController extends Controller
             return redirect()->route('tenants.create')->with('error', __('tenant.create_error'));
         }
     }
+
 
     /* 
     * Show tenant dashboard with subscription info
