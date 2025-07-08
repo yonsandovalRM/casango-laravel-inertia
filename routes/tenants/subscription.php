@@ -21,8 +21,16 @@ Route::group(['prefix' => 'dashboard/subscription'], function () {
         ->name('tenant.subscription.create')
         ->middleware('can:' . Permissions::SUBSCRIPTION_MANAGE);
 
+    Route::post('/renew', [TenantSubscriptionController::class, 'renew'])
+        ->name('tenant.subscription.renew')
+        ->middleware('can:' . Permissions::SUBSCRIPTION_MANAGE);
+
     Route::post('/cancel', [TenantSubscriptionController::class, 'cancel'])
         ->name('tenant.subscription.cancel')
+        ->middleware('can:' . Permissions::SUBSCRIPTION_MANAGE);
+
+    Route::post('/update', [TenantSubscriptionController::class, 'update'])
+        ->name('tenant.subscription.update')
         ->middleware('can:' . Permissions::SUBSCRIPTION_MANAGE);
 
     Route::get('/show', [TenantSubscriptionController::class, 'show'])

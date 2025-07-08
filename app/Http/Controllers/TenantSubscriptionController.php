@@ -82,7 +82,7 @@ class TenantSubscriptionController extends Controller
     public function getStatus()
     {
         $tenant = tenant();
-        $subscription = Subscription::with('plan')
+        $subscription = Subscription::on('pgsql')->with('plan')
             ->where('tenant_id', $tenant->id)
             ->first();
 
@@ -113,7 +113,7 @@ class TenantSubscriptionController extends Controller
         $plan = Plan::on('pgsql')->findOrFail($request->plan_id);
 
         // Verificar si ya tiene una suscripción activa
-        $existingSubscription = Subscription::where('tenant_id', $tenant->id)
+        $existingSubscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)
             ->where('is_active', true)
             ->first();
 
@@ -124,7 +124,7 @@ class TenantSubscriptionController extends Controller
         DB::beginTransaction();
         try {
             // Crear nueva suscripción
-            $subscription = Subscription::create([
+            $subscription = Subscription::on('pgsql')->create([
                 'tenant_id' => $tenant->id,
                 'plan_id' => $plan->id,
                 'price' => $request->is_monthly ? $plan->price_monthly : $plan->price_annual,
@@ -180,7 +180,7 @@ class TenantSubscriptionController extends Controller
         ]);
 
         $tenant = tenant();
-        $subscription = Subscription::where('tenant_id', $tenant->id)->first();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
             return response()->json(['error' => 'Subscription not found'], 404);
@@ -235,7 +235,7 @@ class TenantSubscriptionController extends Controller
     public function renew(Request $request)
     {
         $tenant = tenant();
-        $subscription = Subscription::where('tenant_id', $tenant->id)->first();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
             return response()->json(['error' => 'Subscription not found'], 404);
@@ -284,7 +284,7 @@ class TenantSubscriptionController extends Controller
     public function cancel(Request $request)
     {
         $tenant = tenant();
-        $subscription = Subscription::where('tenant_id', $tenant->id)->first();
+        $subscription = Subscription::on('pgsql')->where('tenant_id', $tenant->id)->first();
 
         if (!$subscription) {
             return response()->json(['error' => 'Subscription not found'], 404);
@@ -327,8 +327,12 @@ class TenantSubscriptionController extends Controller
     /**
      * Obtener datos del estado de la suscripción
      */
-    private function getSubscriptionStatusData(Subscription $subscription, ?string $mpStatus = null): array
+    private function getSubscriptionStatusData($subscription, ?string $mpStatus = null): array
     {
+        if (!$subscription) {
+            return [];
+        }
+        $subscription = Subscription::on('pgsql')->find($subscription->id);
         return [
             'status' => $subscription->payment_status,
             'status_label' => $subscription->status_label,
