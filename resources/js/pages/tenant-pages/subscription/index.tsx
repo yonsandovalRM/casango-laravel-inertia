@@ -220,7 +220,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
     };
 
     const getSelectedPlan = () => {
-        return plans.find((plan) => plan.id === parseInt(data.plan_id));
+        return plans.find((plan) => plan.id === data.plan_id);
     };
 
     const getSelectedPlanPrice = () => {
