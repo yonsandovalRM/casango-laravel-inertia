@@ -157,7 +157,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
 
     if (isConfirmed) {
         return (
-            <div className="min-h-screen p-4">
+            <div className="min-h-screen p-6">
                 <div className="mx-auto max-w-2xl pt-20">
                     <Card className="bg-card text-center">
                         <CardHeader className="pb-4">
@@ -191,7 +191,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 pt-4">
+                            <div className="flex gap-6 pt-4">
                                 <Button variant="outline" onClick={() => window.location.reload()} className="flex-1">
                                     Nueva Reserva
                                 </Button>
@@ -302,7 +302,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                             </div>
 
                             {/* Price */}
-                            <div className="rounded-lg bg-accent p-4">
+                            <div className="rounded-lg bg-accent p-6">
                                 <div className="flex items-center justify-between">
                                     <span className="font-semibold">Total a pagar:</span>
                                     <div className="text-right">

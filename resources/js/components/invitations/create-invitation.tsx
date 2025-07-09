@@ -49,7 +49,7 @@ export const CreateInvitation = () => {
                         <FormInvitation data={data} setData={setData} errors={errors} roles={roles} />
                     </form>
                 </ScrollArea>
-                <SheetFooter className="grid grid-cols-2 gap-4">
+                <SheetFooter className="grid grid-cols-2 gap-6">
                     <Button type="submit" variant="default" form="invitation-form" disabled={processing}>
                         {processing ? 'Creando...' : 'Crear invitación'}
                     </Button>

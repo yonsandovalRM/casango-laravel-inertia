@@ -186,7 +186,7 @@ export default function BookingShow({
             <Head title={t('bookings.show.title')} />
             <AppHeaderPage title={t('bookings.show.title')} description={t('bookings.show.description')} />
 
-            <div className="space-y-6 p-4">
+            <div className="space-y-6 p-6">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* Columna izquierda - Información básica */}
                     <div className="space-y-4">

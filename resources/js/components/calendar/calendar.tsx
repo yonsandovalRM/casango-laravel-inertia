@@ -22,7 +22,7 @@ export default function Calendar({ events, onEventClick, onDateClick }: Calendar
     }, []);
 
     return (
-        <div className="p-4">
+        <div className="p-6">
             <FullCalendar
                 ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

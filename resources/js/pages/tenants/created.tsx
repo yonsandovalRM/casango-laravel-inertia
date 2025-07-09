@@ -77,11 +77,11 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                             sistema.
                         </AlertDescription>
                     </Alert>
-                    <div className="mb-8 grid gap-4">
+                    <div className="mb-8 grid gap-6">
                         <h2 className="mb-4 text-xl font-semibold">Próximos pasos</h2>
 
                         <Card className="cursor-pointer transition-shadow hover:shadow-md">
-                            <CardContent className="flex items-center p-4">
+                            <CardContent className="flex items-center p-6">
                                 <div className="mr-4 rounded-lg bg-blue-100 p-3 dark:bg-blue-900">
                                     <Settings className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                                 </div>
@@ -94,7 +94,7 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                         </Card>
 
                         <Card className="cursor-pointer transition-shadow hover:shadow-md">
-                            <CardContent className="flex items-center p-4">
+                            <CardContent className="flex items-center p-6">
                                 <div className="mr-4 rounded-lg bg-green-100 p-3 dark:bg-green-900">
                                     <Calendar className="h-6 w-6 text-green-600 dark:text-green-400" />
                                 </div>
@@ -107,7 +107,7 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                         </Card>
 
                         <Card className="cursor-pointer transition-shadow hover:shadow-md">
-                            <CardContent className="flex items-center p-4">
+                            <CardContent className="flex items-center p-6">
                                 <div className="mr-4 rounded-lg bg-purple-100 p-3 dark:bg-purple-900">
                                     <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                                 </div>
@@ -119,7 +119,7 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                    <div className="flex flex-col justify-center gap-6 sm:flex-row">
                         <Button variant="outline" asChild>
                             <Link href={route('home')}>Volver al inicio</Link>
                         </Button>
@@ -135,7 +135,7 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                             <CardTitle className="text-center">¿Necesitas ayuda para empezar?</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+                            <div className="flex flex-col justify-center gap-6 sm:flex-row">
                                 <Button variant="ghost" size="sm">
                                     <Phone className="h-4 w-4" />
                                     Agendar demo gratuita

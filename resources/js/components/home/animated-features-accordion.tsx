@@ -310,7 +310,7 @@ export function AnimatedFeaturesAccordion() {
                                     className="h-full w-full object-cover transition-all duration-700 ease-in-out hover:scale-105"
                                 />
                             </div>
-                            <div className="mt-4 p-4">
+                            <div className="mt-4 p-6">
                                 <h4 className="mb-2 font-outfit text-lg font-semibold text-gray-900 dark:text-white">{activeFeature?.title}</h4>
                                 <p className="text-sm text-gray-600 dark:text-gray-300">{activeFeature?.description}</p>
                             </div>

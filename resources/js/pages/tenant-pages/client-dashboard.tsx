@@ -40,9 +40,9 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: route('dashboard') }]}>
             <Head title="Dashboard" />
-            <div className="space-y-6 p-4">
+            <div className="space-y-6 p-6">
                 {/* Stats Grid */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard title="Total de Reservas" value={stats.totalBookings} icon={Calendar} description="Todas las reservas" />
                     <StatsCard title="Próximas Citas" value={stats.upcomingBookings} icon={Clock} description="Reservas confirmadas" />
                     <StatsCard
@@ -63,7 +63,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                         <CardContent>
                             {nextBooking ? (
                                 <div className="space-y-4">
-                                    <div className="flex items-center space-x-4 rounded-lg border border-border bg-accent p-4">
+                                    <div className="flex items-center space-x-4 rounded-lg border border-border bg-accent p-6">
                                         <div className="flex-shrink-0">
                                             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                                                 <Calendar className="h-6 w-6 text-blue-600" />
@@ -137,9 +137,9 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                 </div>
 
                 {/* Additional Stats */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-3">
                     <Card>
-                        <CardContent className="p-4">
+                        <CardContent className="p-6">
                             <div className="flex items-center space-x-2">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
                                     <Calendar className="h-4 w-4 text-green-600" />
@@ -153,7 +153,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                     </Card>
 
                     <Card>
-                        <CardContent className="p-4">
+                        <CardContent className="p-6">
                             <div className="flex items-center space-x-2">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-100">
                                     <Calendar className="h-4 w-4 text-red-600" />
@@ -167,7 +167,7 @@ export default function ClientDashboard({ client, bookings, stats }: ClientDashb
                     </Card>
 
                     <Card>
-                        <CardContent className="p-4">
+                        <CardContent className="p-6">
                             <div className="flex items-center space-x-2">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
                                     <DollarSign className="h-4 w-4 text-blue-600" />

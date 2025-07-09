@@ -17,7 +17,7 @@ const BookingTimeline: React.FC<BookingTimelineProps> = ({ bookings, filters, se
     const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
 
     return (
-        <div className="mx-auto max-w-6xl space-y-6 p-4">
+        <div className="mx-auto max-w-6xl space-y-6 p-6">
             <FiltersBookings bookings={bookings} filters={filters} services={services} />
 
             {/* Timeline */}

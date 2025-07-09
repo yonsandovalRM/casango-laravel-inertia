@@ -116,7 +116,7 @@ export default function BusinessHours({ data, handleScheduleChange, canEdit = fa
 
                                 {schedule.is_open && (
                                     <>
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-2 gap-6">
                                             <div>
                                                 <Label className="mb-1 block text-xs font-medium text-muted-foreground">
                                                     {t('company.form.open_time')}
@@ -152,7 +152,7 @@ export default function BusinessHours({ data, handleScheduleChange, canEdit = fa
                                         {t('company.form.has_break')}
                                     </Label>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-6">
                                     {schedule.has_break && (
                                         <>
                                             <div>

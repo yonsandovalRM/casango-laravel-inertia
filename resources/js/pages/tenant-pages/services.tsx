@@ -35,7 +35,7 @@ const Services = ({ company }: { company: CompanyResource }) => {
 
                     {/* Search and Filters */}
                     <div className="mb-8 rounded-2xl bg-card p-6 shadow-lg">
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
                             {/* Search */}
                             <div className="relative">
                                 <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />

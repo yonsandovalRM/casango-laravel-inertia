@@ -48,7 +48,7 @@ export function PricingSection({ plans }: { plans: PlanResource[] }) {
                     <p className="mb-8 text-xl text-muted-foreground dark:text-gray-300">Elige el plan que mejor se adapte a tu negocio</p>
 
                     {/* Billing Toggle */}
-                    <div className="mb-4 flex items-center justify-center gap-4">
+                    <div className="mb-4 flex items-center justify-center gap-6">
                         <span
                             className={cn(
                                 'text-sm font-medium transition-colors',

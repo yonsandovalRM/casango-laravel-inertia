@@ -234,7 +234,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
         return (
             <AppLayout breadcrumbs={[{ title: 'Suscripción', href: '/subscription' }]}>
                 <Head title="Suscripción" />
-                <div className="p-4">
+                <div className="p-6">
                     <Card>
                         <CardHeader>
                             <CardTitle>Crear Suscripción</CardTitle>
@@ -291,7 +291,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                             </div>
 
                             {data.plan_id && (
-                                <div className="rounded-lg bg-gray-50 p-4">
+                                <div className="rounded-lg bg-gray-50 p-6">
                                     <p className="font-medium">
                                         Precio: {formatCurrency(getSelectedPlanPrice(), getSelectedPlan()?.currency || 'CLP')}
                                         {data.is_monthly ? '/mes' : '/año'}
@@ -321,7 +321,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
     return (
         <AppLayout breadcrumbs={[{ title: 'Suscripción', href: '/subscription' }]}>
             <Head title="Suscripción" />
-            <div className="p-4">
+            <div className="p-6">
                 <Card>
                     <CardHeader className="pb-4">
                         <div className="flex items-center justify-between">
@@ -374,7 +374,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                         </div>
 
                         {/* Price & Billing */}
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div className="flex items-center space-x-3">
                                 <CreditCard className="h-5 w-5 text-muted-foreground" />
                                 <div>
@@ -521,7 +521,7 @@ export default function Subscription({ subscription, plans, paymentUrl, subscrip
                         </div>
 
                         {data.plan_id && (
-                            <div className="rounded-lg bg-accent p-4">
+                            <div className="rounded-lg bg-accent p-6">
                                 <p className="font-medium">
                                     Precio: {formatCurrency(getSelectedPlanPrice(), getSelectedPlan()?.currency || 'CLP')}
                                     {data.is_monthly ? '/mes' : '/año'}

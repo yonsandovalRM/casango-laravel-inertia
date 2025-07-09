@@ -51,7 +51,7 @@ const Hero = () => {
                             {company.description || 'Agrega una descripción para tu empresa en el panel de administración.'}
                         </p>
 
-                        <div className="mb-8 flex flex-col gap-4 sm:flex-row">
+                        <div className="mb-8 flex flex-col gap-6 sm:flex-row">
                             <Button size="lg" onClick={() => router.visit(route('home.bookings'))}>
                                 <Calendar className="mr-2 h-5 w-5" />
                                 Reservar Cita

@@ -161,7 +161,7 @@ export default function TenantsCreate({ plans, plan, billing }: { plans: PlanRes
                                 <RadioGroup
                                     value={data.plan_id}
                                     onValueChange={(value) => setData((prev) => ({ ...prev, plan_id: value }))}
-                                    className="grid gap-4 md:grid-cols-3"
+                                    className="grid gap-6 md:grid-cols-3"
                                 >
                                     {plans.map((plan) => (
                                         <PlanCard key={plan.id} plan={plan} isSelected={data.plan_id === plan.id} billing={data.billing} />

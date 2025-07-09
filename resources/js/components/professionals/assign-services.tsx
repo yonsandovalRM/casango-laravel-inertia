@@ -126,8 +126,8 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
     };
 
     return (
-        <div className="flex flex-col gap-4 p-4">
-            <div className="flex flex-col gap-4 lg:flex-row">
+        <div className="flex flex-col gap-6 p-6">
+            <div className="flex flex-col gap-6 lg:flex-row">
                 {/* Servicios asignados */}
                 <Card className="flex-1">
                     <CardContent>
@@ -156,7 +156,7 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
                                             <p className="text-base font-semibold">{service.name}</p>
                                             <p className="text-sm text-muted-foreground">{service.description}</p>
 
-                                            <div className="mt-1 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                            <div className="mt-1 flex flex-wrap gap-6 text-sm text-muted-foreground">
                                                 <div className="flex items-center gap-1">
                                                     <span>{t('professionals.assign_services.duration')}:</span>
                                                     <span className="flex items-center gap-1 font-medium text-foreground">
@@ -224,7 +224,7 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
                                             <p className="text-base font-semibold">{service.name}</p>
                                             <p className="text-sm text-muted-foreground">{service.description}</p>
 
-                                            <div className="mt-1 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                            <div className="mt-1 flex flex-wrap gap-6 text-sm text-muted-foreground">
                                                 <div className="flex items-center gap-1">
                                                     <span>{t('professionals.assign_services.duration')}:</span>
                                                     <span className="flex items-center gap-1 font-medium text-foreground">
@@ -317,7 +317,7 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
                     </Alert>
 
                     <form onSubmit={handleSubmitAssign}>
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-6">
                             <Input
                                 className="hidden"
                                 type="text"

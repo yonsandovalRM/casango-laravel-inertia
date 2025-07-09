@@ -68,7 +68,7 @@ export function ProfessionalExceptions({ exceptions }: { exceptions: ExceptionRe
                             </div>
                             <div className="col-span-2 space-y-4">
                                 <div className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-6">
                                         <div>
                                             <Label htmlFor="time-from">{t('professional.exceptions.form.start_time')}</Label>
                                             <div className="relative flex w-full items-center gap-2">
@@ -113,7 +113,7 @@ export function ProfessionalExceptions({ exceptions }: { exceptions: ExceptionRe
                 </Card>
             </form>
 
-            <div className="mt-4 flex w-full flex-col gap-4">
+            <div className="mt-4 flex w-full flex-col gap-6">
                 {exceptions.length === 0 && <EmptyState text="No exceptions found" />}
                 {exceptions.map((exception: ExceptionResource) => (
                     <Card key={exception.id} className="group transition-all hover:shadow-md" aria-labelledby={`exception-${exception.id}-title`}>
@@ -141,7 +141,7 @@ export function ProfessionalExceptions({ exceptions }: { exceptions: ExceptionRe
                             </Button>
                         </CardHeader>
 
-                        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <CardContent className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div className="space-y-1">
                                 <p className="text-sm text-muted-foreground">{t('professional.exceptions.form.start_time')}</p>
                                 <p className="font-medium">{formatTime(exception.start_time)}</p>

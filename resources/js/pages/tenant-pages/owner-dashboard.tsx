@@ -50,7 +50,7 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
             <Head title="Dashboard - Owner" />
             <div className="flex flex-col gap-6 p-6">
                 {/* Main Stats Grid */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard
                         title="Reservas del Mes"
                         value={stats.monthlyBookings}
@@ -76,7 +76,7 @@ export default function OwnerDashboard({ owner, stats, recentBookings, topServic
                 </div>
 
                 {/* Secondary Stats */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-3">
                     <StatsCard
                         title="Valor Promedio"
                         value={`$${formatCurrency(stats.avgBookingValue)}`}

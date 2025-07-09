@@ -122,10 +122,10 @@ export default function BookingCardTimeline({
                 onClick={() => setSelectedBooking(selectedBooking === booking.id ? null : booking.id)}
             >
                 <CardHeader className="pb-3">
-                    <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
+                    <div className="flex flex-col items-start justify-between gap-6 sm:flex-row">
                         <div className="flex-1">
                             <CardTitle className="mb-2 text-xl font-semibold text-foreground">{booking.service.name}</CardTitle>
-                            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                     <Calendar className="h-4 w-4" />
                                     <span className="font-medium">{formatDate(booking.date)}</span>
@@ -179,7 +179,7 @@ export default function BookingCardTimeline({
                         <div className="animate-fade-in mt-4 space-y-4">
                             <Separator />
 
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-3">
                                     <div className="flex items-center gap-2 text-sm">
                                         <User className="h-4 w-4 text-muted-foreground" />

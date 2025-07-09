@@ -78,7 +78,7 @@ const CompanyReadOnlyView = ({ company, t }: Props) => {
                 </div>
 
                 <div className="px-8 pt-20 pb-8">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-6">
                         <div>
                             <h1 className="font-outfit text-3xl font-bold text-foreground">{company?.name || t('company.name_placeholder')}</h1>
                             {company?.tagline && <p className="mt-2 text-lg text-muted-foreground">{company.tagline}</p>}
@@ -119,7 +119,7 @@ const CompanyReadOnlyView = ({ company, t }: Props) => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
                                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                                 <div>
@@ -501,7 +501,7 @@ export default function CompanyIndex({ company }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('company.title')} />
-            <div className="p-4">{canEdit ? <CompanyEditView company={company} t={t} /> : <CompanyReadOnlyView company={company} t={t} />}</div>
+            <div className="p-6">{canEdit ? <CompanyEditView company={company} t={t} /> : <CompanyReadOnlyView company={company} t={t} />}</div>
         </AppLayout>
     );
 }

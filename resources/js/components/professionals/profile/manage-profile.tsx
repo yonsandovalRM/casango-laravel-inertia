@@ -77,11 +77,11 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                     <Pencil className="h-4 w-4" />
                 </Button>
             </div>
-            <div className="p-4">
+            <div className="p-6">
                 {isEditing ? (
                     <div>
                         <form onSubmit={handleSubmit}>
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-6">
                                 <div className="flex flex-col items-center space-y-4">
                                     <div className="relative pt-4">
                                         <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-border bg-muted shadow-lg">
@@ -192,7 +192,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                         </form>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-6">
                         <div className="flex flex-col items-center space-y-4">
                             <div className="flex flex-col items-center pt-4">
                                 <div className="h-32 w-32 overflow-hidden rounded-full border-4 border-border bg-muted shadow-lg">
@@ -215,7 +215,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                                     {professional.specialty && <p className="text-sm text-muted-foreground">{professional.specialty}</p>}
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-6">
                                 <div className="text-sm text-muted-foreground">{professional.bio}</div>
 
                                 <div className="text-sm text-muted-foreground">

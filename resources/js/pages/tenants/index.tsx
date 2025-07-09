@@ -46,10 +46,10 @@ export default function TenantsIndex({ tenants }: { tenants: TenantResource[] })
                     </Button>
                 }
             />
-            <div className="p-4">
+            <div className="p-6">
                 <TenantFilters />
 
-                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {tenants.map((tenant) => (
                         <TenantCard
                             key={tenant.id}

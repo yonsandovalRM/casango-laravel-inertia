@@ -28,9 +28,9 @@ export function ManageCategory({ categories, t }: { categories: CategoryResource
                 description={t('categories.description')}
                 actions={<Button onClick={handleCreate}>{t('categories.manage.create')}</Button>}
             />
-            <div className="p-4">
-                <div className="flex flex-col gap-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="p-6">
+                <div className="flex flex-col gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {categories.length === 0 && (
                             <EmptyState
                                 action={<Button onClick={handleCreate}>{t('categories.manage.create')}</Button>}

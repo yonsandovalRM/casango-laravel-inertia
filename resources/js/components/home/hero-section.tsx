@@ -15,7 +15,7 @@ const HeroSection = () => {
                 <p className="mx-auto mb-12 max-w-2xl text-xl leading-relaxed text-muted-foreground dark:text-gray-300">
                     La plataforma más simple para profesionales que buscan optimizar su tiempo y brindar la mejor experiencia a sus clientes.
                 </p>
-                <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <div className="mb-16 flex flex-col items-center justify-center gap-6 sm:flex-row">
                     <Button
                         size="lg"
                         className="bg-blue-600 px-8 py-4 text-lg font-medium transition-all duration-300 hover:scale-105 hover:bg-blue-700"

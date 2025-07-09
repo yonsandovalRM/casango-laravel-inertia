@@ -132,10 +132,10 @@ export default function FiltersBookings({ bookings, filters, services }: Filters
 
     return (
         <Card>
-            <CardContent className="p-4">
+            <CardContent className="p-6">
                 <div className="space-y-4">
                     {/* Primera fila: Búsqueda y contadores */}
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                         <div className="relative max-w-md flex-1">
                             <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                             <Input
@@ -174,7 +174,7 @@ export default function FiltersBookings({ bookings, filters, services }: Filters
                     </div>
 
                     {/* Segunda fila: Filtros */}
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
                         {/* Estado */}
                         <Select
                             value={localFilters.status}

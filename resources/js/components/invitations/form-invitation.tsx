@@ -15,7 +15,7 @@ export const FormInvitation = ({ data, setData, errors, roles }: FormInvitationP
     return (
         <div>
             <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-6">
                     <div className="space-y-6 pb-4">
                         <div>
                             <Label htmlFor="name" required>

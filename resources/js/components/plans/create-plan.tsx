@@ -56,7 +56,7 @@ function CreatePlan({ t }: { t: any }) {
                         <FormPlan data={data} setData={setData} errors={errors} />
                     </form>
                 </ScrollArea>
-                <SheetFooter className="grid grid-cols-2 gap-4">
+                <SheetFooter className="grid grid-cols-2 gap-6">
                     <Button type="submit" variant="default" form="plan-form" disabled={processing}>
                         {processing ? t('plans.creating') : t('plans.create')}
                     </Button>

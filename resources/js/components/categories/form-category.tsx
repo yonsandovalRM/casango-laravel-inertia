@@ -25,7 +25,7 @@ export function FormCategory() {
                 <ScrollArea className="h-[calc(100vh-180px)]">
                     <form id="category-form" onSubmit={handleSubmit}>
                         <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-6">
                                 <div className="space-y-6 pb-4">
                                     <div>
                                         <Label required>{t('services.form.name')}</Label>
@@ -47,7 +47,7 @@ export function FormCategory() {
                         </div>
                     </form>
                 </ScrollArea>
-                <SheetFooter className="grid grid-cols-2 gap-4">
+                <SheetFooter className="grid grid-cols-2 gap-6">
                     <Button type="submit" variant="default" form="category-form" disabled={processing}>
                         {processing ? (
                             <Loader2 className="size-4 animate-spin" />

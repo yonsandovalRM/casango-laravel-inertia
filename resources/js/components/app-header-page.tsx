@@ -1,6 +1,6 @@
 export const AppHeaderPage = ({ title, description, actions }: { title: string; description?: string; actions?: React.ReactNode }) => {
     return (
-        <div className="flex items-center justify-between px-4 py-6">
+        <div className="flex items-center justify-between p-6">
             <div className="flex flex-col">
                 <h1 className="font-outfit text-2xl font-bold sm:text-3xl">{title}</h1>
                 {description && <p className="text-sm text-foreground">{description}</p>}

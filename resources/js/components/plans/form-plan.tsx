@@ -45,7 +45,7 @@ function FormPlan({ data, setData, errors, t }: FormPlanProps & { t: any }) {
     return (
         <div>
             <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-6">
                     <div className="space-y-6 pb-4">
                         <div>
                             <Label htmlFor="name" required>
@@ -146,7 +146,7 @@ function FormPlan({ data, setData, errors, t }: FormPlanProps & { t: any }) {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
                         <div className="flex items-center gap-2">
                             <Checkbox id="is_free" name="is_free" checked={data.is_free} onCheckedChange={(checked) => setData('is_free', checked)} />
                             <Label htmlFor="is_free">{t('plans.form.is_free')}</Label>

@@ -30,7 +30,7 @@ export default function UsersIndex({ users }: { users: UserResource[] }) {
                 description="Gestiona los usuarios de tu empresa"
                 actions={hasPermission(PERMISSIONS.invitations.create) && <CreateInvitation />}
             />
-            <div className="p-4">
+            <div className="p-6">
                 <TenantFilters />
 
                 <div className="mt-4">

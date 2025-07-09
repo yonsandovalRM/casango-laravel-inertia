@@ -58,9 +58,9 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
     return (
         <AppLayout breadcrumbs={[{ title: 'Dashboard', href: route('dashboard') }]}>
             <Head title="Dashboard" />
-            <div className="flex flex-col gap-6 p-4">
+            <div className="flex flex-col gap-6 p-6">
                 {/* Stats Grid */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     <StatsCard title="Total Reservas" value={stats.totalBookings} icon={Calendar} description="Todas las reservas" />
                     <StatsCard title="Citas de Hoy" value={stats.todayBookings} icon={Clock} description="Reservas programadas hoy" />
                     <StatsCard
@@ -73,9 +73,9 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
                 </div>
 
                 {/* Secondary Stats */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-3">
                     <Card>
-                        <CardContent className="p-4">
+                        <CardContent className="p-6">
                             <div className="flex items-center space-x-2">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100">
                                     <Calendar className="h-4 w-4 text-blue-600" />
@@ -89,7 +89,7 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
                     </Card>
 
                     <Card>
-                        <CardContent className="p-4">
+                        <CardContent className="p-6">
                             <div className="flex items-center space-x-2">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
                                     <DollarSign className="h-4 w-4 text-green-600" />
@@ -103,7 +103,7 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
                     </Card>
 
                     <Card>
-                        <CardContent className="p-4">
+                        <CardContent className="p-6">
                             <div className="flex items-center space-x-2">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-100">
                                     <ChevronRight className="h-4 w-4 text-purple-600" />
@@ -117,7 +117,7 @@ export default function ProfessionalDashboard({ professional, bookings, stats }:
                     </Card>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2">
                     {/* Today's Schedule */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">

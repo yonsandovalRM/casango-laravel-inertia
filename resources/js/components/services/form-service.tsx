@@ -32,7 +32,7 @@ export function FormService({ categories }: { categories: CategoryResource[] }) 
                     <ScrollArea className="h-[calc(100vh-180px)]">
                         <form id="service-form" onSubmit={handleSubmit}>
                             <div className="grid flex-1 auto-rows-min gap-6 px-4">
-                                <div className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-6">
                                     <div className="space-y-6 pb-4">
                                         <div>
                                             <Label required>{t('services.form.name')}</Label>
@@ -49,7 +49,7 @@ export function FormService({ categories }: { categories: CategoryResource[] }) 
                                             <Input value={data.notes} onChange={(e) => setData({ ...data, notes: e.target.value })} />
                                             <InputError message={errors.notes} />
                                         </div>
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-6">
                                             <div className="flex-1">
                                                 <Label required>{t('services.form.category')}</Label>
                                                 <SelectAutocomplete
@@ -106,7 +106,7 @@ export function FormService({ categories }: { categories: CategoryResource[] }) 
                             </div>
                         </form>
                     </ScrollArea>
-                    <SheetFooter className="grid grid-cols-2 gap-4">
+                    <SheetFooter className="grid grid-cols-2 gap-6">
                         <Button type="submit" variant="default" form="service-form" disabled={processing}>
                             {processing ? (
                                 <Loader2 className="size-4 animate-spin" />

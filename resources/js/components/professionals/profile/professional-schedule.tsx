@@ -158,7 +158,7 @@ export function ProfessionalSchedule({ isFullTime, professional_schedules, compa
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {schedules.map((schedule, index) => (
-                                <div key={schedule.day_of_week} className="space-y-4 rounded-lg border p-4">
+                                <div key={schedule.day_of_week} className="space-y-4 rounded-lg border p-6">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
                                             <Checkbox
@@ -180,7 +180,7 @@ export function ProfessionalSchedule({ isFullTime, professional_schedules, compa
                                     {schedule.is_open && (
                                         <div className="ml-6 space-y-4">
                                             {/* Horario de trabajo */}
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-2 gap-6">
                                                 <div>
                                                     <Label htmlFor={`open-${schedule.day_of_week}`}>Hora de Apertura</Label>
                                                     <Input
@@ -213,7 +213,7 @@ export function ProfessionalSchedule({ isFullTime, professional_schedules, compa
                                                 </div>
 
                                                 {schedule.has_break && (
-                                                    <div className="ml-6 grid grid-cols-2 gap-4">
+                                                    <div className="ml-6 grid grid-cols-2 gap-6">
                                                         <div>
                                                             <Label htmlFor={`break-start-${schedule.day_of_week}`}>Inicio del Descanso</Label>
                                                             <Input

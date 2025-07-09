@@ -54,7 +54,7 @@ export const EditUser = ({ user }: { user: UserResource }) => {
                         <FormUser data={data} setData={setData} errors={errors} roles={roles} />
                     </form>
                 </ScrollArea>
-                <SheetFooter className="grid grid-cols-2 gap-4">
+                <SheetFooter className="grid grid-cols-2 gap-6">
                     <Button type="submit" variant="default" form="user-form" disabled={processing}>
                         {processing ? 'Actualizando...' : 'Actualizar usuario'}
                     </Button>

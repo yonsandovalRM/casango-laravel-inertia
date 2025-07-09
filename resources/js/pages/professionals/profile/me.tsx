@@ -21,8 +21,8 @@ export default function ProfessionalProfileMe({ professional, professional_sched
         <AppLayout breadcrumbs={[{ title: 'Perfil profesional', href: '/professional/profile' }]}>
             <Head title={t('professional.profile.title')} />
             <AppHeaderPage title={t('professional.profile.title')} description={t('professional.profile.description')} />
-            <div className="p-4">
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div className="p-6">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <ManageProfile professional={professional} />
                     <Tabs defaultValue="schedule" className="w-full lg:col-span-2">
                         <TabsList className="w-full">

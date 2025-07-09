@@ -84,7 +84,7 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
 
             <div className="space-y-4">
                 {/* Client Information */}
-                <div className="rounded-lg bg-accent p-4">
+                <div className="rounded-lg bg-accent p-6">
                     <div className="mb-2 flex items-center space-x-3">
                         <User className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium text-foreground">{booking.client.name}</span>
@@ -98,7 +98,7 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
                 </div>
 
                 {/* Date and Time */}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="flex items-center space-x-3">
                         <Calendar className="h-4 w-4 text-cm-blue-500" />
                         <div>
@@ -116,10 +116,10 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
                 </div>
 
                 {/* Service Details */}
-                <div className="rounded-lg bg-cm-blue-600/20 p-4">
+                <div className="rounded-lg bg-cm-blue-600/20 p-6">
                     <h4 className="mb-2 font-medium text-foreground">Detalles del servicio</h4>
                     <p className="mb-2 text-sm text-muted-foreground">{booking.service.description}</p>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-2 gap-6 text-sm">
                         <div>
                             <span className="text-cm-blue-500">Duración:</span>
                             <span className="ml-2 font-medium">{booking.service.duration} min</span>
@@ -132,7 +132,7 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
                 </div>
 
                 {/* Pricing */}
-                <div className="rounded-lg bg-cm-green-600/20 p-4">
+                <div className="rounded-lg bg-cm-green-600/20 p-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                             <DollarSign className="h-4 w-4 text-cm-green-500" />
