@@ -45,6 +45,8 @@ export const professionals = {
                 minutes: 'minutes',
                 price: 'Price',
                 cancel: 'Cancel',
+                back: 'Back',
+                save_assignments: 'Save Assignments',
             },
         },
         professional: {
@@ -122,6 +124,8 @@ export const professionals = {
                 price: 'Precio',
                 close: 'Cerrar',
                 cancel: 'Cancelar',
+                back: 'Volver',
+                save_assignments: 'Guardar asignaciones',
             },
             form: {
                 bio: 'Biografía',

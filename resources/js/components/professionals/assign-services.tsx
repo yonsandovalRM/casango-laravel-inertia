@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Alert, AlertDescription } from '../ui/alert';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent } from '../ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { EmptyState } from '../ui/empty-state';
 import { Input } from '../ui/input';
@@ -87,6 +87,7 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
         const newAssigned = [...assignedServices, ...availableServices];
         setAssignedServices(newAssigned);
         setAvailableServices([]);
+        onAssign();
         setIsOpenAssignAllModal(false);
     };
 
@@ -127,8 +128,14 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
 
     return (
         <div className="flex flex-col gap-6 p-6">
+            <div className="flex items-center justify-between">
+                <Button onClick={() => router.visit(route('professionals.index'))} variant="outline">
+                    {t('professionals.assign_services.back')}
+                </Button>
+
+                <Button onClick={onAssign}>{t('professionals.assign_services.save_assignments')}</Button>
+            </div>
             <div className="flex flex-col gap-6 lg:flex-row">
-                {/* Servicios asignados */}
                 <Card className="flex-1">
                     <CardContent>
                         <h3 className="mb-3 text-lg font-medium">
@@ -275,35 +282,6 @@ export function AssignServices({ services, t, professional }: AssignServicesProp
                     </CardContent>
                 </Card>
             </div>
-
-            {/* Resumen Mejorado */}
-            <Card className="flex-1 shadow-md">
-                <CardHeader className="border-b pb-3">
-                    <CardTitle className="text-lg font-semibold text-foreground">{t('professionals.assign_services.summary')}</CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-3 pt-4">
-                    <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">{t('professionals.assign_services.total_assigned')}:</span>
-                        <span className="font-medium text-foreground">{assignedServices.length}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground">{t('professionals.assign_services.total_available')}:</span>
-                        <span className="font-medium text-foreground">{availableServices.length}</span>
-                    </div>
-                </CardContent>
-
-                <CardFooter className="flex justify-end gap-3 border-t pt-4">
-                    <Button onClick={() => router.visit(route('professionals.index'))} variant="outline">
-                        {t('professionals.assign_services.cancel')}
-                    </Button>
-
-                    <Button onClick={onAssign} disabled={assignedServices.length === 0}>
-                        {t('professionals.assign_services.assign')}
-                    </Button>
-                </CardFooter>
-            </Card>
 
             <Dialog open={isOpenAssignModal} onOpenChange={setIsOpenAssignModal}>
                 <DialogContent>

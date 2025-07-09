@@ -22,7 +22,7 @@ class UpdateProfessionalServicesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'services' => 'required|array',
+            'services' => 'nullable|array',
             'services.*.service_id' => 'required|exists:services,id',
             'services.*.price' => 'required|numeric',
             'services.*.duration' => 'required|numeric',

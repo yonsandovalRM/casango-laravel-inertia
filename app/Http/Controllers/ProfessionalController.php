@@ -108,6 +108,7 @@ class ProfessionalController extends Controller
 
     public function assignServices(Professional $professional, UpdateProfessionalServicesRequest $request)
     {
+
         $professional->services()->sync($request->services);
         return redirect()->route('professionals.index')->with('success', __('professional.updated'));
     }
