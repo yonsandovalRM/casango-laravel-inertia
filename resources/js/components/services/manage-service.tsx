@@ -17,7 +17,7 @@ import {
 } from '../ui/alert-dialog';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { CardContent, CardDescription, CardHeader, CardItem, CardTitle } from '../ui/card';
 import { EmptyState } from '../ui/empty-state';
 import { FormService } from './form-service';
 import { useService } from './service-context';
@@ -57,7 +57,7 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
                         />
                     )}
                     {services.map((service) => (
-                        <Card key={service.id} className="group transition-all duration-200 hover:shadow-lg">
+                        <CardItem key={service.id} className="group">
                             <CardHeader>
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1">
@@ -121,7 +121,7 @@ export function ManageService({ services, categories, t }: { services: ServiceRe
                                     </div>
                                 </div>
                             </CardContent>
-                        </Card>
+                        </CardItem>
                     ))}
                 </div>
             </div>

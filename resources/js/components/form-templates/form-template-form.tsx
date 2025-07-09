@@ -8,6 +8,7 @@ import { FormField, FormTemplate } from '@/interfaces/form-template';
 import { useForm } from '@inertiajs/react';
 import { Calendar, Plus, Trash2, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { CardContent, CardHeader, CardItem } from '../ui/card';
 
 interface FormTemplateFormProps {
     template?: FormTemplate;
@@ -175,152 +176,165 @@ export const FormTemplateForm: React.FC<FormTemplateFormProps> = ({ template, is
                 </div>
 
                 {fields.map((field, index) => (
-                    <div key={index} className="space-y-4 rounded-lg border bg-card p-6">
-                        <div className="flex items-center justify-between">
-                            <h4 className="font-medium">Campo #{index + 1}</h4>
-                            <div className="flex items-center gap-2">
-                                {isEdit && (
-                                    <>
-                                        <Button type="button" onClick={() => moveField(index, 'up')} variant="ghost" size="sm" disabled={index === 0}>
-                                            ↑
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            onClick={() => moveField(index, 'down')}
-                                            variant="ghost"
-                                            size="sm"
-                                            disabled={index === fields.length - 1}
-                                        >
-                                            ↓
-                                        </Button>
-                                    </>
-                                )}
-                                <Button
-                                    type="button"
-                                    onClick={() => removeField(index)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-900 dark:hover:text-red-400"
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                            <div className="space-y-2">
-                                <Label>Etiqueta</Label>
-                                <Input
-                                    value={field.label}
-                                    onChange={(e) => updateField(index, { label: e.target.value })}
-                                    placeholder="Ej: Nombre completo"
-                                    className={errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.label ? 'border-red-500' : ''}
-                                />
-                                {errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.label && (
-                                    <p className="text-sm text-red-500">{errors.fields[index].label}</p>
-                                )}
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Nombre interno</Label>
-                                <Input
-                                    value={field.name}
-                                    onChange={(e) => updateField(index, { name: e.target.value })}
-                                    placeholder="Ej: full_name"
-                                    className={errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.name ? 'border-red-500' : ''}
-                                />
-                                {errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.name && (
-                                    <p className="text-sm text-red-500">{errors.fields[index].name}</p>
-                                )}
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Tipo de campo</Label>
-                                <Select value={field.type} onValueChange={(value) => updateField(index, { type: value })}>
-                                    <SelectTrigger
-                                        className={
-                                            errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.type ? 'border-red-500' : ''
-                                        }
+                    <CardItem key={index}>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <h4 className="font-medium">Campo #{index + 1}</h4>
+                                <div className="flex items-center gap-2">
+                                    {isEdit && (
+                                        <>
+                                            <Button
+                                                type="button"
+                                                onClick={() => moveField(index, 'up')}
+                                                variant="ghost"
+                                                size="sm"
+                                                disabled={index === 0}
+                                            >
+                                                ↑
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                onClick={() => moveField(index, 'down')}
+                                                variant="ghost"
+                                                size="sm"
+                                                disabled={index === fields.length - 1}
+                                            >
+                                                ↓
+                                            </Button>
+                                        </>
+                                    )}
+                                    <Button
+                                        type="button"
+                                        onClick={() => removeField(index)}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-900 dark:hover:text-red-400"
                                     >
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="text">Texto</SelectItem>
-                                        <SelectItem value="textarea">Área de texto</SelectItem>
-                                        <SelectItem value="date">Fecha</SelectItem>
-                                        <SelectItem value="time">Hora</SelectItem>
-                                        <SelectItem value="datetime-local">Fecha y hora</SelectItem>
-                                        <SelectItem value="select">Lista desplegable</SelectItem>
-                                        <SelectItem value="checkbox">Casillas de verificación</SelectItem>
-                                        <SelectItem value="radio">Botones de radio</SelectItem>
-                                        <SelectItem value="file">Archivo</SelectItem>
-                                        <SelectItem value="email">Email</SelectItem>
-                                        <SelectItem value="number">Número</SelectItem>
-                                        <SelectItem value="tel">Teléfono</SelectItem>
-                                        <SelectItem value="url">URL</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.type && (
-                                    <p className="text-sm text-red-500">{errors.fields[index].type}</p>
-                                )}
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label>Placeholder</Label>
-                                <Input
-                                    value={field.placeholder || ''}
-                                    onChange={(e) => updateField(index, { placeholder: e.target.value || null })}
-                                    placeholder="Texto de ayuda..."
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label>Valor por defecto</Label>
-                                <Input
-                                    value={field.default_value || ''}
-                                    onChange={(e) => updateField(index, { default_value: e.target.value || null })}
-                                    placeholder="Valor inicial..."
-                                />
-                            </div>
-                        </div>
-
-                        {(field.type === 'select' || field.type === 'checkbox' || field.type === 'radio') && (
-                            <div className="space-y-2">
-                                <Label>Opciones (separadas por comas)</Label>
-                                <Textarea
-                                    value={(() => {
-                                        try {
-                                            return field.options ? JSON.parse(field.options).join(', ') : '';
-                                        } catch {
-                                            return '';
+                        </CardHeader>
+                        <CardContent className="space-y-4 p-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                                <div className="space-y-2">
+                                    <Label>Etiqueta</Label>
+                                    <Input
+                                        value={field.label}
+                                        onChange={(e) => updateField(index, { label: e.target.value })}
+                                        placeholder="Ej: Nombre completo"
+                                        className={
+                                            errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.label ? 'border-red-500' : ''
                                         }
-                                    })()}
-                                    onChange={(e) => {
-                                        const options = e.target.value
-                                            .split(',')
-                                            .map((s) => s.trim())
-                                            .filter(Boolean);
-
-                                        updateField(index, {
-                                            options: options.length > 0 ? JSON.stringify(options) : null,
-                                        });
-                                    }}
-                                    placeholder="Opción 1, Opción 2, Opción 3..."
-                                    rows={2}
-                                />
+                                    />
+                                    {errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.label && (
+                                        <p className="text-sm text-red-500">{errors.fields[index].label}</p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Nombre interno</Label>
+                                    <Input
+                                        value={field.name}
+                                        onChange={(e) => updateField(index, { name: e.target.value })}
+                                        placeholder="Ej: full_name"
+                                        className={
+                                            errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.name ? 'border-red-500' : ''
+                                        }
+                                    />
+                                    {errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.name && (
+                                        <p className="text-sm text-red-500">{errors.fields[index].name}</p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Tipo de campo</Label>
+                                    <Select value={field.type} onValueChange={(value) => updateField(index, { type: value })}>
+                                        <SelectTrigger
+                                            className={
+                                                errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.type ? 'border-red-500' : ''
+                                            }
+                                        >
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="text">Texto</SelectItem>
+                                            <SelectItem value="textarea">Área de texto</SelectItem>
+                                            <SelectItem value="date">Fecha</SelectItem>
+                                            <SelectItem value="time">Hora</SelectItem>
+                                            <SelectItem value="datetime-local">Fecha y hora</SelectItem>
+                                            <SelectItem value="select">Lista desplegable</SelectItem>
+                                            <SelectItem value="checkbox">Casillas de verificación</SelectItem>
+                                            <SelectItem value="radio">Botones de radio</SelectItem>
+                                            <SelectItem value="file">Archivo</SelectItem>
+                                            <SelectItem value="email">Email</SelectItem>
+                                            <SelectItem value="number">Número</SelectItem>
+                                            <SelectItem value="tel">Teléfono</SelectItem>
+                                            <SelectItem value="url">URL</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.fields && Array.isArray(errors.fields) && errors.fields[index]?.type && (
+                                        <p className="text-sm text-red-500">{errors.fields[index].type}</p>
+                                    )}
+                                </div>
                             </div>
-                        )}
 
-                        <div className="flex items-center gap-6">
-                            <label className="flex items-center gap-2" htmlFor={`required-${index}`}>
-                                <Switch
-                                    id={`required-${index}`}
-                                    checked={field.is_required}
-                                    onCheckedChange={(checked) => updateField(index, { is_required: !!checked })}
-                                />
-                                <span className="text-sm">Campo requerido</span>
-                            </label>
-                        </div>
-                    </div>
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label>Placeholder</Label>
+                                    <Input
+                                        value={field.placeholder || ''}
+                                        onChange={(e) => updateField(index, { placeholder: e.target.value || null })}
+                                        placeholder="Texto de ayuda..."
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Valor por defecto</Label>
+                                    <Input
+                                        value={field.default_value || ''}
+                                        onChange={(e) => updateField(index, { default_value: e.target.value || null })}
+                                        placeholder="Valor inicial..."
+                                    />
+                                </div>
+                            </div>
+
+                            {(field.type === 'select' || field.type === 'checkbox' || field.type === 'radio') && (
+                                <div className="space-y-2">
+                                    <Label>Opciones (separadas por comas)</Label>
+                                    <Textarea
+                                        value={(() => {
+                                            try {
+                                                return field.options ? JSON.parse(field.options).join(', ') : '';
+                                            } catch {
+                                                return '';
+                                            }
+                                        })()}
+                                        onChange={(e) => {
+                                            const options = e.target.value
+                                                .split(',')
+                                                .map((s) => s.trim())
+                                                .filter(Boolean);
+
+                                            updateField(index, {
+                                                options: options.length > 0 ? JSON.stringify(options) : null,
+                                            });
+                                        }}
+                                        placeholder="Opción 1, Opción 2, Opción 3..."
+                                        rows={2}
+                                    />
+                                </div>
+                            )}
+
+                            <div className="flex items-center gap-6">
+                                <label className="flex items-center gap-2" htmlFor={`required-${index}`}>
+                                    <Switch
+                                        id={`required-${index}`}
+                                        checked={field.is_required}
+                                        onCheckedChange={(checked) => updateField(index, { is_required: !!checked })}
+                                    />
+                                    <span className="text-sm">Campo requerido</span>
+                                </label>
+                            </div>
+                        </CardContent>
+                    </CardItem>
                 ))}
 
                 {fields.length === 0 && (

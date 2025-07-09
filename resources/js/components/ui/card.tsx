@@ -2,12 +2,22 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+function CardItem({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn("bg-card text-card-foreground flex flex-col gap-6 rounded-xl hover:shadow-lg transition-shadow duration-300 py-6", className)}
+      {...props}
+    />
+  )
+}
+
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-md",
+        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6",
         className
       )}
       {...props}
@@ -65,4 +75,4 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, CardItem }
