@@ -3,9 +3,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { FormFieldType } from '@/interfaces/form-template';
+import { FormField } from '@/interfaces/form-template';
 
-export function Fields({ field, form }: { field: FormFieldType; form: any }) {
+export function Fields({ field, form }: { field: FormField; form: any }) {
     const baseProps = {
         id: field.id,
         placeholder: field.placeholder,

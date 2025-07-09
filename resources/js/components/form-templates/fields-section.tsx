@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { FormFieldType } from '@/interfaces/form-template';
+import { FormField } from '@/interfaces/form-template';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useForm } from '@inertiajs/react';
@@ -38,9 +38,9 @@ export const SortableFieldEditor = ({
     isEditing,
     onToggleEdit,
 }: {
-    field: FormFieldType;
+    field: FormField;
     index: number;
-    onUpdate: (index: number, field: FormFieldType) => void;
+    onUpdate: (index: number, field: FormField) => void;
     onRemove: (index: number) => void;
     isEditing: boolean;
     onToggleEdit: (index: number) => void;
@@ -55,14 +55,14 @@ export const SortableFieldEditor = ({
         opacity: isDragging ? 0.5 : 1,
     };
 
-    const [localField, setLocalField] = useState<FormFieldType>(field);
+    const [localField, setLocalField] = useState<FormField>(field);
     const PERMIT_DEFAULT_VALUE = ['text', 'number', 'email', 'tel', 'url', 'textarea', 'select', 'radio', 'checkbox'];
     const PERMIT_OPTIONS = ['select', 'radio', 'checkbox'];
     const PERMIT_PLACEHOLDER = ['text', 'number', 'email', 'tel', 'url', 'textarea'];
     const [options, setOptions] = useState(field.options ? field.options.join('\n') : '');
 
     const handleSave = () => {
-        const updatedField: FormFieldType = {
+        const updatedField: FormField = {
             ...localField,
             options: PERMIT_OPTIONS.includes(localField.type) ? options.split('\n').filter((opt: string) => opt.trim() !== '') : [],
         };
@@ -262,7 +262,7 @@ export const SortableFieldEditor = ({
     );
 };
 
-export const FormPreview = ({ fields, formName }: { fields: FormFieldType[]; formName: string }) => {
+export const FormPreview = ({ fields, formName }: { fields: FormField[]; formName: string }) => {
     const form = useForm({
         fields: {},
     });

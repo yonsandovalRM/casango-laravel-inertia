@@ -4,6 +4,7 @@ import { auth } from './auth';
 import { bookings } from './bookings';
 import { categories } from './categories';
 import { company } from './company';
+import { formTemplates } from './form-templates';
 import { plans } from './plans';
 import { professionals } from './professionals';
 import { profile } from './profile';
@@ -26,6 +27,7 @@ const resources = {
             ...categories.en,
             ...professionals.en,
             ...bookings.en,
+            ...formTemplates.en,
         },
     },
     es: {
@@ -40,6 +42,7 @@ const resources = {
             ...categories.es,
             ...professionals.es,
             ...bookings.es,
+            ...formTemplates.es,
         },
     },
 };

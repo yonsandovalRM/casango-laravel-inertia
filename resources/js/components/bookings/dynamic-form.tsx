@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { FormFieldType, FormTemplate } from '@/interfaces/form-template';
+import { FormField, FormTemplate } from '@/interfaces/form-template';
 import { useEffect, useState } from 'react';
 import InputError from '../input-error';
 
@@ -58,10 +58,10 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
         setData(fieldName, value);
     };
 
-    const renderField = (field: FormFieldType) => {
+    const renderField = (field: FormField) => {
         const value = formData[field.name];
         const hasError = errors[field.name];
-
+        console.log({ field });
         switch (field.type) {
             case 'text':
             case 'email':
@@ -70,7 +70,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
                 return (
                     <Input
                         type={field.type}
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || field.label}
                         value={value || ''}
                         onChange={(e) => handleFieldChange(field.name, e.target.value)}
                         className={hasError ? 'border-destructive' : ''}
@@ -81,7 +81,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
                 return (
                     <Input
                         type="number"
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || field.label}
                         value={value || ''}
                         onChange={(e) => handleFieldChange(field.name, e.target.value)}
                         className={hasError ? 'border-destructive' : ''}
@@ -121,7 +121,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
             case 'textarea':
                 return (
                     <Textarea
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || field.label}
                         value={value || ''}
                         onChange={(e) => handleFieldChange(field.name, e.target.value)}
                         className={hasError ? 'border-destructive' : ''}
@@ -136,7 +136,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
                             <SelectValue placeholder={field.placeholder} />
                         </SelectTrigger>
                         <SelectContent>
-                            {field.options?.map((option: string) => (
+                            {(typeof field.options === 'string' ? JSON.parse(field.options) : field.options || []).map((option: string) => (
                                 <SelectItem key={option} value={option}>
                                     {option}
                                 </SelectItem>
@@ -158,7 +158,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
             case 'radio':
                 return (
                     <RadioGroup value={value || ''} onValueChange={(selectedValue) => handleFieldChange(field.name, selectedValue)}>
-                        {field.options?.map((option: string) => (
+                        {(typeof field.options === 'string' ? JSON.parse(field.options) : field.options || []).map((option: string) => (
                             <div key={option} className="flex items-center space-x-2">
                                 <RadioGroupItem value={option} id={`${field.name}-${option}`} />
                                 <Label htmlFor={`${field.name}-${option}`} className="text-sm font-normal">
@@ -185,7 +185,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
                 return (
                     <Input
                         type="text"
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholder || field.label}
                         value={value || ''}
                         onChange={(e) => handleFieldChange(field.name, e.target.value)}
                         className={hasError ? 'border-destructive' : ''}
@@ -205,7 +205,7 @@ export default function DynamicForm({ template, data, setData, errors, onSubmit,
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
-                {sortedFields.map((field: FormFieldType) => (
+                {sortedFields.map((field: FormField) => (
                     <div key={field.id} className="space-y-2">
                         {field.type !== 'checkbox' && (
                             <Label htmlFor={field.name}>
