@@ -21,7 +21,7 @@ export function NavFooter({
                                     href={item.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="border border-blue-400 bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-100"
+                                    className="border border-secondary bg-secondary/10 px-4 py-2 text-sm text-secondary-foreground hover:bg-secondary/20 dark:bg-secondary/20"
                                 >
                                     {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
                                     <span>{item.title}</span>

@@ -12,7 +12,7 @@ import { EditUser } from './edit-user';
 
 export const UserList = ({ users }: { users: UserResource[] }) => {
     const { t } = useTranslation();
-    const { hasPermission } = usePermissions();
+    const { hasPermission, hasRole } = usePermissions();
 
     const handleDelete = (userId: string) => {
         router.delete(route('users.destroy', { user: userId }));
@@ -30,7 +30,7 @@ export const UserList = ({ users }: { users: UserResource[] }) => {
         {
             field: 'actions',
             headerName: 'Acciones',
-            width: 120,
+            width: 180,
             pinned: 'right',
             cellRenderer: (params: any) => (
                 <div className="flex items-center gap-2">

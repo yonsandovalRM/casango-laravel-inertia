@@ -34,10 +34,12 @@ class ProfessionalController extends Controller
      */
     public function index()
     {
-        $professionals = Professional::with('user')->get();
+        $professionals = Professional::with(['user', 'services'])->get();
+        $services = Service::where('is_active', true)->get();
 
         return Inertia::render('professionals/index', [
             'professionals' => ProfessionalResource::collection($professionals)->toArray(request()),
+            'services' => ServiceResource::collection($services)->toArray(request()),
 
         ]);
     }
