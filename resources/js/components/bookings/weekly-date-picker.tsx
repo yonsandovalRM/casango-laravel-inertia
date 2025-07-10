@@ -97,7 +97,7 @@ export const WeeklyDatePicker: React.FC<WeeklyDatePickerProps> = ({ selectedDate
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
 
-                    <h3 className="text-lg font-semibold text-foreground capitalize">{currentMonth}</h3>
+                    <h3 className="font-outfit text-lg font-semibold text-foreground capitalize">{currentMonth}</h3>
 
                     <Button variant="ghost" size="sm" onClick={handleNextWeek} className="hover:bg-accent">
                         <ChevronRight className="h-4 w-4" />

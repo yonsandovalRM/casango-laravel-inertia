@@ -4,6 +4,7 @@ import { TimeSelection } from '@/components/bookings/time-selection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import BookingLayout from '@/layouts/booking-layout';
+import { formatCurrency } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle, Clock, User } from 'lucide-react';
 import React, { useState } from 'react';
@@ -66,11 +67,11 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                         <CardHeader>
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <CardTitle className="mb-2 text-2xl">{service.name}</CardTitle>
+                                    <CardTitle className="mb-2 font-outfit text-2xl">{service.name}</CardTitle>
                                     <p className="text-muted-foreground">{service.description}</p>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-3xl font-bold text-blue-600">${Number(service.price).toLocaleString()}</div>
+                                    <div className="text-3xl font-bold text-primary">${formatCurrency(service.price)}</div>
                                     <div className="text-sm text-muted-foreground">{service.duration} minutos</div>
                                 </div>
                             </div>
@@ -94,7 +95,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                                         isActive
                                                             ? 'bg-primary text-primary-foreground'
                                                             : isCompleted
-                                                              ? 'bg-green-500 text-white'
+                                                              ? 'bg-cm-green-600 text-white'
                                                               : 'bg-secondary text-secondary-foreground'
                                                     } `}
                                                 >
@@ -102,7 +103,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                                 </div>
                                                 <span
                                                     className={`text-sm font-medium ${
-                                                        isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-gray-500'
+                                                        isActive ? 'text-blue-600' : isCompleted ? 'text-cm-green-600' : 'text-muted-foreground'
                                                     }`}
                                                 >
                                                     {step.title}
@@ -110,7 +111,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                             </div>
                                             {index < steps.length - 1 && (
                                                 <div
-                                                    className={`mx-4 h-0.5 flex-1 transition-all ${isCompleted ? 'bg-green-500' : 'bg-secondary'} `}
+                                                    className={`mx-4 h-0.5 flex-1 transition-all ${isCompleted ? 'bg-cm-green-600' : 'bg-secondary'} `}
                                                 />
                                             )}
                                         </React.Fragment>

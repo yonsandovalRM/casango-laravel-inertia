@@ -1,14 +1,14 @@
 import { AppHeaderPage } from '@/components/app-header-page';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ProfessionalHeader } from '@/components/professionals/ui/professional-header';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardHeader, CardItem, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardItem } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ProfessionalResource } from '@/interfaces/professional';
 import AppLayout from '@/layouts/app-layout';
 import { formatCurrency } from '@/lib/utils';
 import { Head, router } from '@inertiajs/react';
-import { Briefcase, Calendar, Clock, DollarSign, Mail, Plus, Settings } from 'lucide-react';
+import { Briefcase, Calendar, Clock, DollarSign, Plus, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -26,14 +26,7 @@ export default function ProfessionalsIndex({ professionals }: { professionals: P
         console.log('Gestionar horario del profesional:', professionalId);
         toast.success('Ver consola para detalles de edición');
     };
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map((word) => word.charAt(0))
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    };
+
     return (
         <AppLayout breadcrumbs={[{ title: t('professionals.title'), href: '/professionals' }]}>
             <Head title={t('professionals.title')} />
@@ -43,28 +36,7 @@ export default function ProfessionalsIndex({ professionals }: { professionals: P
                     {professionals.map((professional) => (
                         <CardItem key={professional.id}>
                             <CardHeader className="pb-4">
-                                <div className="flex items-center space-x-4">
-                                    <Avatar className="h-16 w-16 border-2 border-primary/20">
-                                        <AvatarImage src={professional.photo || undefined} />
-                                        <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
-                                            {getInitials(professional.user.name)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1">
-                                        <CardTitle className="text-xl text-foreground">
-                                            {professional.title} {professional.user.name}
-                                        </CardTitle>
-                                        <div className="mt-1 flex items-center space-x-2 text-sm text-muted-foreground">
-                                            <Mail className="h-4 w-4" />
-                                            <span>{professional.user.email}</span>
-                                        </div>
-                                        {professional.specialty && (
-                                            <Badge variant="secondary" className="mt-2">
-                                                {professional.specialty}
-                                            </Badge>
-                                        )}
-                                    </div>
-                                </div>
+                                <ProfessionalHeader professional={professional} />
                             </CardHeader>
 
                             <CardContent className="space-y-4">

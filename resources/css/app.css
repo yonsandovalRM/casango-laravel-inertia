@@ -174,7 +174,7 @@
     --chart-3: oklch(0.398 0.07 227.392);
     --chart-4: oklch(0.828 0.189 84.429);
     --chart-5: oklch(0.769 0.188 70.08);
-    --sidebar: oklch(0.98 0 0);
+    --sidebar: oklch(1 0 0);
     --sidebar-foreground: oklch(0.32 0.08 248.49);
     --sidebar-primary: var(--color-cm-blue-600);
     --sidebar-primary-foreground: oklch(0.97 0.014 254.604);

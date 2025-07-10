@@ -34,3 +34,12 @@ export const isRouteActive = (currentUrl: string, targetPath: string): boolean =
 
     return currentPath === target;
 };
+
+export const getInitials = (name: string) => {
+    return name
+        .split(' ')
+        .map((word) => word.charAt(0))
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+};

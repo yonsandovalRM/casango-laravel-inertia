@@ -1,10 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProfessionals } from '@/hooks/use-professionals';
 import { ArrowLeft, Calendar, Clock, DollarSign, User } from 'lucide-react';
 import React, { useState } from 'react';
+import { ProfessionalHeader } from '../professionals/ui/professional-header';
 import { WeeklyDatePicker } from './weekly-date-picker';
 
 interface ProfessionalSelectionProps {
@@ -112,22 +112,7 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                                 onClick={() => handleProfessionalSelect(professional)}
                             >
                                 <CardHeader>
-                                    <div className="mb-3 flex items-center space-x-4">
-                                        <Avatar className="h-12 w-12">
-                                            <AvatarImage src={professional.photo} />
-                                            <AvatarFallback className="bg-blue-100 text-blue-600">
-                                                {professional.user.name
-                                                    .split(' ')
-                                                    .map((n) => n[0])
-                                                    .join('')}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1">
-                                            <h3 className="text-lg font-semibold transition-colors group-hover:text-blue-600">
-                                                {professional.title} {professional.user.name}
-                                            </h3>
-                                        </div>
-                                    </div>
+                                    <ProfessionalHeader professional={professional} />
 
                                     {professional.bio && <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">{professional.bio}</p>}
                                 </CardHeader>

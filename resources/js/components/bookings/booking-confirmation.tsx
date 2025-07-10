@@ -1,5 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,9 +7,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/use-auth';
 import { useCompany } from '@/hooks/use-company';
 import { router, useForm } from '@inertiajs/react';
-import { ArrowLeft, Calendar, CheckCircle, Clock, DollarSign, LogIn, Mail, Phone, User } from 'lucide-react';
+import { ArrowLeft, Calendar, Check, CheckCircle, Clock, DollarSign, LogIn, Mail, Phone, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import InputError from '../input-error';
+import { ProfessionalHeader } from '../professionals/ui/professional-header';
+import { Alert, AlertDescription } from '../ui/alert';
 
 interface BookingConfirmationProps {
     service: any;
@@ -234,23 +235,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                 <h3 className="mb-2 text-lg font-semibold">{service.name}</h3>
                                 <p className="mb-4 text-sm text-muted-foreground">{service.description}</p>
 
-                                <div className="mb-4 flex items-center space-x-4">
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src={professional.user?.photo || availability?.professional?.photo} />
-                                        <AvatarFallback className="bg-blue-100 text-blue-600">
-                                            {(professional.user?.name || availability?.professional?.name)
-                                                ?.split(' ')
-                                                .map((n: string) => n[0])
-                                                .join('') || 'P'}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-medium">
-                                            {professional.title} {professional.user?.name || availability?.professional?.name}
-                                        </p>
-                                        <Badge variant="secondary">Profesional</Badge>
-                                    </div>
-                                </div>
+                                <ProfessionalHeader professional={professional} />
                             </div>
 
                             {/* User Info (when logged in) */}
@@ -310,7 +295,9 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                         <div className="text-sm text-muted-foreground">{company.currency}</div>
                                     </div>
                                 </div>
-                                {finalPrice !== service.price && <p className="mt-2 text-xs text-gray-500">* Precio personalizado del profesional</p>}
+                                {finalPrice !== service.price && (
+                                    <p className="mt-2 text-xs text-muted-foreground">* Precio personalizado del profesional</p>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
@@ -342,7 +329,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="tu@email.com"
                                                 className="mt-1"
                                             />
-                                            {loginForm.errors.email && <p className="mt-1 text-sm text-red-500">{loginForm.errors.email}</p>}
+                                            <InputError message={loginForm.errors.email} />
                                         </div>
                                         <div>
                                             <Label htmlFor="login-password">Contraseña</Label>
@@ -354,9 +341,9 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="Tu contraseña"
                                                 className="mt-1"
                                             />
-                                            {loginForm.errors.password && <p className="mt-1 text-sm text-red-500">{loginForm.errors.password}</p>}
+                                            <InputError message={loginForm.errors.password} />
                                         </div>
-                                        <Button onClick={handleLogin} disabled={loginForm.processing} className="w-full">
+                                        <Button onClick={handleLogin} disabled={loginForm.processing} className="w-full" size="lg">
                                             {loginForm.processing ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                                         </Button>
                                     </TabsContent>
@@ -371,7 +358,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="Tu nombre completo"
                                                 className="mt-1"
                                             />
-                                            {registerForm.errors.name && <p className="mt-1 text-sm text-red-500">{registerForm.errors.name}</p>}
+                                            <InputError message={registerForm.errors.name} />
                                         </div>
                                         <div>
                                             <Label htmlFor="register-email">Correo electrónico</Label>
@@ -383,7 +370,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="tu@email.com"
                                                 className="mt-1"
                                             />
-                                            {registerForm.errors.email && <p className="mt-1 text-sm text-red-500">{registerForm.errors.email}</p>}
+                                            <InputError message={registerForm.errors.email} />
                                         </div>
                                         <div>
                                             <Label htmlFor="register-phone">Teléfono</Label>
@@ -395,7 +382,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="+57 300 123 4567"
                                                 className="mt-1"
                                             />
-                                            {registerForm.errors.phone && <p className="mt-1 text-sm text-red-500">{registerForm.errors.phone}</p>}
+                                            <InputError message={registerForm.errors.phone} />
                                         </div>
                                         <div>
                                             <Label htmlFor="register-password">Contraseña</Label>
@@ -407,9 +394,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="Contraseña"
                                                 className="mt-1"
                                             />
-                                            {registerForm.errors.password && (
-                                                <p className="mt-1 text-sm text-red-500">{registerForm.errors.password}</p>
-                                            )}
+                                            <InputError message={registerForm.errors.password} />
                                         </div>
                                         <div>
                                             <Label htmlFor="register-confirm">Confirmar contraseña</Label>
@@ -421,6 +406,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                                 placeholder="Confirma tu contraseña"
                                                 className="mt-1"
                                             />
+                                            <InputError message={registerForm.errors.password_confirmation} />
                                         </div>
                                         <Button onClick={handleRegister} disabled={registerForm.processing} className="w-full">
                                             {registerForm.processing ? 'Creando cuenta...' : 'Crear Cuenta'}
@@ -429,14 +415,17 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                 </Tabs>
                             ) : (
                                 <div className="space-y-4">
-                                    <div className="mb-4 rounded-lg bg-accent p-3">
-                                        <p className="text-sm text-green-700">✓ Sesión iniciada como {auth.user.name}</p>
-                                    </div>
+                                    <Alert variant="success">
+                                        <AlertDescription className="flex items-center">
+                                            <Check className="mr-2 inline h-4 w-4" />
+                                            Estás logueado como <strong>{auth.user.name}</strong>.
+                                        </AlertDescription>
+                                    </Alert>
 
                                     <div>
                                         <Label htmlFor="phone">Teléfono *</Label>
                                         <div className="relative">
-                                            <Phone className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                                            <Phone className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
                                             <Input
                                                 id="phone"
                                                 type="tel"
@@ -464,14 +453,14 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                         <Button
                                             onClick={handleConfirmBooking}
                                             disabled={isSubmitting || (!auth.user.phone && !bookingData.phone)}
-                                            className="w-full bg-blue-600 hover:bg-blue-700"
+                                            className="w-full"
                                             size="lg"
                                         >
                                             {isSubmitting ? 'Confirmando...' : 'Confirmar Reserva'}
                                         </Button>
                                     </div>
 
-                                    <p className="text-center text-xs text-gray-500">
+                                    <p className="mt-2 text-center text-xs text-muted-foreground">
                                         Al confirmar, aceptas nuestros términos y condiciones de servicio.
                                     </p>
                                 </div>

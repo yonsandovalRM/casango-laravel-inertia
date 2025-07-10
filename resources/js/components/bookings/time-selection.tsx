@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { useCompany } from '@/hooks/use-company';
 import { useProfessionalAvailability } from '@/hooks/use-professional-availability';
 import { ArrowLeft, Calendar, CheckCircle, Clock } from 'lucide-react';
 import React, { useState } from 'react';
+import { ProfessionalHeader } from '../professionals/ui/professional-header';
 import { BookingConfirmation } from './booking-confirmation';
 
 interface TimeSlot {
@@ -41,10 +41,6 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
         }
     };
 
-    const handleConfirmBooking = () => {
-        setShowConfirmation(true);
-    };
-
     const handleBackToTimes = () => {
         setShowConfirmation(false);
         setSelectedTime(null);
@@ -57,10 +53,6 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
             month: 'long',
             day: 'numeric',
         });
-    };
-
-    const getPeriodLabel = (period: string) => {
-        return period === 'morning' ? 'Mañana' : 'Tarde';
     };
 
     if (showConfirmation && selectedTime) {
@@ -78,8 +70,6 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
 
     const finalPrice = availability?.service?.price || service.price;
     const finalDuration = availability?.service?.duration || service.duration;
-    const professionalName = professional.user?.name || availability?.professional?.name;
-    const professionalPhoto = professional.photo || availability?.professional?.photo;
 
     // Verificar si hay horarios disponibles
     const hasAvailableSlots =
@@ -103,26 +93,8 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                     <CardContent>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <div>
-                                <h3 className="mb-4 text-lg font-semibold text-foreground">{service.name}</h3>
-                                <div className="mb-4 flex items-center space-x-4">
-                                    <Avatar className="h-12 w-12">
-                                        <AvatarImage src={professionalPhoto} alt={professionalName} />
-                                        <AvatarFallback className="bg-blue-100 text-blue-600">
-                                            {professionalName
-                                                ?.split(' ')
-                                                .map((n: string) => n[0])
-                                                .join('') || 'P'}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                        <p className="font-medium text-foreground">
-                                            {professional.title && `${professional.title} `}
-                                            {professionalName}
-                                        </p>
-                                        <p className="text-sm text-muted-foreground">Profesional</p>
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-sm text-muted-foreground">
+                                <ProfessionalHeader professional={professional} />
+                                <div className="mt-4 space-y-2 text-sm text-muted-foreground">
                                     <div className="flex items-center">
                                         <Calendar className="mr-2 h-4 w-4 text-primary" />
                                         {formatDate(selectedDate)}
@@ -186,7 +158,7 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                                     className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
                                                         selectedTime?.time === timeSlot.time
                                                             ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
-                                                            : 'border-secondary bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/90'
+                                                            : 'border-border bg-accent text-foreground hover:border-primary hover:bg-primary/90 hover:text-primary-foreground'
                                                     } `}
                                                     disabled={!timeSlot.available}
                                                     onClick={() =>
@@ -224,7 +196,7 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                                     className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
                                                         selectedTime?.time === (timeSlot.time || timeSlot)
                                                             ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
-                                                            : 'border-secondary bg-secondary text-secondary-foreground hover:border-primary hover:bg-secondary/90'
+                                                            : 'border-border bg-accent text-foreground hover:border-primary hover:bg-primary/90 hover:text-primary-foreground'
                                                     } `}
                                                     disabled={!timeSlot.available}
                                                     onClick={() =>
@@ -249,9 +221,9 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                             </div>
                         ) : (
                             <div className="py-12 text-center">
-                                <Clock className="mx-auto mb-4 h-16 w-16 text-gray-400" />
-                                <h3 className="mb-2 text-lg font-medium text-gray-600">No hay horarios disponibles</h3>
-                                <p className="text-gray-500">
+                                <Clock className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+                                <h3 className="mb-2 text-lg font-medium text-foreground">No hay horarios disponibles</h3>
+                                <p className="text-muted-foreground">
                                     Para esta fecha no hay horarios disponibles.
                                     <br />
                                     Por favor, selecciona otra fecha.
@@ -271,11 +243,11 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                     </div>
                                     <div className="flex gap-3">
                                         {onBack && (
-                                            <Button variant="outline" onClick={onBack}>
+                                            <Button variant="outline" onClick={onBack} size="lg">
                                                 Volver
                                             </Button>
                                         )}
-                                        <Button onClick={handleConfirmSelection} className="bg-blue-600 hover:bg-blue-700" size="lg">
+                                        <Button onClick={handleConfirmSelection} size="lg">
                                             Continuar
                                         </Button>
                                     </div>
