@@ -3,6 +3,7 @@ import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
+import { OAuthButtons } from '@/components/oauth/oauth-buttons';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -21,10 +22,12 @@ interface LoginProps {
     status?: string;
     canResetPassword: boolean;
     t: any;
+    googleAuthUrl: string;
+    microsoftAuthUrl: string;
 }
 
 export default withTranslation()(Login);
-function Login({ status, canResetPassword, t }: LoginProps) {
+function Login({ status, canResetPassword, t, googleAuthUrl, microsoftAuthUrl }: LoginProps) {
     const { data, setData, post, processing, errors, reset } = useForm<Required<LoginForm>>({
         email: '',
         password: '',
@@ -41,7 +44,23 @@ function Login({ status, canResetPassword, t }: LoginProps) {
     return (
         <AuthLayout title={t('auth.login.title')} description={t('auth.login.description')}>
             <Head title={t('auth.login.title')} />
-            <a href={route('google.redirect')}>Iniciar sesión con Google</a>
+            {/* OAuth Buttons */}
+
+            <div className="mb-6">
+                <OAuthButtons googleAuthUrl={googleAuthUrl} microsoftAuthUrl={microsoftAuthUrl} />
+
+                <div className="mt-6 mb-6">
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="bg-white px-2 text-gray-500">O continúa con email</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">

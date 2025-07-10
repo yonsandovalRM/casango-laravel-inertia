@@ -9,8 +9,10 @@ use App\Models\Service;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+
 class TenantHomeController extends Controller
 {
+
     public function index()
     {
         $company = Company::with('schedules')->first();

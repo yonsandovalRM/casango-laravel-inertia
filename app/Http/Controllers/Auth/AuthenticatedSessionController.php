@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\OAuthHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -18,11 +19,17 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(Request $request): Response
     {
+        $tenantId = tenant('id');
+
         return Inertia::render('auth/login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => $request->session()->get('status'),
+            'googleAuthUrl' => $tenantId ? OAuthHelper::getGoogleAuthUrl($tenantId) : null,
+            'microsoftAuthUrl' => $tenantId ? OAuthHelper::getMicrosoftAuthUrl($tenantId) : null,
         ]);
     }
+
+
 
     /**
      * Handle an incoming authentication request.
