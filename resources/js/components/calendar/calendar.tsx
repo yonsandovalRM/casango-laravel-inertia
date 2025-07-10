@@ -44,6 +44,7 @@ export default function Calendar({ events, onEventClick, onDateClick }: Calendar
                 nowIndicator={true}
                 editable={false}
                 selectable={true}
+                allDaySlot={false}
                 eventTimeFormat={{
                     hour: '2-digit',
                     minute: '2-digit',

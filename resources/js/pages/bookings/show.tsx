@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BookingResource } from '@/interfaces/booking';
 import { FormTemplate } from '@/interfaces/form-template';
 import AppLayout from '@/layouts/app-layout';
+import { cn, formatTimeAMPM } from '@/lib/utils';
 import { Head, useForm } from '@inertiajs/react';
+import { Calendar, Check, CreditCard, User } from 'lucide-react';
 // Removed date-fns import as it's not available
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -195,19 +198,70 @@ export default function BookingShow({
                                 <CardTitle>{t('bookings.show.client_section.title')}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div>
-                                    <Label>{t('bookings.show.client_section.client_name')}</Label>
-                                    <p className="font-medium">{booking.client.name}</p>
+                                <div className="flex gap-4">
+                                    <div className="flex items-center justify-center rounded-full bg-primary/10 p-4">
+                                        <User className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                        <Label>{t('bookings.show.client_section.client_name')}</Label>
+                                        <p className="font-medium">{booking.client.name}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <Label>{t('bookings.show.client_section.date')}</Label>
-                                    <p className="font-medium">{formatDateTime(booking.date)}</p>
+                                <div className="flex gap-4">
+                                    <div className="flex items-center justify-center rounded-full bg-primary/10 p-4">
+                                        <Calendar className="h-4 w-4 text-primary" />
+                                    </div>
+                                    <div>
+                                        <Label>{t('bookings.show.client_section.date_time')}</Label>
+                                        <p className="font-medium">
+                                            {new Date(booking.date).toLocaleDateString('es-ES', {
+                                                weekday: 'long',
+                                                year: 'numeric',
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                            })}{' '}
+                                            - {formatTimeAMPM(booking.time)}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <Label>{t('bookings.show.client_section.status')}</Label>
-                                    <Badge variant="outline" className="capitalize">
-                                        {booking.status}
-                                    </Badge>
+                                <Separator className="my-4" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div
+                                            className={cn('flex items-center justify-center rounded-full bg-primary/10 p-4', {
+                                                'bg-green-500/10': booking.status === 'confirmed',
+                                                'bg-yellow-500/10': booking.status === 'pending',
+                                                'bg-red-500/10': booking.status === 'cancelled',
+                                            })}
+                                        >
+                                            <Check
+                                                className={cn('h-4 w-4', {
+                                                    'text-green-500': booking.status === 'confirmed',
+                                                    'text-yellow-500': booking.status === 'pending',
+                                                    'text-red-500': booking.status === 'cancelled',
+                                                })}
+                                            />
+                                        </div>
+                                        <Label>{t('bookings.show.client_section.booking_status')}</Label>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <div
+                                            className={cn('flex items-center justify-center rounded-full bg-primary/10 p-4', {
+                                                'bg-green-500/10': booking.payment_status === 'paid',
+                                                'bg-yellow-500/10': booking.payment_status === 'pending',
+                                                'bg-red-500/10': booking.payment_status === 'failed',
+                                            })}
+                                        >
+                                            <CreditCard
+                                                className={cn('h-4 w-4', {
+                                                    'text-green-500': booking.payment_status === 'paid',
+                                                    'text-yellow-500': booking.payment_status === 'pending',
+                                                    'text-red-500': booking.payment_status === 'failed',
+                                                })}
+                                            />
+                                        </div>
+                                        <Label>{t('bookings.show.client_section.payment_status')}</Label>
+                                    </div>
                                 </div>
                                 <div>
                                     <Label>{t('bookings.show.client_section.notes')}</Label>
@@ -310,20 +364,21 @@ export default function BookingShow({
                         <DialogTitle className="flex items-center gap-2">Detalles de la Reserva</DialogTitle>
                         <DialogDescription>Información completa de la reserva seleccionada</DialogDescription>
                     </DialogHeader>
+                    <ScrollArea className="max-h-96">
+                        {selectedBookingHistory && (
+                            <div className="space-y-6">
+                                {/* Datos del formulario */}
+                                {renderFieldsBySection(selectedBookingHistory.mapped_form_data)}
 
-                    {selectedBookingHistory && (
-                        <div className="space-y-6">
-                            {/* Datos del formulario */}
-                            {renderFieldsBySection(selectedBookingHistory.mapped_form_data)}
-
-                            {/* Mensaje si no hay datos */}
-                            {selectedBookingHistory.mapped_form_data.length === 0 && (
-                                <Alert>
-                                    <AlertDescription>No hay información adicional disponible para esta reserva.</AlertDescription>
-                                </Alert>
-                            )}
-                        </div>
-                    )}
+                                {/* Mensaje si no hay datos */}
+                                {selectedBookingHistory.mapped_form_data.length === 0 && (
+                                    <Alert>
+                                        <AlertDescription>No hay información adicional disponible para esta reserva.</AlertDescription>
+                                    </Alert>
+                                )}
+                            </div>
+                        )}
+                    </ScrollArea>
                 </DialogContent>
             </Dialog>
         </AppLayout>
