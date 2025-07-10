@@ -2,28 +2,62 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useProfessionals } from '@/hooks/use-professionals';
+import { ProfessionalResource } from '@/interfaces/professional';
+import { ServiceResource } from '@/interfaces/service';
 import { ArrowLeft, Calendar, Clock, DollarSign, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { ProfessionalHeader } from '../professionals/ui/professional-header';
 import { WeeklyDatePicker } from './weekly-date-picker';
 
 interface ProfessionalSelectionProps {
-    service: any;
+    service: ServiceResource;
     onBack?: () => void;
-    onProfessionalSelect?: (professional: any, date: string) => void;
+    onProfessionalSelect?: (professional: ProfessionalResource, date: string) => void;
     hideHeader?: boolean;
 }
 
 export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ service, onBack, onProfessionalSelect, hideHeader = false }) => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-
     const { professionals, loading } = useProfessionals(service.id, selectedDate);
 
-    const handleProfessionalSelect = (professional: any) => {
-        if (onProfessionalSelect) {
-            onProfessionalSelect(professional, selectedDate);
-        }
+    const handleProfessionalSelect = (professional: ProfessionalResource) => {
+        onProfessionalSelect?.(professional, selectedDate);
     };
+
+    const renderLoadingSkeleton = () => (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+                <Card key={i} className="animate-pulse">
+                    <CardHeader>
+                        <div className="flex items-center space-x-4">
+                            <div className="h-12 w-12 rounded-full bg-secondary"></div>
+                            <div className="flex-1 space-y-2">
+                                <div className="h-4 w-3/4 rounded bg-secondary"></div>
+                                <div className="h-3 w-1/2 rounded bg-secondary"></div>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-3">
+                            <div className="h-3 rounded bg-secondary"></div>
+                            <div className="h-3 w-2/3 rounded bg-secondary"></div>
+                            <div className="h-10 rounded bg-secondary"></div>
+                        </div>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+    );
+
+    const renderEmptyState = () => (
+        <div className="py-12 text-center">
+            <div className="mb-4 text-muted-foreground">
+                <User className="mx-auto h-16 w-16" />
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-muted-foreground">No hay profesionales disponibles</h3>
+            <p className="text-muted-foreground">Intenta seleccionar otra fecha</p>
+        </div>
+    );
 
     return (
         <div className={hideHeader ? '' : 'min-h-screen p-4'}>
@@ -81,28 +115,9 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                 </div>
 
                 {loading ? (
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                        {[1, 2, 3].map((i) => (
-                            <Card key={i} className="animate-pulse">
-                                <CardHeader>
-                                    <div className="flex items-center space-x-4">
-                                        <div className="h-12 w-12 rounded-full bg-secondary"></div>
-                                        <div className="flex-1 space-y-2">
-                                            <div className="h-4 w-3/4 rounded bg-secondary"></div>
-                                            <div className="h-3 w-1/2 rounded bg-secondary"></div>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-3">
-                                        <div className="h-3 rounded bg-secondary"></div>
-                                        <div className="h-3 w-2/3 rounded bg-secondary"></div>
-                                        <div className="h-10 rounded bg-secondary"></div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                    renderLoadingSkeleton()
+                ) : professionals.length === 0 ? (
+                    renderEmptyState()
                 ) : (
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {professionals.map((professional) => (
@@ -113,7 +128,6 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                             >
                                 <CardHeader>
                                     <ProfessionalHeader professional={professional} />
-
                                     {professional.bio && <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">{professional.bio}</p>}
                                 </CardHeader>
 
@@ -146,16 +160,6 @@ export const ProfessionalSelection: React.FC<ProfessionalSelectionProps> = ({ se
                                 </CardContent>
                             </Card>
                         ))}
-                    </div>
-                )}
-
-                {!loading && professionals.length === 0 && (
-                    <div className="py-12 text-center">
-                        <div className="mb-4 text-muted-foreground">
-                            <User className="mx-auto h-16 w-16" />
-                        </div>
-                        <h3 className="mb-2 text-xl font-semibold text-muted-foreground">No hay profesionales disponibles</h3>
-                        <p className="text-muted-foreground">Intenta seleccionar otra fecha</p>
                     </div>
                 )}
             </div>

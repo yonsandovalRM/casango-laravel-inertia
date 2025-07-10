@@ -3,32 +3,25 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCompany } from '@/hooks/use-company';
 import { useProfessionalAvailability } from '@/hooks/use-professional-availability';
+import { ProfessionalAvailability, ProfessionalResource, TimeSlot } from '@/interfaces/professional';
+import { ServiceResource } from '@/interfaces/service';
+import { formatTimeAMPM } from '@/lib/utils';
 import { ArrowLeft, Calendar, CheckCircle, Clock } from 'lucide-react';
 import React, { useState } from 'react';
 import { ProfessionalHeader } from '../professionals/ui/professional-header';
-import { BookingConfirmation } from './booking-confirmation';
-
-interface TimeSlot {
-    time: string;
-    available: boolean;
-    period: 'morning' | 'afternoon';
-}
 
 interface TimeSelectionProps {
-    service: any;
-    professional: any;
+    service: ServiceResource;
+    professional: ProfessionalResource;
     selectedDate: string;
     onBack?: () => void;
-    onTimeSelect?: (timeSlot: any, availability: any) => void;
+    onTimeSelect?: (timeSlot: TimeSlot, availability: ProfessionalAvailability) => void;
     hideHeader?: boolean;
 }
 
 export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professional, selectedDate, onBack, onTimeSelect, hideHeader = false }) => {
     const company = useCompany();
-
     const [selectedTime, setSelectedTime] = useState<TimeSlot | null>(null);
-    const [showConfirmation, setShowConfirmation] = useState(false);
-
     const { availability, loading } = useProfessionalAvailability(professional.id, service.id, selectedDate);
 
     const handleTimeSelect = (timeSlot: TimeSlot) => {
@@ -37,13 +30,8 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
 
     const handleConfirmSelection = () => {
         if (onTimeSelect && selectedTime) {
-            onTimeSelect(selectedTime, availability);
+            onTimeSelect(selectedTime, availability!);
         }
-    };
-
-    const handleBackToTimes = () => {
-        setShowConfirmation(false);
-        setSelectedTime(null);
     };
 
     const formatDate = (dateString: string) => {
@@ -55,25 +43,78 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
         });
     };
 
-    if (showConfirmation && selectedTime) {
-        return (
-            <BookingConfirmation
-                service={service}
-                professional={professional}
-                selectedDate={selectedDate}
-                selectedTime={selectedTime}
-                availability={availability}
-                onBack={handleBackToTimes}
-            />
-        );
-    }
-
     const finalPrice = availability?.service?.price || service.price;
     const finalDuration = availability?.service?.duration || service.duration;
 
-    // Verificar si hay horarios disponibles
     const hasAvailableSlots =
         availability?.time_blocks && (availability.time_blocks.morning?.length > 0 || availability.time_blocks.afternoon?.length > 0);
+
+    const renderLoadingSkeleton = () => (
+        <div className="space-y-6">
+            {['Mañana', 'Tarde'].map((period) => (
+                <div key={period}>
+                    <h3 className="mb-3 font-semibold text-foreground">{period}</h3>
+                    <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="h-12 animate-pulse rounded-lg bg-secondary" />
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+
+    const renderEmptyState = () => (
+        <div className="py-12 text-center">
+            <Clock className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+            <h3 className="mb-2 text-lg font-medium text-foreground">No hay horarios disponibles</h3>
+            <p className="text-muted-foreground">
+                Para esta fecha no hay horarios disponibles.
+                <br />
+                Por favor, selecciona otra fecha.
+            </p>
+        </div>
+    );
+
+    const renderTimeSlots = (slots: TimeSlot[], period: 'morning' | 'afternoon') => {
+        const periodName = period === 'morning' ? 'Mañana' : 'Tarde';
+        const periodColor = period === 'morning' ? 'bg-yellow-400' : 'bg-orange-400';
+
+        return (
+            <div>
+                <h3 className="mb-4 flex items-center text-lg font-semibold text-foreground">
+                    <div className={`mr-2 h-2 w-2 rounded-full ${periodColor}`}></div>
+                    {periodName}
+                </h3>
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
+                    {slots.map((timeSlot: any, index: number) => (
+                        <Button
+                            key={`${period}-${index}`}
+                            variant={selectedTime?.time === (timeSlot.time || timeSlot) ? 'default' : 'outline'}
+                            className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                                selectedTime?.time === (timeSlot.time || timeSlot)
+                                    ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
+                                    : 'border-border bg-accent text-foreground hover:border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                            }`}
+                            disabled={!timeSlot.available}
+                            onClick={() =>
+                                handleTimeSelect({
+                                    time: timeSlot.time || timeSlot,
+                                    available: true,
+                                    period,
+                                })
+                            }
+                        >
+                            <div className="flex items-center">
+                                {selectedTime?.time === (timeSlot.time || timeSlot) && <CheckCircle className="mr-1 h-3 w-3" />}
+                                {formatTimeAMPM(timeSlot.time || timeSlot)}
+                            </div>
+                        </Button>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className={hideHeader ? '' : 'min-h-screen p-4'}>
@@ -129,106 +170,17 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                     </CardHeader>
                     <CardContent>
                         {loading ? (
-                            <div className="space-y-6">
-                                {['Mañana', 'Tarde'].map((period) => (
-                                    <div key={period}>
-                                        <h3 className="mb-3 font-semibold text-foreground">{period}</h3>
-                                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                                            {[1, 2, 3, 4, 5, 6].map((i) => (
-                                                <div key={i} className="h-12 animate-pulse rounded-lg bg-secondary" />
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            renderLoadingSkeleton()
                         ) : hasAvailableSlots ? (
                             <div className="space-y-6">
                                 {/* Horarios de Mañana */}
-                                {availability.time_blocks.morning && availability.time_blocks.morning.length > 0 && (
-                                    <div>
-                                        <h3 className="mb-4 flex items-center text-lg font-semibold text-foreground">
-                                            <div className="mr-2 h-2 w-2 rounded-full bg-yellow-400"></div>
-                                            Mañana
-                                        </h3>
-                                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                                            {availability.time_blocks.morning.map((timeSlot: any, index: number) => (
-                                                <Button
-                                                    key={`morning-${index}`}
-                                                    variant={selectedTime?.time === timeSlot.time ? 'default' : 'outline'}
-                                                    className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                                                        selectedTime?.time === timeSlot.time
-                                                            ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
-                                                            : 'border-border bg-accent text-foreground hover:border-primary hover:bg-primary/90 hover:text-primary-foreground'
-                                                    } `}
-                                                    disabled={!timeSlot.available}
-                                                    onClick={() =>
-                                                        handleTimeSelect({
-                                                            time: timeSlot.time || timeSlot,
-                                                            available: true,
-                                                            period: 'morning',
-                                                        })
-                                                    }
-                                                >
-                                                    <div className="flex items-center">
-                                                        {selectedTime?.time === (timeSlot.time || timeSlot) && (
-                                                            <CheckCircle className="mr-1 h-3 w-3" />
-                                                        )}
-                                                        {timeSlot.time || timeSlot}
-                                                    </div>
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                {availability.time_blocks.morning?.length > 0 && renderTimeSlots(availability.time_blocks.morning, 'morning')}
 
                                 {/* Horarios de Tarde */}
-                                {availability.time_blocks.afternoon && availability.time_blocks.afternoon.length > 0 && (
-                                    <div>
-                                        <h3 className="mb-4 flex items-center text-lg font-semibold text-foreground">
-                                            <div className="mr-2 h-2 w-2 rounded-full bg-orange-400"></div>
-                                            Tarde
-                                        </h3>
-                                        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                                            {availability.time_blocks.afternoon.map((timeSlot: any, index: number) => (
-                                                <Button
-                                                    key={`afternoon-${index}`}
-                                                    variant={selectedTime?.time === timeSlot.time ? 'default' : 'outline'}
-                                                    className={`h-12 text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                                                        selectedTime?.time === (timeSlot.time || timeSlot)
-                                                            ? 'border-primary bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
-                                                            : 'border-border bg-accent text-foreground hover:border-primary hover:bg-primary/90 hover:text-primary-foreground'
-                                                    } `}
-                                                    disabled={!timeSlot.available}
-                                                    onClick={() =>
-                                                        handleTimeSelect({
-                                                            time: timeSlot.time || timeSlot,
-                                                            available: true,
-                                                            period: 'afternoon',
-                                                        })
-                                                    }
-                                                >
-                                                    <div className="flex items-center">
-                                                        {selectedTime?.time === (timeSlot.time || timeSlot) && (
-                                                            <CheckCircle className="mr-1 h-3 w-3" />
-                                                        )}
-                                                        {timeSlot.time || timeSlot}
-                                                    </div>
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                {availability.time_blocks.afternoon?.length > 0 && renderTimeSlots(availability.time_blocks.afternoon, 'afternoon')}
                             </div>
                         ) : (
-                            <div className="py-12 text-center">
-                                <Clock className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-                                <h3 className="mb-2 text-lg font-medium text-foreground">No hay horarios disponibles</h3>
-                                <p className="text-muted-foreground">
-                                    Para esta fecha no hay horarios disponibles.
-                                    <br />
-                                    Por favor, selecciona otra fecha.
-                                </p>
-                            </div>
+                            renderEmptyState()
                         )}
 
                         {/* Botón de avanzar */}
@@ -238,7 +190,8 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                                     <div>
                                         <p className="font-semibold">Horario seleccionado:</p>
                                         <p className="text-foreground">
-                                            {selectedTime.time} - {selectedTime.period === 'morning' ? 'Por la mañana' : 'Por la tarde'}
+                                            {formatTimeAMPM(selectedTime.time)} -{' '}
+                                            {selectedTime.period === 'morning' ? '(Por la mañana)' : '(Por la tarde)'}
                                         </p>
                                     </div>
                                     <div className="flex gap-3">

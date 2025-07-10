@@ -11,16 +11,17 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { BookingResource } from '@/interfaces/booking';
+import { formatCurrency, formatTimeAMPM } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { format, isToday, isTomorrow, isYesterday, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CheckCircle, Clock, CreditCard, Download, FileText, User, XCircle } from 'lucide-react';
+import { ProfessionalHeader } from '../professionals/ui/professional-header';
 import DotTimeline from './dot-timeline';
 
 const formatDate = (dateString: string) => {
@@ -124,7 +125,7 @@ export default function BookingCardTimeline({
                 <CardHeader className="pb-3">
                     <div className="flex flex-col items-start justify-between gap-6 sm:flex-row">
                         <div className="flex-1">
-                            <CardTitle className="mb-2 text-xl font-semibold text-foreground">{booking.service.name}</CardTitle>
+                            <CardTitle className="mb-2 font-outfit text-xl font-semibold text-foreground">{booking.service.name}</CardTitle>
                             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-1">
                                     <Calendar className="h-4 w-4" />
@@ -132,7 +133,7 @@ export default function BookingCardTimeline({
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Clock className="h-4 w-4" />
-                                    <span>{booking.time}</span>
+                                    <span>{formatTimeAMPM(booking.time)}</span>
                                 </div>
                             </div>
                         </div>
@@ -161,19 +162,7 @@ export default function BookingCardTimeline({
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                    <div className="mb-4 flex items-center gap-3">
-                        <Avatar className="h-12 w-12">
-                            <AvatarImage src={booking.professional.photo} alt={booking.professional.user?.name} />
-                            <AvatarFallback className="bg-blue-100 text-blue-700">{booking.professional.user?.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <h4 className="font-medium text-foreground">
-                                {booking.professional.title} {booking.professional.user.name}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">{booking.professional.profession}</p>
-                            <p className="text-sm text-muted-foreground">{booking.professional.specialty}</p>
-                        </div>
-                    </div>
+                    <ProfessionalHeader professional={booking.professional} />
 
                     {selectedBooking === booking.id && (
                         <div className="animate-fade-in mt-4 space-y-4">
@@ -196,7 +185,7 @@ export default function BookingCardTimeline({
                                     <div className="flex items-center gap-2 text-sm">
                                         <CreditCard className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-muted-foreground">Total:</span>
-                                        <span className="font-medium">${booking.total}</span>
+                                        <span className="font-medium">${formatCurrency(booking.total)}</span>
                                     </div>
                                 </div>
 

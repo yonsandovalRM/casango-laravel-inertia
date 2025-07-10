@@ -15,7 +15,7 @@ export const WeeklyDatePicker: React.FC<WeeklyDatePickerProps> = ({ selectedDate
     useEffect(() => {
         const today = new Date();
         const dayOfWeek = today.getDay();
-        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Ajustar para que lunes sea el primer día
+        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
         const monday = new Date(today);
         monday.setDate(today.getDate() + mondayOffset);
         setCurrentWeekStart(monday);
@@ -32,9 +32,7 @@ export const WeeklyDatePicker: React.FC<WeeklyDatePickerProps> = ({ selectedDate
     };
 
     const formatDay = (date: Date): string => {
-        return date.toLocaleDateString('es-ES', {
-            weekday: 'long',
-        });
+        return date.toLocaleDateString('es-ES', { weekday: 'long' });
     };
 
     const formatDayNumber = (date: Date): string => {
@@ -42,9 +40,7 @@ export const WeeklyDatePicker: React.FC<WeeklyDatePickerProps> = ({ selectedDate
     };
 
     const formatMonth = (date: Date): string => {
-        return date.toLocaleDateString('es-ES', {
-            month: 'short',
-        });
+        return date.toLocaleDateString('es-ES', { month: 'short' });
     };
 
     const isToday = (date: Date): boolean => {

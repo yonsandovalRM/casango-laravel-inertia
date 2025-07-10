@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/use-auth';
 import { useCompany } from '@/hooks/use-company';
+import { formatCurrency, formatTimeAMPM } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, Check, CheckCircle, Clock, DollarSign, LogIn, Mail, Phone, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -158,8 +159,8 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
 
     if (isConfirmed) {
         return (
-            <div className="min-h-screen p-6">
-                <div className="mx-auto max-w-2xl pt-20">
+            <div className="p-6">
+                <div className="mx-auto max-w-2xl">
                     <Card className="bg-card text-center">
                         <CardHeader className="pb-4">
                             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
@@ -175,20 +176,26 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                             <div className="space-y-2 rounded-lg bg-accent p-4 text-left">
                                 <div className="flex items-center">
                                     <Calendar className="mr-2 h-4 w-4 text-green-600 dark:text-green-400" />
-                                    <span className="font-semibold">Fecha:</span> {new Date(selectedDate).toLocaleDateString('es-ES')}
+                                    <span className="mr-2 font-semibold">Fecha:</span>{' '}
+                                    {new Date(selectedDate).toLocaleDateString('es-ES', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                    })}
                                 </div>
                                 <div className="flex items-center">
                                     <Clock className="mr-2 h-4 w-4 text-green-600" />
-                                    <span className="font-semibold">Hora:</span> {selectedTime.time}
+                                    <span className="mr-2 font-semibold">Hora:</span> {formatTimeAMPM(selectedTime.time)}
                                 </div>
                                 <div className="flex items-center">
                                     <User className="mr-2 h-4 w-4 text-green-600" />
-                                    <span className="font-semibold">Profesional:</span> {professional.title}{' '}
+                                    <span className="mr-2 font-semibold">Profesional:</span> {professional.title}{' '}
                                     {professional.user?.name || availability?.professional?.name}
                                 </div>
                                 <div className="flex items-center">
                                     <DollarSign className="mr-2 h-4 w-4 text-green-600" />
-                                    <span className="font-semibold">Total:</span> ${Number(finalPrice).toLocaleString()} COP
+                                    <span className="mr-2 font-semibold">Total:</span> ${formatCurrency(finalPrice)} {company.currency || 'CLP'}
                                 </div>
                             </div>
 
@@ -280,7 +287,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                                     <div>
                                         <p className="font-medium">Hora y Duración</p>
                                         <p className="text-sm text-muted-foreground">
-                                            {selectedTime.time} • {finalDuration} minutos
+                                            {formatTimeAMPM(selectedTime.time)} • {finalDuration} minutos
                                         </p>
                                     </div>
                                 </div>

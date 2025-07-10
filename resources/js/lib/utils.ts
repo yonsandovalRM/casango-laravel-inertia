@@ -43,3 +43,10 @@ export const getInitials = (name: string) => {
         .toUpperCase()
         .slice(0, 2);
 };
+
+export const formatTimeAMPM = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+    return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+};
