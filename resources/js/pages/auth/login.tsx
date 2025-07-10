@@ -41,7 +41,7 @@ function Login({ status, canResetPassword, t }: LoginProps) {
     return (
         <AuthLayout title={t('auth.login.title')} description={t('auth.login.description')}>
             <Head title={t('auth.login.title')} />
-
+            <a href={route('google.redirect')}>Iniciar sesión con Google</a>
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
