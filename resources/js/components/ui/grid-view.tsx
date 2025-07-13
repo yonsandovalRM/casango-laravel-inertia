@@ -1,4 +1,4 @@
-import { useAppearance } from '@/hooks/use-appearance';
+import { useAppearance } from '@/store/theme-store';
 import { colorSchemeDark, colorSchemeLight, themeQuartz } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useState } from 'react';

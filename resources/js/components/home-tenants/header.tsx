@@ -1,7 +1,7 @@
-import { useAppearance } from '@/hooks/use-appearance';
 import { useAuth } from '@/hooks/use-auth';
 import { useCompany } from '@/hooks/use-company';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
+import { useAppearance } from '@/store/theme-store';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

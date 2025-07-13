@@ -1,6 +1,6 @@
-import { useAppearance } from '@/hooks/use-appearance';
 import { useAuth } from '@/hooks/use-auth';
 import { useCompany } from '@/hooks/use-company';
+import { useAppearance } from '@/store/theme-store';
 import { router } from '@inertiajs/react';
 import { MoonIcon, SunIcon } from 'lucide-react';
 import React, { useRef, useState } from 'react';

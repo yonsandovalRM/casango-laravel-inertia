@@ -1,13 +1,11 @@
-import AppLogoIcon from './app-logo-icon';
-
 export default function AppLogo() {
     return (
         <>
-            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-                <AppLogoIcon className="size-5 fill-current text-white dark:text-gray-900" />
+            <div className="flex size-8 items-center justify-center">
+                <img src="/logo/micita.svg" alt="Logo" className="ml-3 h-8 w-auto" />
             </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold">
+            <div className="mt-1 ml-3 grid flex-1 text-left text-sm">
+                <span className="mb-0 truncate leading-tight font-semibold">
                     <svg className="w-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 297.66 80.63" fill="currentColor">
                         <path d="M75.35 2.09v77H60.28V29.15l-21.71 35.72-1.77.06L15.18 29.34v49.75H0V2.09h15.62l22.08 36.36L59.67 2.09h15.68Z" />
                         <path d="M96.03 17.49c-2.35 0-4.38-.86-6.1-2.58-1.72-1.72-2.58-3.76-2.58-6.1s.86-4.4 2.58-6.16c1.72-1.76 3.76-2.64 6.1-2.64s4.49.88 6.22 2.64c1.72 1.76 2.58 3.81 2.58 6.16s-.86 4.38-2.58 6.1-3.79 2.58-6.22 2.58ZM88.99 79.09V24.09h14.19v55H88.99Z" />

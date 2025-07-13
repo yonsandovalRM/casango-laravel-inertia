@@ -1,11 +1,11 @@
 import '../css/app.css';
 
+import { initializeTheme } from '@/store/theme-store';
 import { createInertiaApp } from '@inertiajs/react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { Toaster } from 'sonner';
-import { initializeTheme } from './hooks/use-appearance';
 import './translations/i18n';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';

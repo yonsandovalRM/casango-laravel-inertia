@@ -1,16 +1,19 @@
-import { Calendar, Mail, Phone } from 'lucide-react';
+import { useAppearance } from '@/store/theme-store';
+import { Mail, Phone } from 'lucide-react';
 
 export function FooterSection() {
+    const { appearance } = useAppearance();
     return (
         <footer className="bg-card px-6 py-16">
             <div className="mx-auto max-w-6xl">
                 <div className="mb-12 grid gap-8 md:grid-cols-4">
                     <div>
                         <div className="mb-6 flex items-center space-x-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
-                                <Calendar className="h-5 w-5 text-foreground" />
-                            </div>
-                            <span className="text-xl font-semibold text-foreground">MiCita</span>
+                            {appearance === 'dark' ? (
+                                <img src="/logo/micita-12.svg" alt="Logo" className="h-8 w-auto" />
+                            ) : (
+                                <img src="/logo/micita-11.svg" alt="Logo" className="h-8 w-auto text-foreground" />
+                            )}
                         </div>
                         <p className="text-muted-foreground">La plataforma más simple para gestión de citas profesionales</p>
                     </div>

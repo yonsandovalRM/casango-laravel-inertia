@@ -1,6 +1,6 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { useAppearance } from '@/hooks/use-appearance';
+import { useAppearance } from '@/store/theme-store';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { MoonIcon, SunIcon } from 'lucide-react';
 import { Button } from './ui/button';

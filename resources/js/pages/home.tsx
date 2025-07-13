@@ -1,58 +1,18 @@
-import { Button } from '@/components/ui/button';
-import { Calendar, MoonIcon, SunIcon } from 'lucide-react';
-
 import { AnimatedFeaturesAccordion } from '@/components/home/animated-features-accordion';
 import { CTASection } from '@/components/home/cta-section';
 import { FAQSection } from '@/components/home/faq-section';
 import { FooterSection } from '@/components/home/footer-section';
 import HeroSection from '@/components/home/hero-section';
+import { Navbar } from '@/components/home/navbar';
 import { PricingSection } from '@/components/home/pricing-section';
-import { useAppearance } from '@/hooks/use-appearance';
-import { useAuth } from '@/hooks/use-auth';
 import { PlanResource } from '@/interfaces/plan';
-import { Head, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 
 export default function Home({ plans }: { plans: PlanResource[] }) {
-    const { appearance, updateAppearance } = useAppearance();
-    const { auth } = useAuth();
     return (
         <div className="min-h-screen bg-background">
             <Head title="Gestión de citas" />
-            {/* Header */}
-            <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-                    <div className="flex items-center space-x-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600">
-                            <Calendar className="h-5 w-5 text-foreground" />
-                        </div>
-                        <span className="font-outfit text-2xl font-semibold text-foreground">MiCita</span>
-                    </div>
-                    <nav className="hidden items-center space-x-8 font-outfit md:flex">
-                        <a href="#features" className="font-medium text-muted-foreground hover:text-foreground">
-                            Características
-                        </a>
-                        <a href="#pricing" className="font-medium text-muted-foreground hover:text-foreground">
-                            Precios
-                        </a>
-                        <a href="#faq" className="font-medium text-muted-foreground hover:text-foreground">
-                            FAQ's
-                        </a>
-                        <Button variant="outline" onClick={() => updateAppearance(appearance === 'light' ? 'dark' : 'light')}>
-                            {appearance === 'light' ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
-                        </Button>
-                        {auth.user ? (
-                            <Button variant="outline" onClick={() => router.visit(route('dashboard'))}>
-                                Dashboard
-                            </Button>
-                        ) : (
-                            <Button variant="outline" onClick={() => router.visit(route('login'))}>
-                                Iniciar sesión
-                            </Button>
-                        )}
-                    </nav>
-                </div>
-            </header>
-
+            <Navbar />
             <HeroSection />
 
             <AnimatedFeaturesAccordion />
