@@ -26,25 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->withSchedule(function (Schedule $schedule) {
-        // Procesamiento horario (recordatorios)
-        $schedule->command('subscriptions:process-hourly')
-            ->hourly()
-            ->withoutOverlapping()
-            ->runInBackground()
-            ->appendOutputTo(storage_path('logs/subscriptions-hourly.log'));
-
-        // Procesamiento diario (limpieza)
-        $schedule->command('subscriptions:process-daily')
-            ->dailyAt('02:00')
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/subscriptions-daily.log'));
-
-        // Verificación de preaprobaciones (más frecuente)
-        $schedule->command('subscriptions:check-preapprovals')
-            ->everyThirtyMinutes()
-            ->between('8:00', '20:00')
-            ->withoutOverlapping()
-            ->runInBackground()
-            ->appendOutputTo(storage_path('logs/preapprovals.log'));
+        //
     })
     ->create();

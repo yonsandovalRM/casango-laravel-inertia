@@ -26,10 +26,7 @@ return new class extends Migration
 
             $table->boolean('is_monthly')->default(true);
             $table->boolean('is_active')->default(true);
-            $table->timestamp('payment_setup_reminder_sent_at')->nullable()->after('mp_init_point');
-            $table->timestamp('payment_due_reminder_sent_at')->nullable()->after('payment_setup_reminder_sent_at');
-            $table->timestamp('last_payment_attempt_at')->nullable();
-            $table->integer('failure_count')->default(0);
+
 
             $table->foreign('tenant_id')->references('id')->on('tenants')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('plan_id')->references('id')->on('plans')->onUpdate('cascade')->onDelete('cascade');

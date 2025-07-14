@@ -9,7 +9,6 @@ use App\Models\Company;
 use App\Models\FormTemplate;
 use App\Models\Plan;
 use App\Models\Tenant;
-use App\Traits\HandlesMercadoPago;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -22,7 +21,7 @@ use App\Traits\GeneratesSubdomainSuggestions;
 
 class TenantController extends Controller
 {
-    use GeneratesSubdomainSuggestions, HandlesMercadoPago;
+    use GeneratesSubdomainSuggestions;
 
     /* 
     * Show the list of tenants
@@ -67,17 +66,10 @@ class TenantController extends Controller
         }])->findOrFail($request->tenant);
 
         $subscription = $tenant->subscriptions->first();
-        $needsPaymentSetup = $subscription ? $this->needsPaymentSetup($subscription) : false;
-        $paymentUrl = null;
-        if ($needsPaymentSetup && $subscription) {
-            $paymentUrl = $this->getPaymentUrl($subscription);
-        }
 
         return Inertia::render('tenants/created', [
             'tenant' => TenantResource::make($tenant)->toArray(request()),
-            'subscription' => $subscription,
-            'needs_payment_setup' => $needsPaymentSetup,
-            'payment_url' => $paymentUrl,
+            'subscription' => $subscription
         ]);
     }
 
@@ -108,7 +100,7 @@ class TenantController extends Controller
         }
 
         try {
-            // DB::beginTransaction();
+
 
             $tenant = Tenant::query()->create([
                 'id' => $tenant_id,
@@ -127,10 +119,7 @@ class TenantController extends Controller
             $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
             $this->createCompany($tenant);
 
-            // Programar creación de preaprobación para después del trial
-            $this->schedulePreapprovalCreation($subscription);
 
-            //DB::commit();
 
             Log::info("Tenant created successfully", [
                 'tenant' => $tenant,
@@ -139,7 +128,7 @@ class TenantController extends Controller
 
             return redirect()->route('tenants.created', ['tenant' => $tenant])->with('success', __('tenant.create_success'));
         } catch (\Exception $e) {
-            // DB::rollback();
+
 
             Log::error("Error creating tenant", [
                 'error' => $e->getMessage(),
@@ -163,18 +152,12 @@ class TenantController extends Controller
         }]);
 
         $subscription = $tenant->subscriptions->first();
-        $needsPaymentSetup = $subscription ? $this->needsPaymentSetup($subscription) : false;
-        $paymentUrl = null;
 
-        if ($needsPaymentSetup && $subscription) {
-            $paymentUrl = $this->getPaymentUrl($subscription);
-        }
+
 
         return Inertia::render('tenants/show', [
             'tenant' => TenantResource::make($tenant)->toArray(request()),
-            'subscription' => $subscription,
-            'needs_payment_setup' => $needsPaymentSetup,
-            'payment_url' => $paymentUrl,
+            'subscription' => $subscription
         ]);
     }
 
@@ -186,11 +169,6 @@ class TenantController extends Controller
     public function destroy(Tenant $tenant)
     {
         try {
-            // Cancelar suscripciones activas
-            $activeSubscriptions = $tenant->subscriptions()->where('is_active', true)->get();
-            foreach ($activeSubscriptions as $subscription) {
-                $this->cancelPreapproval($subscription);
-            }
 
             $tenant->delete();
 
@@ -284,19 +262,7 @@ class TenantController extends Controller
         ]);
     }
 
-    /* 
-    * Schedule preapproval creation for near trial end
-    * @param \App\Models\Subscription $subscription
-    * @return void
-    */
-    private function schedulePreapprovalCreation($subscription)
-    {
-        // Si el trial termina en menos de 7 días, crear preaprobación inmediatamente
-        if ($subscription->trial_ends_at <= now()->addDays(7)) {
-            $this->createPreapproval($subscription);
-        }
-        // Si no, el comando programado se encargará de crearla cuando sea necesario
-    }
+
 
     private function createCompany(Tenant $tenant)
     {

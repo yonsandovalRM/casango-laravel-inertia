@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { PERMISSIONS, ROLES } from '@/hooks/use-permissions';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Building2, Calendar, CalendarClock, CreditCard, Globe, LayoutGrid, LayoutTemplate, Package, Tags, Users } from 'lucide-react';
+import { Building2, Calendar, CalendarClock, Globe, LayoutGrid, LayoutTemplate, Package, Tags, Users } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 import { ScrollArea } from './ui/scroll-area';
@@ -96,13 +96,6 @@ function AppSidebar({ t }: { t: any }) {
             href: route('form-templates.index'),
             icon: LayoutTemplate,
             permission: PERMISSIONS.formTemplates.view,
-        },
-
-        {
-            title: t('ui.menu.subscription'),
-            href: route('tenant.subscription.index'),
-            icon: CreditCard,
-            permission: PERMISSIONS.subscription.view,
         },
     ];
     const footerNavItems: NavItem[] = [

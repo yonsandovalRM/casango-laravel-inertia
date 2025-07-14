@@ -24,10 +24,10 @@ return [
     */
 
     'subscription' => [
-        'reminder_days_before_trial_end' => env('MP_REMINDER_DAYS', 3),
-        'due_reminder_days_before_trial_end' => env('MP_DUE_REMINDER_DAYS', 1),
-        'grace_period_days' => env('MP_GRACE_PERIOD_DAYS', 7),
-        'auto_suspend_after_days' => env('MP_AUTO_SUSPEND_DAYS', 30),
+        'reminder_days_before_trial_end' => env('SUBSCRIPTION_REMINDER_DAYS', 3),
+        'due_reminder_days_before_trial_end' => env('SUBSCRIPTION_DUE_REMINDER_DAYS', 1),
+        'grace_period_days' => env('SUBSCRIPTION_GRACE_PERIOD_DAYS', 7),
+        'auto_suspend_after_days' => env('SUBSCRIPTION_AUTO_SUSPEND_DAYS', 30),
     ],
 
     /*
@@ -37,19 +37,9 @@ return [
     */
 
     'currency' => [
-        'default' => env('MP_DEFAULT_CURRENCY', 'ARS'),
+        'default' => env('MP_DEFAULT_CURRENCY', 'CLP'),
         'supported' => ['ARS', 'USD', 'EUR', 'BRL', 'CLP', 'COP', 'MXN', 'PEN', 'UYU'],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Testing Configuration
-    |--------------------------------------------------------------------------
-    */
 
-    'sandbox' => [
-        'enabled' => env('MP_SANDBOX', false),
-        'access_token' => env('MP_SANDBOX_ACCESS_TOKEN', ''),
-        'preapproval_url' => env('MP_SANDBOX_PREAPPROVAL_URL', 'https://api.mercadopago.com/preapproval'),
-    ],
 ];

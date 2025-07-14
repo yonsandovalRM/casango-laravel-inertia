@@ -74,8 +74,7 @@ export const PERMISSIONS = {
     },
     subscription: {
         view: 'view subscription',
-        edit: 'edit subscription',
-        delete: 'delete subscription',
+        manage: 'manage subscription',
     },
     formTemplates: {
         create: 'create form templates',
