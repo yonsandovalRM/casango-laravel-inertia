@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\MercadoPagoService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class WebhookController extends Controller
 {
@@ -17,11 +18,19 @@ class WebhookController extends Controller
 
     public function handleMercadoPago(Request $request)
     {
-        // Aquí deberías validar la firma del webhook si la configuraste en Mercado Pago
-        // para asegurar que la petición es legítima.
+        Log::info('MercadoPago webhook received', $request->all());
 
-        $this->mercadoPagoService->handleWebhook($request->all());
+        try {
+            $this->mercadoPagoService->handleWebhook($request->all());
 
-        return response()->json(['status' => 'ok'], Response::HTTP_OK);
+            return response()->json(['status' => 'ok'], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            Log::error('Error processing MercadoPago webhook', [
+                'data' => $request->all(),
+                'exception' => $e->getMessage()
+            ]);
+
+            return response()->json(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 }

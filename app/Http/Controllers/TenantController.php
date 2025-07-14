@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SubscriptionStatus;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\TenantResource;
 use App\Models\Company;
 use App\Models\FormTemplate;
 use App\Models\Plan;
+use App\Models\Subscription;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -118,6 +120,7 @@ class TenantController extends Controller
             $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
             $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
             $this->createCompany($tenant);
+            $this->createSubscription($tenant, $plan, $request->billing);
 
 
 
@@ -247,18 +250,36 @@ class TenantController extends Controller
     */
     private function createSubscription(Tenant $tenant, Plan $plan, string $billing)
     {
-        $trial_days = now()->addDays($plan->trial_days);
-        $ends_at = now()->addDays($plan->trial_days)->addMonths($billing === 'monthly' ? 1 : 12);
+        // Si es plan gratuito o tiene período de prueba, crear suscripción local
+        if ($plan->is_free || $plan->trial_days > 0) {
+            $subscription = Subscription::create([
+                'tenant_id' => $tenant->id,
+                'plan_id' => $plan->id,
+                'status' => $plan->is_free ? SubscriptionStatus::ACTIVE : SubscriptionStatus::TRIAL,
+                'price' => $plan->is_free ? 0 : ($billing === 'monthly' ? $plan->price_monthly : $plan->price_annual),
+                'currency' => $plan->currency,
+                'billing_cycle' => $billing,
+                'starts_at' => now(),
+                'trial_ends_at' => $plan->trial_days > 0 ? now()->addDays($plan->trial_days) : null,
+                'is_active' => true,
+            ]);
 
-        return $tenant->subscriptions()->create([
+            if ($plan->trial_days > 0) {
+                $subscription->startTrial();
+            }
+
+            return $subscription;
+        }
+
+        // Para planes de pago, crear con estado pendiente
+        return Subscription::create([
+            'tenant_id' => $tenant->id,
             'plan_id' => $plan->id,
+            'status' => SubscriptionStatus::PENDING,
             'price' => $billing === 'monthly' ? $plan->price_monthly : $plan->price_annual,
             'currency' => $plan->currency,
-            'trial_ends_at' => $trial_days,
-            'ends_at' => $ends_at,
-            'payment_status' => 'pending',
-            'is_monthly' => $billing === 'monthly',
-            'is_active' => true,
+            'billing_cycle' => $billing,
+            'is_active' => false,
         ]);
     }
 

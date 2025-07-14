@@ -28,6 +28,7 @@ return [
         'due_reminder_days_before_trial_end' => env('SUBSCRIPTION_DUE_REMINDER_DAYS', 1),
         'grace_period_days' => env('SUBSCRIPTION_GRACE_PERIOD_DAYS', 7),
         'auto_suspend_after_days' => env('SUBSCRIPTION_AUTO_SUSPEND_DAYS', 30),
+        'max_failed_attempts' => env('SUBSCRIPTION_MAX_FAILED_ATTEMPTS', 3),
     ],
 
     /*

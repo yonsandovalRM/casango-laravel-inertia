@@ -1,5 +1,6 @@
 import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { PlanResource } from '@/interfaces/plan';
+import { formatCurrency } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import { CheckIcon, SparklesIcon, TrashIcon } from 'lucide-react';
 import { withTranslation } from 'react-i18next';
@@ -44,7 +45,7 @@ function ListPlans({ plans, t }: { plans: PlanResource[]; t: any }) {
                                 <div className="flex items-center gap-2">
                                     <p className="text-sm">{plan.currency}</p>
                                     <p className="text-md font-bold">
-                                        {plan.price_monthly}
+                                        {formatCurrency(plan.price_monthly)}
                                         <span className="text-sm">/{t('plans.list.card.monthly')}</span>
                                     </p>
                                 </div>
