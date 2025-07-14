@@ -42,8 +42,6 @@ class SubscriptionController extends Controller
             'billing' => 'required|in:monthly,annual'
         ]);
 
-        // $this->authorize('create', \App\Models\Subscription::class);
-
         $plan = Plan::findOrFail($request->plan_id);
         $tenant = tenant();
 
@@ -85,8 +83,6 @@ class SubscriptionController extends Controller
             return back()->withErrors(['error' => 'No tienes una suscripción activa para cancelar.']);
         }
 
-        //$this->authorize('cancel', $subscription);
-
         $success = $this->mercadoPagoService->cancelSubscription($subscription);
 
         if ($success) {
@@ -104,8 +100,6 @@ class SubscriptionController extends Controller
         if (!$subscription) {
             return back()->withErrors(['error' => 'No se encontró una suscripción para reactivar.']);
         }
-
-        //$this->authorize('reactivate', $subscription);
 
         // Para planes gratuitos, reactivar directamente
         if ($subscription->plan->is_free) {
