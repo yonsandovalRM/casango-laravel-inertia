@@ -128,6 +128,8 @@ trait HandlesMercadoPago
             'authorized' => 'active',
             'paused' => 'suspended',
             'cancelled' => 'cancelled',
+            'past_due' => 'past_due',
+
         ];
 
         $newStatus = $statusMap[$mpStatus] ?? $subscription->payment_status;
@@ -244,5 +246,22 @@ trait HandlesMercadoPago
         }
 
         return $this->createPreapproval($subscription);
+    }
+
+    public function reactivateSubscription(Subscription $subscription): ?string
+    {
+        if ($subscription->payment_status !== Subscription::STATUS_SUSPENDED) {
+            return null;
+        }
+
+        // Crear nueva preaprobación
+        $url = $this->createPreapproval($subscription);
+
+        $subscription->update([
+            'payment_status' => Subscription::STATUS_PENDING_PAYMENT_METHOD,
+            'is_active' => true
+        ]);
+
+        return $url;
     }
 }

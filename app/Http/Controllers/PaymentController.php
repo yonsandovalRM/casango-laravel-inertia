@@ -148,15 +148,15 @@ class PaymentController extends Controller
     }
 
     /**
-     * Verificar la firma del webhook (opcional)
+     * Verificar la firma del webhook 
      */
     private function verifyWebhookSignature(Request $request): bool
     {
-        // Implementar verificación de firma si es necesario
-        // $signature = $request->header('x-signature');
-        // $secret = config('mercadopago.webhook_secret');
-        // return hash_equals($signature, hash_hmac('sha256', $request->getContent(), $secret));
+        $signature = $request->header('x-signature');
+        $secret = config('mercadopago.webhook_secret');
 
-        return true; // Simplificado por ahora
+        $hash = hash_hmac('sha256', $request->getContent(), $secret);
+
+        return hash_equals($signature, "sha256=$hash");
     }
 }

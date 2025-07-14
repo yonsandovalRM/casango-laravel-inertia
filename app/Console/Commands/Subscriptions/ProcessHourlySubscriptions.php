@@ -105,4 +105,25 @@ class ProcessHourlySubscriptions extends Command
             'trace' => $e->getTraceAsString()
         ]);
     }
+
+    private function processGracePeriodReminders(): void
+    {
+        $this->info('Processing grace period reminders...');
+
+        Subscription::where('payment_status', Subscription::STATUS_PAST_DUE)
+            ->where('ends_at', '>', now())
+            ->whereNull('grace_period_reminder_sent_at')
+            ->with('tenant')
+            ->each(function ($subscription) {
+                $daysLeft = $subscription->ends_at->diffInDays(now());
+
+                if ($daysLeft <= 3) {
+                    // TODO: Enviar recordatorio de período de gracia
+                    /* Mail::to($subscription->tenant->email)
+                    ->send(new GracePeriodReminder($subscription, $daysLeft)); */
+
+                    $subscription->update(['grace_period_reminder_sent_at' => now()]);
+                }
+            });
+    }
 }

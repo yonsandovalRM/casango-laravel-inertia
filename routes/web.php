@@ -34,6 +34,8 @@ foreach (config('tenancy.central_domains') as $domain) {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         });
 
+
+
         require __DIR__ . '/main/tenants.php';
         require __DIR__ . '/main/payments.php';
 

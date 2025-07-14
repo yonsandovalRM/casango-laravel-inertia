@@ -88,6 +88,8 @@ class Subscription extends Model
             return true;
         }
 
+
+
         // Si es un plan gratuito, está activa si el estado es activo
         if ($this->plan->is_free) {
             return $this->payment_status === self::STATUS_ACTIVE;
@@ -96,6 +98,13 @@ class Subscription extends Model
         // Para planes de pago, verificar estado y fecha de vencimiento
         return $this->payment_status === self::STATUS_ACTIVE &&
             (!$this->ends_at || $this->ends_at > now());
+
+        // Para planes de pago: considerar días de gracia
+        if ($this->isInGracePeriod()) {
+            return true; // Acceso durante gracia
+        }
+
+        return false;
     }
 
     /**
@@ -259,6 +268,16 @@ class Subscription extends Model
     public function resetFailureCount(): void
     {
         $this->update(['failure_count' => 0]);
+    }
+
+    public function markAsPastDue(): void
+    {
+        if ($this->isExpired()) {
+            $this->update([
+                'payment_status' => self::STATUS_PAST_DUE,
+                'ends_at' => now()->addDays(config('subscription.grace_period_days'))
+            ]);
+        }
     }
 
     /**

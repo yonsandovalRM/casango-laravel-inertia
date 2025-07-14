@@ -17,6 +17,9 @@ class ProcessDailySubscriptions extends Command
         // 1. Limpieza de suscripciones vencidas
         $this->cleanupExpiredSubscriptions();
 
+        // 2. Manejo de períodos de gracia
+        $this->handleGracePeriods();
+
         // 2. Generar reportes (opcional)
         $this->generateDailyReports();
 
@@ -43,5 +46,24 @@ class ProcessDailySubscriptions extends Command
         $this->info('Generating daily reports...');
         // Lógica para generar reportes diarios
         // Ejemplo: Enviar email con resumen al administrador
+    }
+
+    private function handleGracePeriods(): void
+    {
+        $this->info('Processing grace periods...');
+
+        $graceSubscriptions = Subscription::where('payment_status', Subscription::STATUS_PAST_DUE)
+            ->where('ends_at', '>', now()->subDays(config('subscription.grace_period_days')))
+            ->get();
+
+        foreach ($graceSubscriptions as $sub) {
+            $daysLeft = $sub->ends_at->diffInDays(now());
+
+            // Suspender después del período de gracia
+            if ($sub->ends_at < now()) {
+                $sub->suspend();
+                $this->info("Suspended subscription #{$sub->id} (grace period expired)");
+            }
+        }
     }
 }
