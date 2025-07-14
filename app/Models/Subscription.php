@@ -2,44 +2,58 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
+use App\Enums\SubscriptionStatus;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subscription extends Model
 {
-    use HasUuid;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'tenant_id',
         'plan_id',
-        'price',
-        'currency',
-        'trial_ends_at',
+        'mercadopago_id',
+        'mercadopago_status',
+        'status',
+        'starts_at',
         'ends_at',
-        'payment_status',
-        'is_monthly',
-        'is_active',
-        'mp_preapproval_id',
-        'mp_init_point',
+        'trial_ends_at',
+        'grace_period_ends_at',
     ];
 
     protected $casts = [
-        'trial_ends_at' => 'datetime',
+        'status' => SubscriptionStatus::class,
+        'starts_at' => 'datetime',
         'ends_at' => 'datetime',
-        'is_monthly' => 'boolean',
-        'is_active' => 'boolean',
+        'trial_ends_at' => 'datetime',
+        'grace_period_ends_at' => 'datetime',
     ];
 
-
-
-    public function tenant()
+    public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
     }
 
-    public function plan()
+    public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === SubscriptionStatus::ACTIVE || $this->onGracePeriod();
+    }
+
+    public function onGracePeriod(): bool
+    {
+        return $this->status === SubscriptionStatus::ON_GRACE_PERIOD && now()->lt($this->grace_period_ends_at);
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === SubscriptionStatus::CANCELLED;
     }
 }

@@ -26,6 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->withSchedule(function (Schedule $schedule) {
-        //
+        $schedule->command('subscriptions:prune-grace-periods')->dailyAt('01:00');
     })
     ->create();
