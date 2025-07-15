@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BookingResource } from '@/interfaces/booking';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { Calendar, Copy, FileText } from 'lucide-react';
 import { useState } from 'react';
 
@@ -37,16 +37,21 @@ export default function CloneFormData({ currentBooking, bookingHistory, classNam
     const handleCloneData = () => {
         if (!selectedBookingId) return;
 
-        post(route('bookings.form-data.clone', { booking: currentBooking.id }), {
-            data: {
-                source_booking_id: selectedBookingId,
+        router.post(
+            route('bookings.form-data.clone', { booking: currentBooking.id }),
+            {
+                data: {
+                    source_booking_id: selectedBookingId,
+                },
             },
-            onSuccess: () => {
-                setOpen(false);
-                setSelectedBookingId('');
+            {
+                onSuccess: () => {
+                    setOpen(false);
+                    setSelectedBookingId('');
+                },
+                preserveScroll: true,
             },
-            preserveScroll: true,
-        });
+        );
     };
 
     const getBookingWithFormsData = () => {
