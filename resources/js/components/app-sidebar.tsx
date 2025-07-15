@@ -51,6 +51,12 @@ function AppSidebar({ t }: { t: any }) {
             icon: CalendarClock,
             permission: ROLES.professional,
         },
+        {
+            title: t('ui.menu.subscription'),
+            href: route('tenant.subscription.index'),
+            icon: Package,
+            permission: PERMISSIONS.subscription.view,
+        },
     ];
 
     const adminNavItems: NavItem[] = [
