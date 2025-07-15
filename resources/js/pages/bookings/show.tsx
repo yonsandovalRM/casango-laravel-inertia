@@ -1,4 +1,5 @@
 import { AppHeaderPage } from '@/components/app-header-page';
+import CloneFormData from '@/components/bookings/clone-form-data';
 import DynamicForm from '@/components/bookings/dynamic-form';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -13,8 +14,7 @@ import { FormTemplate } from '@/interfaces/form-template';
 import AppLayout from '@/layouts/app-layout';
 import { cn, formatTimeAMPM } from '@/lib/utils';
 import { Head, useForm } from '@inertiajs/react';
-import { Calendar, Check, CreditCard, User } from 'lucide-react';
-// Removed date-fns import as it's not available
+import { Calendar, Check, CreditCard, Download, FileText, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -34,6 +34,11 @@ interface BookingFormData {
     is_visible_to_team: boolean;
 }
 
+interface BookingFormWithTemplate {
+    template: FormTemplate;
+    data: BookingFormData;
+}
+
 interface MappedFieldData {
     name: string;
     label: string;
@@ -41,17 +46,22 @@ interface MappedFieldData {
     type: string;
 }
 
-interface BookingHistory extends BookingResource {
+interface FormDataGroup {
+    template: FormTemplate;
     mapped_form_data: MappedFieldData[];
-    basic_info: MappedFieldData[];
+    has_data: boolean;
+}
+
+interface BookingHistory extends BookingResource {
+    forms_data: FormDataGroup[];
 }
 
 type BookingShowProps = {
     booking: BookingResource;
     user_profile_data: UserProfileData;
-    booking_form_data: BookingFormData;
+    booking_forms_data: BookingFormWithTemplate[];
     user_profile_template: FormTemplate;
-    booking_form_template: FormTemplate;
+    booking_forms_templates: FormTemplate[];
     booking_history: BookingHistory[];
 };
 
@@ -63,12 +73,13 @@ const FORM_TYPES = {
 export default function BookingShow({
     booking,
     user_profile_data,
-    booking_form_data,
+    booking_forms_data,
     user_profile_template,
-    booking_form_template,
+    booking_forms_templates,
     booking_history,
 }: BookingShowProps) {
     const { t } = useTranslation();
+
     const formatDate = (dateString: string): string => {
         try {
             const date = new Date(dateString);
@@ -96,21 +107,42 @@ export default function BookingShow({
             return dateString;
         }
     };
+
+    // Form para perfil de usuario
     const formUserProfile = useForm<Record<string, any>>({});
-    const formBooking = useForm<Record<string, any>>({});
+
+    // Crear forms individuales para cada template (fuera del useEffect)
+    const bookingFormsList = booking_forms_data.map((formWithTemplate) => ({
+        templateId: formWithTemplate.template.id,
+        form: useForm<Record<string, any>>(formWithTemplate.data?.data || {}),
+    }));
+
+    // Convertir a objeto para fácil acceso
+    const bookingForms = bookingFormsList.reduce(
+        (acc, { templateId, form }) => {
+            acc[templateId] = form;
+            return acc;
+        },
+        {} as Record<string, any>,
+    );
+
     const [selectedBookingHistory, setSelectedBookingHistory] = useState<BookingHistory | null>(null);
     const [openDialog, setOpenDialog] = useState(false);
+    const [activeBookingFormTab, setActiveBookingFormTab] = useState<string>('');
 
+    // Inicializar forms
     useEffect(() => {
         if (user_profile_data?.data) {
             formUserProfile.setData(user_profile_data.data);
         }
-        if (booking_form_data?.data) {
-            formBooking.setData(booking_form_data.data);
-        }
-    }, [user_profile_data, booking_form_data]);
 
-    const handleFormSubmit = (formType: string) => {
+        // Establecer la primera tab como activa
+        if (booking_forms_templates.length > 0) {
+            setActiveBookingFormTab(booking_forms_templates[0].id);
+        }
+    }, [user_profile_data, booking_forms_templates]);
+
+    const handleFormSubmit = (formType: string, templateId?: string) => {
         if (formType === FORM_TYPES.USER_PROFILE) {
             formUserProfile.post(route('bookings.form-data.store.user-profile', { booking: booking.id }), {
                 preserveScroll: true,
@@ -118,19 +150,26 @@ export default function BookingShow({
                     // Opcional: mostrar mensaje de éxito
                 },
             });
-        } else if (formType === FORM_TYPES.BOOKING_FORM) {
-            formBooking.post(route('bookings.form-data.store.booking-form', { booking: booking.id }), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    // Opcional: mostrar mensaje de éxito
-                },
-            });
+        } else if (formType === FORM_TYPES.BOOKING_FORM && templateId) {
+            const form = bookingForms[templateId];
+            if (form) {
+                form.post(route('bookings.form-data.store.booking-form', { booking: booking.id, templateId }), {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        // Opcional: mostrar mensaje de éxito
+                    },
+                });
+            }
         }
     };
 
     const handleBookingDetails = (historyBooking: BookingHistory) => {
         setSelectedBookingHistory(historyBooking);
         setOpenDialog(true);
+    };
+
+    const handleExportData = () => {
+        window.open(route('bookings.form-data.export', { booking: booking.id }), '_blank');
     };
 
     const formatFieldValue = (field: MappedFieldData): string => {
@@ -178,6 +217,84 @@ export default function BookingShow({
         );
     };
 
+    const renderBookingFormTabs = () => {
+        if (!booking_forms_templates || booking_forms_templates.length === 0) {
+            return (
+                <Alert>
+                    <AlertDescription>No hay formularios de reserva configurados.</AlertDescription>
+                </Alert>
+            );
+        }
+
+        return (
+            <Tabs value={activeBookingFormTab} onValueChange={setActiveBookingFormTab}>
+                <TabsList className="grid w-full grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-3">
+                    {booking_forms_templates.map((template) => (
+                        <TabsTrigger key={template.id} value={template.id} className="flex items-center gap-2 text-sm">
+                            <FileText className="h-4 w-4" />
+                            <span className="truncate">{template.name}</span>
+                        </TabsTrigger>
+                    ))}
+                </TabsList>
+
+                {booking_forms_templates.map((template) => {
+                    const form = bookingForms[template.id];
+                    if (!form) return null;
+
+                    return (
+                        <TabsContent key={template.id} value={template.id}>
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <FileText className="h-5 w-5" />
+                                        {template.name}
+                                    </CardTitle>
+                                    {template.description && <CardDescription>{template.description}</CardDescription>}
+                                </CardHeader>
+                                <CardContent>
+                                    <DynamicForm
+                                        template={template}
+                                        data={form.data}
+                                        setData={form.setData}
+                                        errors={form.errors}
+                                        onSubmit={() => handleFormSubmit(FORM_TYPES.BOOKING_FORM, template.id)}
+                                        isProcessing={form.processing}
+                                    />
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+                    );
+                })}
+            </Tabs>
+        );
+    };
+
+    const renderHistoryFormsData = (formsData: FormDataGroup[]) => {
+        return (
+            <div className="space-y-4">
+                {formsData.map((formGroup, index) => (
+                    <div key={`${formGroup.template.id}-${index}`}>
+                        <div className="mb-3 flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-muted-foreground" />
+                            <h4 className="text-sm font-medium">{formGroup.template.name}</h4>
+                            <Badge variant={formGroup.has_data ? 'default' : 'secondary'} className="text-xs">
+                                {formGroup.has_data ? 'Completado' : 'Sin datos'}
+                            </Badge>
+                        </div>
+
+                        {formGroup.has_data ? (
+                            renderFieldsBySection(formGroup.mapped_form_data)
+                        ) : (
+                            <p className="text-sm text-muted-foreground italic">No hay información registrada para este formulario.</p>
+                        )}
+
+                        {index < formsData.length - 1 && <Separator className="mt-4" />}
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     return (
         <AppLayout
             breadcrumbs={[
@@ -195,7 +312,13 @@ export default function BookingShow({
                     <div className="space-y-4">
                         <Card>
                             <CardHeader>
-                                <CardTitle>{t('bookings.show.client_section.title')}</CardTitle>
+                                <CardTitle className="flex items-center justify-between">
+                                    {t('bookings.show.client_section.title')}
+                                    <Button variant="outline" size="sm" onClick={handleExportData}>
+                                        <Download className="mr-2 h-4 w-4" />
+                                        Exportar
+                                    </Button>
+                                </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="flex gap-4">
@@ -270,6 +393,9 @@ export default function BookingShow({
                             </CardContent>
                         </Card>
 
+                        {/* Componente para clonar datos */}
+                        <CloneFormData currentBooking={booking} bookingHistory={booking_history} />
+
                         {/* Historial de reservas */}
                         <Card>
                             <CardHeader>
@@ -293,6 +419,17 @@ export default function BookingShow({
                                                             <p className="text-sm text-muted-foreground">
                                                                 {pastBooking.service?.name || 'Servicio no especificado'}
                                                             </p>
+                                                            <div className="flex flex-wrap items-center gap-1">
+                                                                {pastBooking.forms_data?.map((formGroup) => (
+                                                                    <Badge
+                                                                        key={formGroup.template.id}
+                                                                        variant={formGroup.has_data ? 'outline' : 'secondary'}
+                                                                        className="text-xs"
+                                                                    >
+                                                                        {formGroup.template.name}
+                                                                    </Badge>
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                         <Button variant="ghost" size="sm" onClick={() => handleBookingDetails(pastBooking)}>
                                                             {t('bookings.view_details')}
@@ -314,9 +451,15 @@ export default function BookingShow({
                     {/* Columna derecha - Formularios */}
                     <div className="space-y-6 lg:col-span-2">
                         <Tabs defaultValue="profile">
-                            <TabsList className="grid w-full max-w-xs grid-cols-2">
-                                <TabsTrigger value="profile">{t('bookings.show.client_profile.title')}</TabsTrigger>
-                                <TabsTrigger value="booking">{t('bookings.show.booking_information.title')}</TabsTrigger>
+                            <TabsList className="grid w-full max-w-md grid-cols-2">
+                                <TabsTrigger value="profile">
+                                    <User className="mr-2 h-4 w-4" />
+                                    {t('bookings.show.client_profile.title')}
+                                </TabsTrigger>
+                                <TabsTrigger value="booking">
+                                    <FileText className="mr-2 h-4 w-4" />
+                                    Formularios de Reserva
+                                </TabsTrigger>
                             </TabsList>
 
                             <TabsContent value="profile">
@@ -325,33 +468,25 @@ export default function BookingShow({
                                         <CardTitle>{t('bookings.show.client_profile.description')}</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <DynamicForm
-                                            template={user_profile_template}
-                                            data={formUserProfile.data}
-                                            setData={formUserProfile.setData}
-                                            errors={formUserProfile.errors}
-                                            onSubmit={() => handleFormSubmit(FORM_TYPES.USER_PROFILE)}
-                                        />
+                                        {user_profile_template ? (
+                                            <DynamicForm
+                                                template={user_profile_template}
+                                                data={formUserProfile.data}
+                                                setData={formUserProfile.setData}
+                                                errors={formUserProfile.errors}
+                                                onSubmit={() => handleFormSubmit(FORM_TYPES.USER_PROFILE)}
+                                                isProcessing={formUserProfile.processing}
+                                            />
+                                        ) : (
+                                            <Alert>
+                                                <AlertDescription>No hay un template de perfil de usuario configurado.</AlertDescription>
+                                            </Alert>
+                                        )}
                                     </CardContent>
                                 </Card>
                             </TabsContent>
 
-                            <TabsContent value="booking">
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>{t('bookings.show.booking_information.description')}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <DynamicForm
-                                            template={booking_form_template}
-                                            data={formBooking.data}
-                                            setData={formBooking.setData}
-                                            errors={formBooking.errors}
-                                            onSubmit={() => handleFormSubmit(FORM_TYPES.BOOKING_FORM)}
-                                        />
-                                    </CardContent>
-                                </Card>
-                            </TabsContent>
+                            <TabsContent value="booking">{renderBookingFormTabs()}</TabsContent>
                         </Tabs>
                     </div>
                 </div>
@@ -359,19 +494,43 @@ export default function BookingShow({
 
             {/* Dialog para mostrar detalles del historial */}
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+                <DialogContent className="max-h-[80vh] max-w-4xl overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle className="flex items-center gap-2">Detalles de la Reserva</DialogTitle>
-                        <DialogDescription>Información completa de la reserva seleccionada</DialogDescription>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Calendar className="h-5 w-5" />
+                            Detalles de la Reserva
+                        </DialogTitle>
+                        <DialogDescription>
+                            Información completa de la reserva del {selectedBookingHistory ? formatDate(selectedBookingHistory.date) : ''}
+                        </DialogDescription>
                     </DialogHeader>
                     <ScrollArea className="max-h-96">
                         {selectedBookingHistory && (
                             <div className="space-y-6">
-                                {/* Datos del formulario */}
-                                {renderFieldsBySection(selectedBookingHistory.mapped_form_data)}
+                                {/* Información básica */}
+                                <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-4">
+                                    <div>
+                                        <span className="text-sm font-medium text-muted-foreground">Servicio:</span>
+                                        <p>{selectedBookingHistory.service?.name || 'No especificado'}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-muted-foreground">Estado:</span>
+                                        <Badge variant="secondary">{selectedBookingHistory.status}</Badge>
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-muted-foreground">Fecha:</span>
+                                        <p>{formatDate(selectedBookingHistory.date)}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-sm font-medium text-muted-foreground">Total:</span>
+                                        <p>${selectedBookingHistory.total}</p>
+                                    </div>
+                                </div>
 
-                                {/* Mensaje si no hay datos */}
-                                {selectedBookingHistory.mapped_form_data.length === 0 && (
+                                {/* Datos de los formularios */}
+                                {selectedBookingHistory.forms_data && selectedBookingHistory.forms_data.length > 0 ? (
+                                    renderHistoryFormsData(selectedBookingHistory.forms_data)
+                                ) : (
                                     <Alert>
                                         <AlertDescription>No hay información adicional disponible para esta reserva.</AlertDescription>
                                     </Alert>

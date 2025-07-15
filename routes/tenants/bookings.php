@@ -4,7 +4,6 @@ use App\Enums\Permissions;
 use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::group(['prefix' => 'dashboard/bookings'], function () {
     Route::get('/client', [BookingController::class, 'historyClient'])->name('bookings.client')->middleware('can:' . Permissions::BOOKINGS_VIEW);
     Route::get('/professional', [BookingController::class, 'historyProfessional'])->name('bookings.professional')->middleware('can:' . Permissions::BOOKINGS_VIEW);
@@ -14,6 +13,22 @@ Route::group(['prefix' => 'dashboard/bookings'], function () {
     Route::put('/{booking}', [BookingController::class, 'update'])->name('bookings.update')->middleware('can:' . Permissions::BOOKINGS_EDIT);
     Route::delete('/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy')->middleware('can:' . Permissions::BOOKINGS_DELETE);
 
-    Route::post('/{booking}/form-data/user-profile', [BookingController::class, 'storeFormDataUserProfile'])->name('bookings.form-data.store.user-profile')->middleware('can:' . Permissions::BOOKINGS_CREATE);
-    Route::post('/{booking}/form-data/booking-form', [BookingController::class, 'storeFormDataBookingForm'])->name('bookings.form-data.store.booking-form')->middleware('can:' . Permissions::BOOKINGS_CREATE);
+    // Ruta para formulario de perfil de usuario (sin cambios)
+    Route::post('/{booking}/form-data/user-profile', [BookingController::class, 'storeFormDataUserProfile'])
+        ->name('bookings.form-data.store.user-profile')
+        ->middleware('can:' . Permissions::BOOKINGS_CREATE);
+
+    // Nueva ruta para múltiples formularios de booking con template específico
+    Route::post('/{booking}/form-data/booking-form/{templateId}', [BookingController::class, 'storeFormDataBookingForm'])
+        ->name('bookings.form-data.store.booking-form')
+        ->middleware('can:' . Permissions::BOOKINGS_CREATE);
+
+    // Nuevas rutas para funcionalidades adicionales
+    Route::post('/{booking}/form-data/clone', [BookingController::class, 'cloneFormData'])
+        ->name('bookings.form-data.clone')
+        ->middleware('can:' . Permissions::BOOKINGS_CREATE);
+
+    Route::get('/{booking}/form-data/export', [BookingController::class, 'exportFormData'])
+        ->name('bookings.form-data.export')
+        ->middleware('can:' . Permissions::BOOKINGS_VIEW);
 });

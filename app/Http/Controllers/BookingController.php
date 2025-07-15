@@ -15,13 +15,21 @@ use App\Models\Professional;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\UserProfileData;
+use App\Services\BookingFormService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class BookingController extends Controller
 {
+    protected $bookingFormService;
+
+    public function __construct(BookingFormService $bookingFormService)
+    {
+        $this->bookingFormService = $bookingFormService;
+    }
+
     public function index()
     {
         $user = User::find(Auth::user()->id);
@@ -40,61 +48,47 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        // Obtener templates activos con sus campos ordenados
-        $templates = $this->getActiveTemplates();
+        // Obtener template de perfil de usuario
+        $userProfileTemplate = FormTemplate::userProfile()
+            ->active()
+            ->with(['fields' => function ($query) {
+                $query->orderBy('order');
+            }])
+            ->first();
 
-        // Verificar que ambos templates existen
-        $this->validateTemplatesExist($templates);
+        // Verificar que el template de perfil existe
+        if (!$userProfileTemplate) {
+            abort(404, __('booking.user_profile_template_not_found'));
+        }
+
+        // Obtener todos los templates activos de booking forms
+        $bookingFormTemplates = FormTemplate::bookingForm()
+            ->active()
+            ->with(['fields' => function ($query) {
+                $query->orderBy('order');
+            }])
+            ->orderBy('name')
+            ->get();
 
         // Preparar datos del cliente
-        $clientData = $this->prepareClientData($booking, $templates['user_profile']);
+        $clientData = $this->prepareClientData($booking, $userProfileTemplate);
 
-        // Preparar datos de la reserva
-        $bookingData = $this->prepareBookingData($booking, $templates['booking_form']);
+        // Usar el servicio para obtener los datos de múltiples formularios
+        $bookingFormsData = $this->bookingFormService->getBookingFormsData($booking);
 
-        // Obtener historial de reservas del cliente
-        $bookingHistory = $this->getClientBookingHistory($booking, $templates['booking_form']);
+        // Obtener historial con múltiples formularios
+        $bookingHistory = $this->bookingFormService->getBookingHistoryWithForms($booking);
+
+
 
         return Inertia::render('bookings/show', [
             'user_profile_data' => $clientData['user_profile_data'],
-            'booking_form_data' => $bookingData['booking_form_data'],
-            'user_profile_template' => $templates['user_profile'],
-            'booking_form_template' => $templates['booking_form'],
+            'booking_forms_data' => $bookingFormsData,
+            'user_profile_template' => $userProfileTemplate,
+            'booking_forms_templates' => $bookingFormTemplates,
             'booking_history' => $bookingHistory,
             'booking' => BookingResource::make($booking)->toArray(request()),
         ]);
-    }
-
-    /**
-     * Obtiene los templates activos con sus campos ordenados
-     */
-    protected function getActiveTemplates(): array
-    {
-        $withOrderedFields = function ($query) {
-            $query->orderBy('order');
-        };
-
-        return [
-            'user_profile' => FormTemplate::userProfile()
-                ->active()
-                ->with(['fields' => $withOrderedFields])
-                ->first(),
-
-            'booking_form' => FormTemplate::bookingForm()
-                ->active()
-                ->with(['fields' => $withOrderedFields])
-                ->first()
-        ];
-    }
-
-    /**
-     * Valida que ambos templates existan
-     */
-    protected function validateTemplatesExist(array $templates): void
-    {
-        if (!$templates['user_profile'] || !$templates['booking_form']) {
-            abort(404, __('booking.templates_not_found'));
-        }
     }
 
     /**
@@ -118,92 +112,8 @@ class BookingController extends Controller
     }
 
     /**
-     * Prepara los datos de la reserva
+     * Guarda los datos del formulario de perfil de usuario
      */
-    protected function prepareBookingData(Booking $booking, FormTemplate $bookingFormTemplate): array
-    {
-        $bookingFormData = BookingFormData::firstOrCreate([
-            'booking_id' => $booking->id,
-            'form_template_id' => $bookingFormTemplate->id,
-        ], [
-            'data' => $this->initializeFormData($bookingFormTemplate),
-            'is_visible_to_team' => true,
-        ]);
-
-        return [
-            'booking_form_data' => $bookingFormData
-        ];
-    }
-
-    /**
-     * Obtiene el historial de reservas del cliente
-     */
-    protected function getClientBookingHistory(Booking $currentBooking, FormTemplate $bookingFormTemplate)
-    {
-        $bookingHistory = Booking::where('client_id', $currentBooking->client_id)
-            ->where('id', '!=', $currentBooking->id)
-            ->where('status', '!=', BookingStatus::STATUS_CANCELLED)
-            ->where('date', '<', $currentBooking->date)
-            ->with([
-                'service',
-                'professional.user',
-                'bookingFormData' => function ($query) use ($bookingFormTemplate) {
-                    $query->where('form_template_id', $bookingFormTemplate->id);
-                }
-            ])
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return $bookingHistory->map(function ($historyBooking) use ($bookingFormTemplate) {
-            return $this->mapBookingHistoryItem($historyBooking, $bookingFormTemplate);
-        });
-    }
-
-    /**
-     * Mapea un item del historial de reservas
-     */
-    protected function mapBookingHistoryItem(Booking $historyBooking, FormTemplate $bookingFormTemplate): array
-    {
-        $historyData = $historyBooking->toArray();
-        $historyData['mapped_form_data'] = $this->mapFormData($historyBooking, $bookingFormTemplate);
-
-
-        return $historyData;
-    }
-
-    /**
-     * Mapea los datos del formulario de una reserva
-     */
-    protected function mapFormData(Booking $booking, FormTemplate $template): array
-    {
-        if (!$booking->bookingFormData || !$booking->bookingFormData->data) {
-            return [];
-        }
-
-        $formData = $booking->bookingFormData->data;
-        $mappedData = [];
-
-        if (is_array($formData) && !empty($formData)) {
-            foreach ($formData as $fieldName => $fieldValue) {
-                if (!is_numeric($fieldName)) {
-                    $field = $template->fields->firstWhere('name', $fieldName);
-                    $value = is_array($fieldValue) ? ($fieldValue['value'] ?? $fieldValue) : $fieldValue;
-
-                    $mappedData[] = [
-                        'name' => $fieldName,
-                        'label' => $field ? $field->label : $fieldName,
-                        'value' => $value,
-                        'type' => $field ? $field->type : 'text'
-                    ];
-                }
-            }
-        }
-
-        return $mappedData;
-    }
-
-
-
     public function storeFormDataUserProfile(Request $request, Booking $booking)
     {
         $template = FormTemplate::where('type', 'user_profile')
@@ -238,38 +148,62 @@ class BookingController extends Controller
         return back()->with('success', __('booking.user_profile_updated'));
     }
 
-    public function storeFormDataBookingForm(Request $request, Booking $booking)
+    /**
+     * Guarda los datos de un formulario específico de reserva
+     */
+    public function storeFormDataBookingForm(Request $request, Booking $booking, $templateId)
     {
-        $template = FormTemplate::where('type', 'booking_form')
-            ->where('is_active', true)
-            ->with('fields')
-            ->firstOrFail();
+        try {
+            $this->bookingFormService->saveBookingFormData($booking, $templateId, $request->all());
 
-        // Validar datos dinámicamente
-        $validator = $this->validateFormData($request->all(), $template);
+            $template = FormTemplate::find($templateId);
+            $templateName = $template ? $template->name : 'formulario';
 
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+            return back()->with('success', __('booking.form_updated', ['form' => $templateName]));
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    /**
+     * Clona los datos de formularios de una reserva anterior
+     */
+    public function cloneFormData(Request $request, Booking $booking)
+    {
+        $request->validate([
+            'source_booking_id' => 'required|exists:bookings,id'
+        ]);
+
+        $sourceBooking = Booking::find($request->source_booking_id);
+
+        if ($sourceBooking->client_id !== $booking->client_id) {
+            return back()->withErrors(['error' => 'No puedes clonar datos de otro cliente']);
         }
 
-        $bookingFormData = BookingFormData::where('booking_id', $booking->id)
-            ->where('form_template_id', $template->id)
-            ->first();
-
-        if ($bookingFormData) {
-            $bookingFormData->update([
-                'data' => $request->all()
-            ]);
-        } else {
-            BookingFormData::create([
-                'booking_id' => $booking->id,
-                'form_template_id' => $template->id,
-                'data' => $request->all(),
-                'is_visible_to_team' => true
-            ]);
+        try {
+            $this->bookingFormService->cloneBookingFormsData($sourceBooking, $booking);
+            return back()->with('success', 'Datos de formularios clonados exitosamente');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error al clonar datos: ' . $e->getMessage()]);
         }
+    }
 
-        return back()->with('success', __('booking.updated'));
+    /**
+     * Exporta los datos de formularios de una reserva
+     */
+    public function exportFormData(Booking $booking)
+    {
+        try {
+            $exportData = $this->bookingFormService->exportBookingFormsData($booking);
+
+            $filename = "booking_forms_data_{$booking->id}_{$booking->date}.json";
+
+            return response()->json($exportData)
+                ->header('Content-Disposition', "attachment; filename=\"{$filename}\"")
+                ->header('Content-Type', 'application/json');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error al exportar datos: ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -346,8 +280,6 @@ class BookingController extends Controller
 
         return Validator::make($data, $rules, $messages);
     }
-
-    // ... resto de métodos existentes sin cambios
 
     /**
      * Display a listing of client bookings with filters.
@@ -550,6 +482,9 @@ class BookingController extends Controller
             'phone' => $request->client['phone'],
             'payment_status' => PaymentStatus::STATUS_PENDING,
         ]);
+
+        // Inicializar formularios automáticamente
+        $this->bookingFormService->initializeBookingForms($booking);
 
         return redirect()->back()->with('success', __('booking.created'));
     }
