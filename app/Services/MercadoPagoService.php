@@ -88,7 +88,7 @@ class MercadoPagoService
 
     protected function createFreeSubscription(Tenant $tenant, Plan $plan): string
     {
-        $subscription = Subscription::updateOrCreate(
+        $subscription = Subscription::on('central')->updateOrCreate(
             ['tenant_id' => $tenant->id],
             [
                 'plan_id' => $plan->id,
@@ -115,7 +115,7 @@ class MercadoPagoService
     ): Subscription {
         $price = $billing === 'monthly' ? $plan->price_monthly : $plan->price_annual;
 
-        return Subscription::updateOrCreate(
+        return Subscription::on('central')->updateOrCreate(
             ['tenant_id' => $tenant->id],
             [
                 'plan_id' => $plan->id,
@@ -154,7 +154,10 @@ class MercadoPagoService
                 return;
             }
 
-            $subscription = Subscription::where('mercadopago_id', $mercadopagoId)->first();
+            // Buscar suscripción en la base de datos central
+            $subscription = Subscription::on('central')
+                ->where('mercadopago_id', $mercadopagoId)
+                ->first();
 
             if (!$subscription) {
                 Log::warning('Local subscription not found', [
@@ -291,6 +294,77 @@ class MercadoPagoService
             ]);
 
             return null;
+        }
+    }
+
+    /**
+     * Buscar suscripción por tenant ID en la base de datos central
+     */
+    public function getSubscriptionByTenant(string $tenantId): ?Subscription
+    {
+        return Subscription::on('central')
+            ->where('tenant_id', $tenantId)
+            ->where('is_active', true)
+            ->with('plan')
+            ->first();
+    }
+
+    /**
+     * Obtener suscripciones que están por vencer
+     */
+    public function getExpiringSubscriptions(int $days = 3): \Illuminate\Database\Eloquent\Collection
+    {
+        return Subscription::on('central')
+            ->where('is_active', true)
+            ->where('trial_ends_at', '>=', now())
+            ->where('trial_ends_at', '<=', now()->addDays($days))
+            ->with(['tenant', 'plan'])
+            ->get();
+    }
+
+    /**
+     * Obtener suscripciones en período de gracia
+     */
+    public function getGracePeriodSubscriptions(): \Illuminate\Database\Eloquent\Collection
+    {
+        return Subscription::on('central')
+            ->where('status', SubscriptionStatus::PAUSED)
+            ->whereNotNull('grace_period_ends_at')
+            ->where('grace_period_ends_at', '>', now())
+            ->with(['tenant', 'plan'])
+            ->get();
+    }
+
+    /**
+     * Procesar suscripciones vencidas
+     */
+    public function processExpiredSubscriptions(): void
+    {
+        // Procesar trials vencidos
+        $expiredTrials = Subscription::on('central')
+            ->where('status', SubscriptionStatus::TRIAL)
+            ->where('trial_ends_at', '<', now())
+            ->get();
+
+        foreach ($expiredTrials as $subscription) {
+            $subscription->update([
+                'status' => SubscriptionStatus::EXPIRED,
+                'is_active' => false,
+            ]);
+        }
+
+        // Procesar períodos de gracia vencidos
+        $expiredGracePeriods = Subscription::on('central')
+            ->where('status', SubscriptionStatus::PAUSED)
+            ->whereNotNull('grace_period_ends_at')
+            ->where('grace_period_ends_at', '<', now())
+            ->get();
+
+        foreach ($expiredGracePeriods as $subscription) {
+            $subscription->update([
+                'status' => SubscriptionStatus::CANCELLED,
+                'is_active' => false,
+            ]);
         }
     }
 }

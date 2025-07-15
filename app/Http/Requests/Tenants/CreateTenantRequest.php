@@ -2,35 +2,50 @@
 
 namespace App\Http\Requests\Tenants;
 
+use App\Models\Tenant;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateTenantRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
-
         return [
-            'name' => 'required|string|max:255',
-            'subdomain' => 'required|string|max:63',
-            'owner_name' => 'required|string|max:255',
-            'owner_email' => 'required|email|max:255',
-            'owner_password' => 'required|string|min:8|confirmed',
-            'plan_id' => 'required|string|exists:plans,id',
-            'category' => 'required|string|max:255',
-            'billing' => 'required|string|in:monthly,annual',
+            'name' => ['required', 'string', 'max:255'],
+            'subdomain' => [
+                'required',
+                'string',
+                'max:50',
+                'regex:/^[a-z0-9]+([a-z0-9\-]*[a-z0-9])?$/',
+                function ($attribute, $value, $fail) {
+                    $domain = $value . '.' . config('tenancy.central_domains')[0];
+                    if (Tenant::whereHas('domains', function ($query) use ($domain) {
+                        $query->where('domain', $domain);
+                    })->exists()) {
+                        $fail('Este subdominio ya está en uso.');
+                    }
+                }
+            ],
+            'owner_name' => ['required', 'string', 'max:255'],
+            'owner_email' => ['required', 'email', 'max:255'],
+            'owner_password' => ['required', 'string', 'min:8', 'confirmed'],
+            'owner_password_confirmation' => ['required', 'string'],
+            'plan_id' => ['required', 'exists:plans,id'],
+            'category' => ['required', 'string', 'max:100'],
+            'billing' => ['required', 'in:monthly,annual'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'subdomain.regex' => 'El subdominio solo puede contener letras minúsculas, números y guiones.',
+            'owner_password.confirmed' => 'Las contraseñas no coinciden.',
         ];
     }
 }

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Tenant;
+namespace App\Http\Controllers\Tenants;
 
 use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use App\Services\MercadoPagoService;
 use App\Http\Resources\SubscriptionStatusResource;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,11 +26,12 @@ class SubscriptionController extends Controller
     public function index()
     {
         $tenant = tenant();
-        $subscription = $tenant->subscriptions()->where('is_active', true)->with('plan')->first();
-        $plans = Plan::where('active', true)->get();
+        $centralTenant = Tenant::on('central')->find($tenant->id);
+        $subscription = $centralTenant->subscriptions()->where('is_active', true)->with('plan')->first();
+        $plans = Plan::on('central')->where('active', true)->get();
 
         return Inertia::render('tenants/subscription/index', [
-            'subscription' => $subscription ? new SubscriptionStatusResource($subscription) : null,
+            'subscription' => $subscription ? SubscriptionStatusResource::make($subscription)->toArray(request()) : null,
             'plans' => $plans,
             'canManage' => $subscription ? $this->user->can('manage', $subscription) : true,
         ]);
@@ -38,21 +40,30 @@ class SubscriptionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'plan_id' => 'required|exists:plans,id',
+            'plan_id' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (!Plan::on('central')->where('id', $value)->where('active', true)->exists()) {
+                        $fail('El plan seleccionado no es válido.');
+                    }
+                }
+            ],
             'billing' => 'required|in:monthly,annual'
         ]);
 
-        $plan = Plan::findOrFail($request->plan_id);
+        $plan = Plan::on('central')->findOrFail($request->plan_id);
         $tenant = tenant();
+        $centralTenant = Tenant::on('central')->find($tenant->id);
 
         // Cancelar suscripción actual si existe
-        $currentSubscription = $tenant->subscriptions()->where('is_active', true)->first();
+        $currentSubscription = $centralTenant->subscriptions()->where('is_active', true)->first();
         if ($currentSubscription && !$currentSubscription->plan->is_free) {
             $this->mercadoPagoService->cancelSubscription($currentSubscription);
         }
 
         $paymentLink = $this->mercadoPagoService->createSubscription(
-            $tenant,
+            $centralTenant,
             $plan,
             $request->billing
         );
@@ -67,7 +78,8 @@ class SubscriptionController extends Controller
     public function success(Request $request)
     {
         $tenant = tenant();
-        $subscription = $tenant->subscriptions()->where('is_active', true)->with('plan')->first();
+        $centralTenant = Tenant::on('central')->find($tenant->id);
+        $subscription = $centralTenant->subscriptions()->where('is_active', true)->with('plan')->first();
 
         return Inertia::render('tenants/subscription/success', [
             'subscription' => $subscription ? new SubscriptionStatusResource($subscription) : null,
@@ -77,7 +89,8 @@ class SubscriptionController extends Controller
     public function cancel()
     {
         $tenant = tenant();
-        $subscription = $tenant->subscriptions()->where('is_active', true)->first();
+        $centralTenant = Tenant::on('central')->find($tenant->id);
+        $subscription = $centralTenant->subscriptions()->where('is_active', true)->first();
 
         if (!$subscription) {
             return back()->withErrors(['error' => 'No tienes una suscripción activa para cancelar.']);
@@ -92,26 +105,34 @@ class SubscriptionController extends Controller
         return back()->withErrors(['error' => 'No se pudo cancelar la suscripción. Por favor, contacta a soporte.']);
     }
 
-    public function reactivate()
+    public function reactivate(Request $request)
     {
+        $request->validate([
+            'plan_id' => 'required|string',
+            'billing' => 'required|in:monthly,annual'
+        ]);
+
         $tenant = tenant();
-        $subscription = $tenant->subscriptions()->latest()->first();
+        $centralTenant = Tenant::on('central')->find($tenant->id);
+        $subscription = $centralTenant->subscriptions()->latest()->first();
 
         if (!$subscription) {
             return back()->withErrors(['error' => 'No se encontró una suscripción para reactivar.']);
         }
 
+        $plan = Plan::on('central')->findOrFail($request->plan_id);
+
         // Para planes gratuitos, reactivar directamente
-        if ($subscription->plan->is_free) {
+        if ($plan->is_free) {
             $subscription->activate();
             return back()->with('success', 'Tu suscripción ha sido reactivada.');
         }
 
         // Para planes de pago, redirigir a MercadoPago
         $paymentLink = $this->mercadoPagoService->createSubscription(
-            $tenant,
-            $subscription->plan,
-            $subscription->billing_cycle
+            $centralTenant,
+            $plan,
+            $request->billing
         );
 
         if ($paymentLink) {
@@ -124,12 +145,21 @@ class SubscriptionController extends Controller
     public function changePlan(Request $request)
     {
         $request->validate([
-            'plan_id' => 'required|exists:plans,id',
+            'plan_id' => [
+                'required',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (!Plan::on('central')->where('id', $value)->where('active', true)->exists()) {
+                        $fail('El plan seleccionado no es válido.');
+                    }
+                }
+            ],
             'billing' => 'required|in:monthly,annual'
         ]);
 
         $tenant = tenant();
-        $currentSubscription = $tenant->subscriptions()->where('is_active', true)->first();
+        $centralTenant = Tenant::on('central')->find($tenant->id);
+        $currentSubscription = $centralTenant->subscriptions()->where('is_active', true)->first();
 
         if (!$currentSubscription) {
             return back()->withErrors(['error' => 'No tienes una suscripción activa.']);
@@ -137,7 +167,7 @@ class SubscriptionController extends Controller
 
         // $this->authorize('manage', $currentSubscription);
 
-        $newPlan = Plan::findOrFail($request->plan_id);
+        $newPlan = Plan::on('central')->findOrFail($request->plan_id);
 
         // Si es el mismo plan, no hacer nada
         if ($currentSubscription->plan_id === $newPlan->id) {
@@ -152,14 +182,14 @@ class SubscriptionController extends Controller
             }
 
             // Crear nueva suscripción gratuita
-            $this->mercadoPagoService->createSubscription($tenant, $newPlan);
+            $this->mercadoPagoService->createSubscription($centralTenant, $newPlan);
 
             return back()->with('success', 'Has cambiado al plan gratuito exitosamente.');
         }
 
         // Para planes de pago, crear nueva suscripción
         $paymentLink = $this->mercadoPagoService->createSubscription(
-            $tenant,
+            $centralTenant,
             $newPlan,
             $request->billing
         );

@@ -10,7 +10,7 @@ class SubscriptionStatusResource extends JsonResource
 {
     public function toArray($request)
     {
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user() ? User::find(Auth::user()->id) : null;
         return [
             'id' => $this->id,
             'status' => $this->status->value,

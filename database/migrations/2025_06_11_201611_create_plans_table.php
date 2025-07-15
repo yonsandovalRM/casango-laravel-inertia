@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('is_free')->default(false);
             $table->boolean('is_popular')->default(false);
             $table->integer('trial_days')->default(14);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

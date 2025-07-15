@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\SubscriptionHelper;
 use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use Illuminate\Foundation\Inspiring;
@@ -11,41 +12,28 @@ use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that's loaded on the first page visit.
-     *
-     * @see https://inertiajs.com/server-side-setup#root-template
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determines the current asset version.
-     *
-     * @see https://inertiajs.com/asset-versioning
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @see https://inertiajs.com/shared-data
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
         $company = null;
+        $subscription = null;
+        $featureLimits = [];
 
-        if (tenancy()->initialized) {
+        // Solo cargar datos del tenant si estamos en un contexto de tenant
+        if (function_exists('tenancy') && tenancy()->initialized) {
             $company = Company::first();
+            $subscription = SubscriptionHelper::getCurrentSubscriptionStatus();
+            $featureLimits = SubscriptionHelper::getFeatureLimits();
         }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -65,13 +53,14 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+
+            // Solo incluir estos datos en tenants
+            'subscription' => $subscription,
+            'featureLimits' => $featureLimits,
         ];
     }
 
-    /**
-     * Get flash messages with unique IDs to prevent re-showing
-     */
     private function getFlashMessages(): array
     {
         $messages = [];
@@ -97,6 +86,14 @@ class HandleInertiaRequests extends Middleware
                 'id' => uniqid('success_'),
                 'message' => $success,
                 'type' => 'success'
+            ];
+        }
+
+        if ($warning = session('warning')) {
+            $messages['warning'] = [
+                'id' => uniqid('warning_'),
+                'message' => $warning,
+                'type' => 'warning'
             ];
         }
 

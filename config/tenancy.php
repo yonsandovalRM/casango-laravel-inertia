@@ -195,4 +195,8 @@ return [
         '--class' => Database\Seeders\Tenants\DatabaseSeeder::class, // root seeder class
         // '--force' => true, // This needs to be true to seed tenant databases in production
     ],
+
+    // Asegurar que la configuración permita el manejo correcto de errores:
+    'queue_database_creation' => false, // Cambiar a true si quieres usar jobs
+    'delete_database_after_tenant_deletion' => true,
 ];

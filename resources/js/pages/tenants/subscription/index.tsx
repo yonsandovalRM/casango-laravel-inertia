@@ -59,7 +59,7 @@ interface Props {
 
 export default function SubscriptionIndex({ subscription, plans, canManage }: Props) {
     const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
-    const [processing, setProcessing] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const getStatusIcon = (subscription: SubscriptionData) => {
         if (subscription.on_trial) return <Clock className="h-4 w-4 text-blue-500" />;
@@ -76,44 +76,76 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
     };
 
     const handleSubscribe = (planId: string) => {
-        router.post(route('tenant.subscription.store'), {
-            data: { plan_id: planId, billing: billingCycle },
-        });
+        setIsSubmitting(true);
+
+        router.post(
+            route('tenant.subscription.store'),
+            {
+                plan_id: planId,
+                billing: billingCycle,
+            },
+            {
+                onFinish: () => setIsSubmitting(false),
+                onError: (errors) => {
+                    console.error('Error en suscripción:', errors);
+                    setIsSubmitting(false);
+                },
+            },
+        );
     };
 
     const handleCancel = () => {
         if (confirm('¿Estás seguro de que quieres cancelar tu suscripción?')) {
-            setProcessing(true);
+            setIsSubmitting(true);
+
             router.post(
                 route('tenant.subscription.cancel'),
                 {},
                 {
-                    onFinish: () => setProcessing(false),
+                    onFinish: () => setIsSubmitting(false),
+                    onError: (errors) => {
+                        console.error('Error al cancelar:', errors);
+                        setIsSubmitting(false);
+                    },
                 },
             );
         }
     };
 
     const handleReactivate = () => {
-        setProcessing(true);
+        setIsSubmitting(true);
+
         router.post(
             route('tenant.subscription.reactivate'),
-            {},
             {
-                onFinish: () => setProcessing(false),
+                plan_id: subscription?.plan.id || '',
+                billing: subscription?.billing_cycle || 'monthly',
+            },
+            {
+                onFinish: () => setIsSubmitting(false),
+                onError: (errors) => {
+                    console.error('Error al reactivar:', errors);
+                    setIsSubmitting(false);
+                },
             },
         );
     };
 
     const handleChangePlan = (planId: string) => {
-        setProcessing(true);
+        setIsSubmitting(true);
+
         router.post(
             route('tenant.subscription.change-plan'),
             {
-                data: { plan_id: planId, billing: billingCycle },
+                plan_id: planId,
+                billing: billingCycle,
             },
             {
-                onFinish: () => setProcessing(false),
+                onFinish: () => setIsSubmitting(false),
+                onError: (errors) => {
+                    console.error('Error al cambiar plan:', errors);
+                    setIsSubmitting(false);
+                },
             },
         );
     };
@@ -210,14 +242,14 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
                         {canManage && (
                             <div className="mt-6 flex gap-3">
                                 {subscription.permissions.can_cancel && (
-                                    <Button variant="outline" onClick={handleCancel} disabled={processing}>
-                                        Cancelar Suscripción
+                                    <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
+                                        {isSubmitting ? 'Procesando...' : 'Cancelar Suscripción'}
                                     </Button>
                                 )}
 
                                 {subscription.permissions.can_reactivate && (
-                                    <Button onClick={handleReactivate} disabled={processing}>
-                                        Reactivar Suscripción
+                                    <Button onClick={handleReactivate} disabled={isSubmitting}>
+                                        {isSubmitting ? 'Procesando...' : 'Reactivar Suscripción'}
                                     </Button>
                                 )}
                             </div>
@@ -229,7 +261,11 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
             {/* Selector de ciclo de facturación */}
             <div className="mb-6 flex items-center justify-center gap-4">
                 <span className={billingCycle === 'monthly' ? 'font-semibold' : 'text-muted-foreground'}>Mensual</span>
-                <Switch checked={billingCycle === 'annual'} onCheckedChange={(checked) => setBillingCycle(checked ? 'annual' : 'monthly')} />
+                <Switch
+                    checked={billingCycle === 'annual'}
+                    onCheckedChange={(checked) => setBillingCycle(checked ? 'annual' : 'monthly')}
+                    disabled={isSubmitting}
+                />
                 <span className={billingCycle === 'annual' ? 'font-semibold' : 'text-muted-foreground'}>Anual</span>
                 {billingCycle === 'annual' && (
                     <Badge variant="secondary" className="bg-green-100 text-green-800">
@@ -317,20 +353,20 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
                                         ) : subscription ? (
                                             <Button
                                                 onClick={() => handleChangePlan(plan.id)}
-                                                disabled={processing}
+                                                disabled={isSubmitting}
                                                 className="w-full"
                                                 variant={plan.is_popular ? 'default' : 'outline'}
                                             >
-                                                {processing ? 'Procesando...' : 'Cambiar a este Plan'}
+                                                {isSubmitting ? 'Procesando...' : 'Cambiar a este Plan'}
                                             </Button>
                                         ) : (
                                             <Button
                                                 onClick={() => handleSubscribe(plan.id)}
-                                                disabled={processing}
+                                                disabled={isSubmitting}
                                                 className="w-full"
                                                 variant={plan.is_popular ? 'default' : 'outline'}
                                             >
-                                                {processing
+                                                {isSubmitting
                                                     ? 'Procesando...'
                                                     : plan.is_free
                                                       ? 'Comenzar Gratis'

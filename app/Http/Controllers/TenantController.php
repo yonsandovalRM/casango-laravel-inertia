@@ -6,29 +6,23 @@ use App\Enums\SubscriptionStatus;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\TenantResource;
+use App\Jobs\SetupTenantJob;
 use App\Models\Company;
-use App\Models\FormTemplate;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
-use Stancl\Tenancy\Jobs\CreateDatabase;
 use App\Traits\GeneratesSubdomainSuggestions;
 
 class TenantController extends Controller
 {
     use GeneratesSubdomainSuggestions;
 
-    /* 
-    * Show the list of tenants
-    * @return \Inertia\Response
-    */
     public function index()
     {
         $tenants = Tenant::with(['subscriptions' => function ($query) {
@@ -40,13 +34,9 @@ class TenantController extends Controller
         ]);
     }
 
-    /* 
-    * Show the form for creating a new tenant
-    * @return \Inertia\Response
-    */
     public function create(Request $request)
     {
-        $plans = Plan::all();
+        $plans = Plan::where('active', true)->get();
         if ($request->plan) {
             $plan = $plans->findOrFail($request->plan);
         } else {
@@ -75,22 +65,12 @@ class TenantController extends Controller
         ]);
     }
 
-    /* 
-    * Get suggestions for a subdomain
-    * @param Request $request
-    * @return \Illuminate\Http\JsonResponse
-    */
     public function getSuggestions(Request $request)
     {
         $suggestions = $this->generateSubdomainSuggestions($request->subdomain, config('tenancy.central_domains')[0], 5);
         return response()->json($suggestions);
     }
 
-    /* 
-    * Store a new tenant
-    * @param CreateTenantRequest $request
-    * @return \Illuminate\Http\RedirectResponse
-    */
     public function store(CreateTenantRequest $request)
     {
         $tenant_id = $request->subdomain;
@@ -101,9 +81,11 @@ class TenantController extends Controller
             return redirect()->route('tenants.create')->with('error', __('tenant.subdomain_already_in_use'));
         }
 
+        $tenant = null;
+        $subscription = null;
+
         try {
-
-
+            // PASO 1: Crear tenant y dominio (sin transacción porque crea DB)
             $tenant = Tenant::query()->create([
                 'id' => $tenant_id,
                 'name' => $request->name,
@@ -116,38 +98,46 @@ class TenantController extends Controller
                 'domain' => $domain,
             ]);
 
-            $subscription = $this->createSubscription($tenant, $plan, $request->billing);
-            $this->createOwnerOnTenant($tenant, $request->owner_name, $request->owner_email, $request->owner_password);
-            $this->createProfessional($tenant); // TODO: Crear profesional por defecto, eliminar en producción
-            $this->createCompany($tenant);
-            $this->createSubscription($tenant, $plan, $request->billing);
+            // PASO 2: Crear suscripción en transacción separada
+            DB::beginTransaction();
 
+            try {
+                $subscription = $this->createSubscription($tenant, $plan, $request->billing);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
 
-
-            Log::info("Tenant created successfully", [
-                'tenant' => $tenant,
-                'subscription' => $subscription,
+            // PASO 3: Configurar datos dentro del tenant
+            SetupTenantJob::dispatch($tenant, [
+                'name' => $request->owner_name,
+                'email' => $request->owner_email,
+                'password' => $request->owner_password,
             ]);
 
-            return redirect()->route('tenants.created', ['tenant' => $tenant])->with('success', __('tenant.create_success'));
+            Log::info("Tenant created successfully", [
+                'tenant_id' => $tenant->id,
+                'subscription_id' => $subscription->id,
+            ]);
+
+            return redirect()->route('tenants.created', ['tenant' => $tenant])
+                ->with('success', __('tenant.create_success'));
         } catch (\Exception $e) {
-
-
             Log::error("Error creating tenant", [
+                'tenant_id' => $tenant_id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('tenants.create')->with('error', __('tenant.create_error'));
+            // Limpiar datos si algo falló
+            $this->cleanupFailedTenant($tenant, $subscription);
+
+            return redirect()->route('tenants.create')
+                ->with('error', __('tenant.create_error') . ': ' . $e->getMessage());
         }
     }
 
-
-    /* 
-    * Show tenant dashboard with subscription info
-    * @param Tenant $tenant
-    * @return \Inertia\Response
-    */
     public function show(Tenant $tenant)
     {
         $tenant->load(['subscriptions' => function ($query) {
@@ -156,22 +146,23 @@ class TenantController extends Controller
 
         $subscription = $tenant->subscriptions->first();
 
-
-
         return Inertia::render('tenants/show', [
             'tenant' => TenantResource::make($tenant)->toArray(request()),
             'subscription' => $subscription
         ]);
     }
 
-    /* 
-    * Destroy a tenant
-    * @param Tenant $tenant
-    * @return \Illuminate\Http\RedirectResponse
-    */
     public function destroy(Tenant $tenant)
     {
         try {
+            // Cancelar suscripciones activas antes de eliminar
+            $activeSubscriptions = $tenant->subscriptions()->where('is_active', true)->get();
+            foreach ($activeSubscriptions as $subscription) {
+                if ($subscription->mercadopago_id) {
+                    // Aquí podrías cancelar en MercadoPago si es necesario
+                }
+                $subscription->cancel();
+            }
 
             $tenant->delete();
 
@@ -186,127 +177,84 @@ class TenantController extends Controller
         }
     }
 
-    /* 
-    * Create the owner on the tenant
-    * @param Tenant $tenant
-    * @param string $ownerName
-    * @param string $ownerEmail
-    * @param string $ownerPassword
-    * @return void
-    */
-    private function createOwnerOnTenant(Tenant $tenant, string $ownerName, string $ownerEmail, string $ownerPassword)
+
+
+    /**
+     * Limpiar datos si la creación falla
+     */
+    private function cleanupFailedTenant(?Tenant $tenant, ?Subscription $subscription): void
     {
-        $tenant->run(function () use ($ownerName, $ownerEmail, $ownerPassword) {
-            $user = User::create([
-                'name' => $ownerName,
-                'email' => $ownerEmail,
-                'password' => bcrypt($ownerPassword),
+        try {
+            if ($subscription) {
+                $subscription->delete();
+            }
+
+            if ($tenant) {
+                // Eliminar dominios
+                $tenant->domains()->delete();
+
+                // Eliminar tenant (esto también elimina la base de datos)
+                $tenant->delete();
+            }
+        } catch (\Exception $e) {
+            Log::error("Error cleaning up failed tenant creation", [
+                'tenant_id' => $tenant?->id,
+                'error' => $e->getMessage()
             ]);
-
-            $owner = Role::findOrCreate('owner');
-            $user->assignRole($owner);
-        });
-    }
-
-    private function createProfessional(Tenant $tenant)
-    {
-        $tenant->run(function () {
-            $user = User::create([
-                'name' => 'Luis Jimenez',
-                'email' => 'lj@pro.com',
-                'password' => bcrypt('password'),
-            ]);
-
-            $professional = Role::findOrCreate('professional');
-            $user->assignRole($professional);
-
-            $user->professional()->create([
-                'title' => 'Dr.',
-                'is_company_schedule' => true,
-            ]);
-        });
-    }
-
-    /* 
-    * Validate if a domain exists
-    * @param string $domain
-    * @return bool
-    */
-    private function validateDomainExists(string $domain)
-    {
-        $tenant = Tenant::query()->where('id', $domain)->first();
-        if ($tenant) {
-            return true;
         }
-        return false;
     }
 
-    /* 
-    * Create a subscription for a tenant
-    * @param Tenant $tenant
-    * @param Plan $plan
-    * @param string $billing
-    * @return \App\Models\Subscription
-    */
-    private function createSubscription(Tenant $tenant, Plan $plan, string $billing)
+
+
+    private function validateDomainExists(string $domain): bool
     {
-        // Si es plan gratuito o tiene período de prueba, crear suscripción local
-        if ($plan->is_free || $plan->trial_days > 0) {
-            $subscription = Subscription::create([
+        return Tenant::query()->whereHas('domains', function ($query) use ($domain) {
+            $query->where('domain', $domain);
+        })->exists();
+    }
+
+    private function createSubscription(Tenant $tenant, Plan $plan, string $billing): Subscription
+    {
+        $price = $billing === 'monthly' ? $plan->price_monthly : $plan->price_annual;
+
+        // Si es plan gratuito, crear directamente como activo
+        if ($plan->is_free) {
+            return Subscription::create([
                 'tenant_id' => $tenant->id,
                 'plan_id' => $plan->id,
-                'status' => $plan->is_free ? SubscriptionStatus::ACTIVE : SubscriptionStatus::TRIAL,
-                'price' => $plan->is_free ? 0 : ($billing === 'monthly' ? $plan->price_monthly : $plan->price_annual),
+                'status' => SubscriptionStatus::ACTIVE,
+                'price' => 0,
                 'currency' => $plan->currency,
                 'billing_cycle' => $billing,
                 'starts_at' => now(),
-                'trial_ends_at' => $plan->trial_days > 0 ? now()->addDays($plan->trial_days) : null,
                 'is_active' => true,
             ]);
-
-            if ($plan->trial_days > 0) {
-                $subscription->startTrial();
-            }
-
-            return $subscription;
         }
 
-        // Para planes de pago, crear con estado pendiente
+        // Si tiene período de prueba, crear como trial
+        if ($plan->trial_days > 0) {
+            return Subscription::create([
+                'tenant_id' => $tenant->id,
+                'plan_id' => $plan->id,
+                'status' => SubscriptionStatus::TRIAL,
+                'price' => $price,
+                'currency' => $plan->currency,
+                'billing_cycle' => $billing,
+                'starts_at' => now(),
+                'trial_ends_at' => now()->addDays($plan->trial_days),
+                'is_active' => true,
+            ]);
+        }
+
+        // Para planes de pago sin trial, crear como pendiente
         return Subscription::create([
             'tenant_id' => $tenant->id,
             'plan_id' => $plan->id,
             'status' => SubscriptionStatus::PENDING,
-            'price' => $billing === 'monthly' ? $plan->price_monthly : $plan->price_annual,
+            'price' => $price,
             'currency' => $plan->currency,
             'billing_cycle' => $billing,
             'is_active' => false,
         ]);
-    }
-
-
-
-    private function createCompany(Tenant $tenant)
-    {
-        $tenant->run(function () use ($tenant) {
-            $company = Company::create([
-                'name' => $tenant->name,
-                'email' => $tenant->email,
-            ]);
-            $this->createCompanySchedule($company);
-        });
-    }
-
-    private function createCompanySchedule(Company $company)
-    {
-        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        foreach ($days as $day) {
-            $company->schedules()->create([
-                'day_of_week' => $day,
-                'open_time' => '09:00',
-                'close_time' => '18:00',
-                'is_open' => $day === 'sunday' ? false : true,
-                'has_break' => false,
-            ]);
-        }
     }
 }

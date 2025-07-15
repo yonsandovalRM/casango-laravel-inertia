@@ -191,4 +191,45 @@ class Subscription extends Model
             $this->startGracePeriod();
         }
     }
+
+
+    public function getRemainingTrialDays(): int
+    {
+        if (!$this->onTrial()) {
+            return 0;
+        }
+
+        return max(0, now()->diffInDays($this->trial_ends_at, false));
+    }
+
+    public function getRemainingGraceDays(): int
+    {
+        if (!$this->onGracePeriod()) {
+            return 0;
+        }
+
+        return max(0, now()->diffInDays($this->grace_period_ends_at, false));
+    }
+
+    public function getStatusMessage(): string
+    {
+        if ($this->onTrial()) {
+            $days = $this->getRemainingTrialDays();
+            return $days > 0 ? "Período de prueba: {$days} días restantes" : "Período de prueba expirado";
+        }
+
+        if ($this->onGracePeriod()) {
+            $days = $this->getRemainingGraceDays();
+            return $days > 0 ? "Período de gracia: {$days} días restantes" : "Período de gracia expirado";
+        }
+
+        return $this->status->label();
+    }
+
+    public function requiresAction(): bool
+    {
+        return $this->needsPayment() ||
+            ($this->onTrial() && $this->getRemainingTrialDays() <= 3) ||
+            ($this->onGracePeriod() && $this->getRemainingGraceDays() <= 2);
+    }
 }

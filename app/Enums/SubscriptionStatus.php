@@ -13,6 +13,7 @@ enum SubscriptionStatus: string
     case TRIAL = 'trial';
     case TRIAL_EXPIRED = 'trial_expired';
     case SUSPENDED = 'suspended';
+    case EXPIRED = 'expired';
 
     public function label(): string
     {
@@ -26,6 +27,7 @@ enum SubscriptionStatus: string
             self::TRIAL => 'Período de prueba',
             self::TRIAL_EXPIRED => 'Prueba expirada',
             self::SUSPENDED => 'Suspendida',
+            self::EXPIRED => 'Expirada',
         };
     }
 
