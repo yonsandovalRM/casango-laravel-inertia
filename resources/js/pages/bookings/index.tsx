@@ -1,11 +1,10 @@
-import Calendar from '@/components/calendar/calendar';
+import { CalendarEvent, CustomCalendar } from '@/components/calendar/calendar';
 import EventCard from '@/components/calendar/event-card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { BookingResource } from '@/interfaces/booking';
 import { ProfessionalResource } from '@/interfaces/professional';
 import AppLayout from '@/layouts/app-layout';
-import { EventClickArg } from '@fullcalendar/core';
 import { Head, router } from '@inertiajs/react';
 import { CalendarIcon, MapPin, XCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -33,25 +32,16 @@ export default function BookingsIndex({ professional, bookings }: BookingsIndexP
     };
 
     // Transformar los bookings a eventos para FullCalendar
-    const events = bookings.map((booking) => ({
+    const events: CalendarEvent[] = bookings.map((booking) => ({
         id: booking.id,
         title: booking.service.name,
-        start: `${booking.date}T${booking.time}`,
-        end: calculateEndTime(booking.date, booking.time, booking.service.duration),
-        className: `fc-event-${booking.status}`,
-        extendedProps: {
-            client: booking.client,
-            professional: booking.professional,
-            service: booking.service,
-            price: booking.price,
-            status: booking.status,
-            notes: booking.notes,
-            payment_status: booking.payment_status,
-        },
+        start: new Date(`${booking.date}T${booking.time}`),
+        end: new Date(calculateEndTime(booking.date, booking.time, booking.service.duration)),
+        color: booking.status === 'confirmed' ? 'green' : booking.status === 'pending' ? 'yellow' : 'red',
+        description: '',
     }));
 
-    const handleEventClick = (clickInfo: EventClickArg) => {
-        const event = clickInfo.event;
+    const handleEventClick = (event: CalendarEvent) => {
         const booking = bookings.find((booking) => booking.id === event.id);
         if (!booking) return;
         setBookingSelected(booking);
@@ -82,7 +72,7 @@ export default function BookingsIndex({ professional, bookings }: BookingsIndexP
     return (
         <AppLayout breadcrumbs={[{ title: t('bookings.index.title'), href: '/bookings' }]}>
             <Head title={t('bookings.index.title')} />
-            <Calendar events={events} onEventClick={handleEventClick} onDateClick={handleDateClick} />
+            <CustomCalendar events={events} onEventClick={handleEventClick} onDateClick={handleDateClick} />
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogContent>
                     <DialogHeader>
