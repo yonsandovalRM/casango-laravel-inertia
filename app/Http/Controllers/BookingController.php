@@ -506,4 +506,120 @@ class BookingController extends Controller
     {
         //
     }
+
+
+    /**
+     * Confirmar una reserva
+     */
+    public function confirm(Booking $booking)
+    {
+        $booking->update(['status' => BookingStatus::STATUS_CONFIRMED]);
+
+        return back()->with('success', __('booking.confirmed_successfully'));
+    }
+
+    /**
+     * Cancelar una reserva
+     */
+    public function cancel(Booking $booking)
+    {
+        $booking->update(['status' => BookingStatus::STATUS_CANCELLED]);
+
+        return back()->with('success', __('booking.cancelled_successfully'));
+    }
+
+    /**
+     * Marcar como completada
+     */
+    public function complete(Booking $booking)
+    {
+        $booking->update(['status' => BookingStatus::STATUS_COMPLETED]);
+
+        return back()->with('success', __('booking.completed_successfully'));
+    }
+
+    /**
+     * Marcar como no asistió
+     */
+    public function noShow(Booking $booking)
+    {
+        $booking->update(['status' => BookingStatus::STATUS_NO_SHOW]);
+
+        return back()->with('success', __('booking.no_show_marked'));
+    }
+
+    /**
+     * Reagendar una reserva
+     */
+    public function reschedule(Request $request, Booking $booking)
+    {
+        $request->validate([
+            'date' => 'required|date|after_or_equal:today',
+            'time' => 'required|date_format:H:i',
+        ]);
+
+        // Verificar que la nueva fecha/hora esté disponible
+        $existingBooking = Booking::where('professional_id', $booking->professional_id)
+            ->where('date', $request->date)
+            ->where('time', $request->time)
+            ->where('status', '!=', BookingStatus::STATUS_CANCELLED)
+            ->where('id', '!=', $booking->id)
+            ->first();
+
+        if ($existingBooking) {
+            return back()->withErrors(['error' => __('booking.time_slot_not_available')]);
+        }
+
+        $booking->update([
+            'date' => $request->date,
+            'time' => $request->time,
+            'status' => BookingStatus::STATUS_RESCHEDULED
+        ]);
+
+        return back()->with('success', __('booking.rescheduled_successfully'));
+    }
+
+    /**
+     * Obtener reservas para el calendario con filtros
+     */
+    public function calendar(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        $professional = Professional::where('user_id', $user->id)->firstOrFail();
+
+        // Obtener filtros
+        $filters = $request->only(['status', 'date_from', 'date_to']);
+
+        // Aplicar valores por defecto
+        $filters = array_merge([
+            'status' => 'all',
+            'date_from' => now()->startOfWeek()->format('Y-m-d'),
+            'date_to' => now()->endOfWeek()->format('Y-m-d'),
+        ], $filters);
+
+        // Construir query
+        $bookingsQuery = Booking::with(['client', 'service', 'professional.user'])
+            ->where('professional_id', $professional->id);
+
+        // Aplicar filtros de fecha
+        if (!empty($filters['date_from'])) {
+            $bookingsQuery->where('date', '>=', $filters['date_from']);
+        }
+
+        if (!empty($filters['date_to'])) {
+            $bookingsQuery->where('date', '<=', $filters['date_to']);
+        }
+
+        // Aplicar filtro de estado
+        if ($filters['status'] !== 'all') {
+            $bookingsQuery->where('status', $filters['status']);
+        }
+
+        $bookings = $bookingsQuery->orderBy('date')->orderBy('time')->get();
+
+        return response()->json([
+            'bookings' => BookingResource::collection($bookings),
+            'filters' => $filters
+        ]);
+    }
 }

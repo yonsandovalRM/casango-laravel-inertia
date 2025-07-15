@@ -1,6 +1,6 @@
 export const GoogleCalendarIcon = ({ className }: { className?: string }) => {
     return (
-        <svg x="0px" y="0px" viewBox="0 0 200 200" enable-background="new 0 0 200 200" className={className}>
+        <svg x="0px" y="0px" viewBox="0 0 200 200" enableBackground="new 0 0 200 200" className={className}>
             <g>
                 <g transform="translate(3.75 3.75)">
                     <path

@@ -13,6 +13,16 @@ Route::group(['prefix' => 'dashboard/bookings'], function () {
     Route::put('/{booking}', [BookingController::class, 'update'])->name('bookings.update')->middleware('can:' . Permissions::BOOKINGS_EDIT);
     Route::delete('/{booking}', [BookingController::class, 'destroy'])->name('bookings.destroy')->middleware('can:' . Permissions::BOOKINGS_DELETE);
 
+    // Nuevas rutas para acciones del calendario
+    Route::post('/{booking}/confirm', [BookingController::class, 'confirm'])->name('bookings.confirm')->middleware('can:' . Permissions::BOOKINGS_EDIT);
+    Route::post('/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel')->middleware('can:' . Permissions::BOOKINGS_EDIT);
+    Route::post('/{booking}/complete', [BookingController::class, 'complete'])->name('bookings.complete')->middleware('can:' . Permissions::BOOKINGS_EDIT);
+    Route::post('/{booking}/no-show', [BookingController::class, 'noShow'])->name('bookings.no-show')->middleware('can:' . Permissions::BOOKINGS_EDIT);
+    Route::post('/{booking}/reschedule', [BookingController::class, 'reschedule'])->name('bookings.reschedule')->middleware('can:' . Permissions::BOOKINGS_EDIT);
+
+    // Ruta para obtener datos del calendario con filtros
+    Route::get('/calendar/data', [BookingController::class, 'calendar'])->name('bookings.calendar')->middleware('can:' . Permissions::BOOKINGS_VIEW);
+
     // Ruta para formulario de perfil de usuario (sin cambios)
     Route::post('/{booking}/form-data/user-profile', [BookingController::class, 'storeFormDataUserProfile'])
         ->name('bookings.form-data.store.user-profile')
