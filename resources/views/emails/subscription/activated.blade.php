@@ -1,23 +1,109 @@
-@component('mail::message')
-    # ¡Tu suscripción está activa!
+<!DOCTYPE html>
+<html>
 
-    Hola {{ $tenant->name }},
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Suscripción Activada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    Tu suscripción al plan **{{ $plan->name }}** se ha activado exitosamente.
+        .header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
 
-    ## Detalles de tu suscripción:
-    - **Plan:** {{ $plan->name }}
-    - **Precio:** ${{ number_format($subscription->price, 0, ',', '.') }} {{ $subscription->currency }}
-    - **Ciclo:** {{ $subscription->billing_cycle === 'monthly' ? 'Mensual' : 'Anual' }}
-    - **Próximo pago:**
-    {{ $subscription->next_billing_date ? $subscription->next_billing_date->format('d/m/Y') : 'Por definir' }}
+        .content {
+            background-color: #ffffff;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
 
-    @component('mail::button', ['url' => 'http://' . $tenant->domains->first()->domain . '/dashboard'])
-        Acceder a tu Dashboard
-    @endcomponent
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
 
-    ¡Ahora puedes aprovechar todas las funcionalidades de tu plan!
+        .details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
 
-    Gracias,<br>
-    {{ config('app.name') }}
-@endcomponent
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>¡Tu suscripción está activa!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hola {{ $tenant->name }},</p>
+
+        <p>Tu suscripción al plan <strong>{{ $plan->name }}</strong> se ha activado exitosamente.</p>
+
+        <div class="success">
+            <strong>¡Excelente!</strong> Ahora puedes aprovechar todas las funcionalidades de tu plan.
+        </div>
+
+        <div class="details">
+            <h3>Detalles de tu suscripción:</h3>
+            <ul>
+                <li><strong>Plan:</strong> {{ $plan->name }}</li>
+                <li><strong>Precio:</strong> ${{ number_format($subscription->price, 0, ',', '.') }}
+                    {{ $subscription->currency }}</li>
+                <li><strong>Ciclo:</strong> {{ $subscription->billing_cycle === 'monthly' ? 'Mensual' : 'Anual' }}</li>
+                <li><strong>Próximo pago:</strong>
+                    {{ $subscription->next_billing_date ? $subscription->next_billing_date->format('d/m/Y') : 'Por definir' }}
+                </li>
+            </ul>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="http://{{ $tenant->domains->first()->domain }}/dashboard" class="button">
+                Acceder a tu Dashboard
+            </a>
+        </div>
+
+        <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+    </div>
+
+    <div class="footer">
+        <p>Gracias,<br>{{ config('app.name') }}</p>
+    </div>
+</body>
+
+</html>

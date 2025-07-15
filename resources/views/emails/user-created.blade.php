@@ -1,85 +1,105 @@
-
-
 <!DOCTYPE html>
 <html>
+
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bienvenido a {{ config('app.name') }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-        }
-        .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .header {
             background-color: #f8f9fa;
             padding: 20px;
             text-align: center;
-            border-radius: 5px 5px 0 0;
-            border-left: 1px solid #ddd;
-            border-right: 1px solid #ddd;
-            border-top: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
         }
+
         .content {
+            background-color: #ffffff;
             padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
         }
+
         .button {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: #007bff;
-            color: white !important;
+            color: white;
             text-decoration: none;
             border-radius: 5px;
-            margin-top: 15px;
+            margin: 20px 0;
         }
-        .credentials {
+
+        .details {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             margin: 15px 0;
         }
+
         .footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #6c757d;
             text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .alert {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Bienvenido a {{ config('app.name') }}</h1>
+    <div class="header">
+        <h1>¡Bienvenido a {{ config('app.name') }}!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hola {{ $user->name }},</p>
+
+        <p>Se ha creado una cuenta para ti en <strong>{{ $tenant->name ?? config('app.name') }}</strong>.</p>
+
+        <div class="details">
+            <h3>Tus credenciales de acceso:</h3>
+            <ul>
+                <li><strong>Email:</strong> {{ $user->email }}</li>
+                <li><strong>Contraseña temporal:</strong> {{ $password }}</li>
+            </ul>
         </div>
-        
-        <div class="content">
-            <p>Hola {{ $user->name }},</p>
-            
-            <p>Se ha creado una cuenta para ti en nuestro sistema. A continuación encontrarás tus credenciales temporales de acceso:</p>
-            
-            <div class="credentials">
-                <p><strong>Email:</strong> {{ $user->email }}</p>
-                <p><strong>Contraseña temporal:</strong> {{ $password }}</p>
-            </div>
-            
-            <p>Por seguridad, te recomendamos cambiar tu contraseña inmediatamente después de iniciar sesión por primera vez.</p>
-            
-            <a href="{{ route('login') }}" class="button">Iniciar Sesión</a>
-            
-            <p>Si no has solicitado esta cuenta, por favor ignora este correo o contacta con nuestro equipo de soporte.</p>
+
+        <div class="alert">
+            <strong>Importante:</strong> Por seguridad, cambia tu contraseña inmediatamente después de iniciar sesión.
         </div>
-        
-        <div class="footer">
-            <p>© {{ date('Y') }} {{ config('app.name') }}. Todos los derechos reservados.</p>
+
+        <div style="text-align: center;">
+            <a href="{{ isset($tenant) ? 'http://' . $tenant->domains->first()->domain . '/login' : route('login') }}"
+                class="button">
+                Iniciar Sesión
+            </a>
         </div>
+
+        <p>Si no has solicitado esta cuenta, puedes ignorar este correo o contactar con nuestro equipo de soporte.</p>
+    </div>
+
+    <div class="footer">
+        <p>Gracias,<br>{{ config('app.name') }}</p>
     </div>
 </body>
+
 </html>
