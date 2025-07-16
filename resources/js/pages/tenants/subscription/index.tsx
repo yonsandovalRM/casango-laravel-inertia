@@ -340,16 +340,17 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
                                     )}
                                 </CardHeader>
 
-                                <CardContent>
-                                    <ul className="mb-6 space-y-3">
-                                        {plan.features.map((feature, index) => (
-                                            <li key={index} className="flex items-center gap-2">
-                                                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
-                                                <span className="text-sm">{feature}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-
+                                <CardContent className="flex h-full flex-col">
+                                    <div className="flex-1">
+                                        <ul className="mb-6 space-y-3">
+                                            {plan.features.map((feature, index) => (
+                                                <li key={index} className="flex items-center gap-2">
+                                                    <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-500" />
+                                                    <span className="text-sm">{feature}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                     {canManage && (
                                         <div className="space-y-2">
                                             {isCurrentPlan ? (
