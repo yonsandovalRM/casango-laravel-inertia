@@ -2,16 +2,19 @@
 
 namespace App\Http\Resources;
 
+use App\Traits\TimezoneResourceTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TenantResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
+    use TimezoneResourceTrait;
+
+    protected $timezoneFields = [
+        'created_at',
+        'updated_at',
+    ];
+
     public function toArray(Request $request): array
     {
         // detectar prod o dev

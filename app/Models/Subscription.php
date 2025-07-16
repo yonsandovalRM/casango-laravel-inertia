@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SubscriptionStatus;
+use App\Traits\HasTimezone;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subscription extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, HasTimezone;
 
     protected $fillable = [
         'tenant_id',
@@ -30,6 +31,20 @@ class Subscription extends Model
         'last_payment_date',
         'failed_payment_attempts',
         'is_active',
+    ];
+
+    /**
+     * Campos específicos de timezone para suscripciones
+     */
+    protected $timezoneFields = [
+        'created_at',
+        'updated_at',
+        'starts_at',
+        'ends_at',
+        'trial_ends_at',
+        'grace_period_ends_at',
+        'next_billing_date',
+        'last_payment_date',
     ];
 
     protected $casts = [
@@ -116,16 +131,18 @@ class Subscription extends Model
 
     public function daysUntilExpiry(): int
     {
+        $now = \App\Services\TimezoneService::now();
+
         if ($this->onTrial()) {
-            return now()->diffInDays($this->trial_ends_at, false);
+            return $now->diffInDays($this->fromUtc($this->trial_ends_at), false);
         }
 
         if ($this->onGracePeriod()) {
-            return now()->diffInDays($this->grace_period_ends_at, false);
+            return $now->diffInDays($this->fromUtc($this->grace_period_ends_at), false);
         }
 
         if ($this->ends_at) {
-            return now()->diffInDays($this->ends_at, false);
+            return $now->diffInDays($this->fromUtc($this->ends_at), false);
         }
 
         return 0;

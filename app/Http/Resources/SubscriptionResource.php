@@ -2,16 +2,20 @@
 
 namespace App\Http\Resources;
 
+use App\Traits\TimezoneResourceTrait;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SubscriptionResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+    use TimezoneResourceTrait;
+
+    protected $timezoneFields = [
+        'trial_ends_at',
+        'ends_at',
+        'created_at',
+        'updated_at',
+    ];
+
     public function toArray($request)
     {
 

@@ -2,17 +2,22 @@
 
 namespace App\Http\Resources;
 
+use App\Traits\TimezoneResourceTrait;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyScheduleResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
+    use TimezoneResourceTrait;
+
+    protected $timezoneFields = [
+        'open_time',
+        'close_time',
+        'break_start_time',
+        'break_end_time',
+    ];
+
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,

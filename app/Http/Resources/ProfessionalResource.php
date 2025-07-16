@@ -2,17 +2,22 @@
 
 namespace App\Http\Resources;
 
+use App\Traits\TimezoneResourceTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProfessionalResource extends JsonResource
 {
+    use TimezoneResourceTrait;
+
     /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
+     * Campos específicos de timezone para BookingResource
      */
+    protected $timezoneFields = [
+        'created_at',
+        'updated_at',
+    ];
     public function toArray(Request $request): array
     {
         return [
@@ -41,8 +46,8 @@ class ProfessionalResource extends JsonResource
                     ];
                 });
             }),
-            'created_at' => $this->created_at?->toDateTimeString(),
-            'updated_at' => $this->updated_at?->toDateTimeString(),
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

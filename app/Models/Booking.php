@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasTimezone;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, HasTimezone;
 
     protected $fillable = [
         'client_id',
@@ -25,6 +26,21 @@ class Booking extends Model
         'payment_method',
         'payment_id',
         'phone',
+    ];
+
+    /**
+     * Campos específicos de timezone para Booking
+     */
+    protected $timezoneFields = [
+        'created_at',
+        'updated_at',
+        'date',
+        'time'
+    ];
+
+    protected $casts = [
+        'date' => 'date',
+        'time' => 'datetime',
     ];
 
     public function client()
@@ -129,5 +145,29 @@ class Booking extends Model
                 $query->orderBy('order');
             }
         ]);
+    }
+
+    /**
+     * Scope para obtener reservas de una fecha específica en timezone de empresa
+     */
+    public function scopeForDate($query, $date)
+    {
+        return $this->scopeWhereDateEqualsInTimezone($query, 'date', $date);
+    }
+
+    /**
+     * Scope para reservas de hoy
+     */
+    public function scopeTodayBookings($query)
+    {
+        return $this->scopeToday($query, 'date');
+    }
+
+    /**
+     * Obtener fecha y hora formateada para mostrar
+     */
+    public function getFormattedDateTimeAttribute(): string
+    {
+        return $this->formatForFrontend('date', 'Y-m-d') . ' ' . $this->formatForFrontend('time', 'H:i');
     }
 }
