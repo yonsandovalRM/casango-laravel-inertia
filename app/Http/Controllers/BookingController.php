@@ -36,8 +36,6 @@ class BookingController extends Controller
         $professional = Professional::where('user_id', $user->id)->firstOrFail();
 
         $bookings = Booking::where('professional_id', $professional->id)
-            ->where('status', BookingStatus::STATUS_PENDING)
-            ->orWhere('status', BookingStatus::STATUS_CONFIRMED)
             ->get();
 
         return Inertia::render('bookings/index', [

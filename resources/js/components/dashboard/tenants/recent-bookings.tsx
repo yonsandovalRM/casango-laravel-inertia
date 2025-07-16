@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookingResource } from '@/interfaces/booking';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatTimeAMPM } from '@/lib/utils';
 import { Calendar, ChevronRight, Clock, Download, Filter, MapPin, MessageCircle, Phone, Star } from 'lucide-react';
 import React from 'react';
 
@@ -232,7 +232,7 @@ export const RecentBookings: React.FC<RecentBookingsProps> = ({
                                                     </div>
                                                     <div className="flex items-center gap-1">
                                                         <Clock className="h-3 w-3" />
-                                                        <span>{booking.time}</span>
+                                                        <span>{formatTimeAMPM(booking.time)}</span>
                                                     </div>
                                                     <span>• {booking.service.duration}min</span>
                                                 </div>

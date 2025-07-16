@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { BookingResource, bookingStatusMap, paymentStatusMap } from '@/interfaces/booking';
 import { formatCurrency, formatTimeAMPM } from '@/lib/utils';
-import { AlertCircle, Calendar, CheckCircle, Clock, CreditCard, DollarSign, FileText, Phone, Tag, User, XCircle } from 'lucide-react';
+import { AlertCircle, Calendar, CheckCircle, Clock, CreditCard, DollarSign, FileText, Phone, User, XCircle } from 'lucide-react';
 import { ProfessionalHeader } from '../professionals/ui/professional-header';
 import { ScrollArea } from '../ui/scroll-area';
 import { Separator } from '../ui/separator';
@@ -80,40 +80,24 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
                 )}
 
                 {/* Date and Time */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="flex items-center space-x-3">
-                        <Calendar className="h-4 w-4 text-cm-blue-500" />
-                        <div>
-                            <p className="text-sm text-muted-foreground">Fecha</p>
-                            <p className="font-medium">{formatDate(booking.date)}</p>
-                        </div>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>
+                            {new Date(booking.date).toLocaleDateString('es-CL', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric',
+                            })}
+                        </span>
                     </div>
-                    <div className="flex items-center space-x-3">
-                        <Clock className="h-4 w-4 text-cm-blue-500" />
-                        <div>
-                            <p className="text-sm text-muted-foreground">Hora</p>
-                            <p className="font-medium">{formatTimeAMPM(booking.time)}</p>
-                        </div>
+                    <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span>{formatTimeAMPM(booking.time)}</span>
                     </div>
+                    <span>• {booking.service.duration}min</span>
                 </div>
 
-                {/* Service Details */}
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div className="flex items-center space-x-3">
-                        <Clock className="h-4 w-4 text-cm-blue-500" />
-                        <div>
-                            <p className="text-sm text-muted-foreground">Duración</p>
-                            <p className="font-medium">{booking.service.duration} min</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                        <Tag className="h-4 w-4 text-cm-blue-500" />
-                        <div>
-                            <p className="text-sm text-muted-foreground">Categoría:</p>
-                            <p className="font-medium">{booking.service.category.name}</p>
-                        </div>
-                    </div>
-                </div>
                 <Separator className="my-4" />
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
