@@ -290,7 +290,7 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
                         return (
                             <Card
                                 key={plan.id}
-                                className={`relative ${plan.is_popular ? 'border-blue-500 shadow-lg' : ''} ${isCurrentPlan ? 'border-blue-300 bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                className={`relative ${plan.is_popular ? 'border-blue-500 shadow-lg' : ''} ${isCurrentPlan ? 'border-2 border-blue-500 bg-gray-50 dark:bg-blue-900/20' : ''}`}
                             >
                                 {plan.is_popular && (
                                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform">
