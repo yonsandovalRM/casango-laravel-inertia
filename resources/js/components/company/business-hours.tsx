@@ -13,28 +13,9 @@ interface BusinessHoursProps {
     canEdit?: boolean;
 }
 
-const formatTime = (time: string) => {
-    if (!time) return '--:--';
-
-    // Extraer horas y minutos
-    const [hours, minutes] = time.split(':').map(Number);
-
-    // Determinar AM/PM
-    const period = hours >= 12 ? 'pm' : 'am';
-
-    // Convertir a formato 12 horas
-    const hours12 = hours % 12 || 12; // 0 se convierte en 12
-
-    // Formatear con ceros a la izquierda si es necesario
-    const formattedHours = hours12.toString().padStart(2, '0');
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-
-    return `${formattedHours}:${formattedMinutes}${period}`;
-};
-
 export default function BusinessHours({ data, handleScheduleChange, canEdit = false }: BusinessHoursProps) {
     const { t } = useTranslation();
-
+    console.log({ data });
     if (!canEdit) {
         return (
             <Card>
@@ -59,12 +40,11 @@ export default function BusinessHours({ data, handleScheduleChange, canEdit = fa
                                                 {t('company.form.open')}
                                             </Badge>
                                             <span className="text-sm text-muted-foreground">
-                                                {formatTime(schedule.open_time)} - {formatTime(schedule.close_time)}
+                                                {schedule.open_time} - {schedule.close_time}
                                             </span>
                                             {schedule.has_break && (
                                                 <span className="text-sm text-muted-foreground">
-                                                    ({t('company.form.break')}: {formatTime(schedule.break_start_time)} -{' '}
-                                                    {formatTime(schedule.break_end_time)})
+                                                    ({t('company.form.break')}: {schedule.break_start_time} - {schedule.break_end_time})
                                                 </span>
                                             )}
                                         </div>

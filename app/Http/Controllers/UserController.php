@@ -19,7 +19,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = UserResource::collection(User::all())->toArray(request());
+        $users = User::with('roles')->get();
         $roles = Role::all()->map(function ($role) {
             return [
                 'id' => $role->id,
@@ -27,7 +27,7 @@ class UserController extends Controller
                 'display_name' => RoleMapper::getRoleName($role->name),
             ];
         });
-        return Inertia::render('users/index', ['users' => $users, 'roles' => $roles]);
+        return Inertia::render('users/index', ['users' => UserResource::collection($users)->toArray(request()), 'roles' => $roles]);
     }
 
     public function destroy(User $user)

@@ -17,7 +17,7 @@ export const UserList = ({ users }: { users: UserResource[] }) => {
     const handleDelete = (userId: string) => {
         router.delete(route('users.destroy', { user: userId }));
     };
-
+    console.log({ users });
     const [colDefs, setColDefs] = useState([
         { field: 'name', headerName: 'Nombre' },
         { field: 'email', headerName: 'Correo' },
