@@ -42,6 +42,19 @@ trait HasTimezone
     }
 
     /**
+     * Campos que son solo TIME (HH:MM) y no necesitan conversión de timezone
+     */
+    protected function getTimeOnlyFields(): array
+    {
+        return $this->timeOnlyFields ?? [
+            'open_time',
+            'close_time',
+            'break_start_time',
+            'break_end_time',
+        ];
+    }
+
+    /**
      * Obtiene el timezone de la empresa actual
      */
     protected function getCompanyTimezone(): string
@@ -59,12 +72,26 @@ trait HasTimezone
     }
 
     /**
+     * Verifica si un campo es solo TIME
+     */
+    protected function isTimeOnlyField(string $field): bool
+    {
+        return in_array($field, $this->getTimeOnlyFields());
+    }
+
+
+    /**
      * Convierte una fecha/hora de timezone de empresa a UTC para guardar en BD
      */
-    public function toUtc($value, string $field = null): ?Carbon
+    public function toUtc($value, string $field): ?Carbon
     {
         if (empty($value)) {
             return null;
+        }
+
+        // Si es un campo de solo TIME, no convertir timezone
+        if ($field && $this->isTimeOnlyField($field)) {
+            return $this->handleTimeOnlyField($value);
         }
 
         $carbon = $value instanceof Carbon ? $value : Carbon::parse($value);
@@ -83,13 +110,19 @@ trait HasTimezone
         return $carbon->utc();
     }
 
+
     /**
      * Convierte una fecha/hora de UTC a timezone de empresa para mostrar
      */
-    public function fromUtc($value): ?Carbon
+    public function fromUtc($value, string $field = null): ?Carbon
     {
         if (empty($value)) {
             return null;
+        }
+
+        // Si es un campo de solo TIME, no convertir timezone
+        if ($field && $this->isTimeOnlyField($field)) {
+            return $this->handleTimeOnlyField($value);
         }
 
         $carbon = $value instanceof Carbon ? $value : Carbon::parse($value);
@@ -101,6 +134,25 @@ trait HasTimezone
         }
 
         return $carbon->setTimezone($companyTimezone);
+    }
+
+    /**
+     * Maneja campos que son solo TIME (HH:MM)
+     */
+    private function handleTimeOnlyField($value): ?Carbon
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // Si es un string con formato de hora
+        if (is_string($value) && preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $value)) {
+            return Carbon::createFromFormat('H:i:s', $value . (strlen($value) === 5 ? ':00' : ''));
+        }
+
+        // Si es Carbon, extraer solo la hora
+        $carbon = $value instanceof Carbon ? $value : Carbon::parse($value);
+        return Carbon::createFromFormat('H:i:s', $carbon->format('H:i:s'));
     }
 
     /**
@@ -123,11 +175,14 @@ trait HasTimezone
         $value = parent::getAttribute($key);
 
         if (in_array($key, $this->getTimezoneFields()) && !empty($value)) {
-            return $this->fromUtc($value);
+            return $this->fromUtc($value, $key);
         }
 
         return $value;
     }
+
+
+
 
     /**
      * Convierte una fecha específica al timezone de empresa (para usar en queries)
@@ -224,7 +279,12 @@ trait HasTimezone
             return null;
         }
 
-        return $this->fromUtc($value)->format($format);
+        // Para campos de solo TIME, usar formato de hora por defecto
+        if ($this->isTimeOnlyField($field)) {
+            $format = 'H:i';
+        }
+
+        return $value->format($format);
     }
 
     /**

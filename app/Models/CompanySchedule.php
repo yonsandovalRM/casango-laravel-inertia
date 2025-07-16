@@ -32,13 +32,19 @@ class CompanySchedule extends Model
         'break_end_time',
     ];
 
+    /**
+     * Campos que son solo TIME (HH:MM)
+     */
+    protected $timeOnlyFields = [
+        'open_time',
+        'close_time',
+        'break_start_time',
+        'break_end_time',
+    ];
+
     protected $casts = [
         'is_open' => 'boolean',
         'has_break' => 'boolean',
-        'open_time' => 'datetime:H:i',
-        'close_time' => 'datetime:H:i',
-        'break_start_time' => 'datetime:H:i',
-        'break_end_time' => 'datetime:H:i',
     ];
 
     protected $appends = ['formatted_schedule'];
@@ -55,8 +61,8 @@ class CompanySchedule extends Model
     {
         return \App\Services\TimezoneService::getWorkingHoursForDate(
             $date,
-            $this->open_time,
-            $this->close_time
+            $this->formatForFrontend('open_time'),
+            $this->formatForFrontend('close_time')
         );
     }
 }
