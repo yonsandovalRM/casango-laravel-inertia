@@ -27,7 +27,7 @@ class UpdateTenantRequest extends FormRequest
             'owner_name' => 'required|string|max:255',
             'owner_email' => 'required|email|max:255',
             'plan_id' => 'required|string|exists:plans,id',
-            'category' => 'required|string|max:255',
+            'tenant_category_id' => 'required|string|max:255|exists:tenant_categories,id',
         ];
     }
 }

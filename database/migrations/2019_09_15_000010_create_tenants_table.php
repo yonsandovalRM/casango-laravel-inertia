@@ -19,7 +19,7 @@ class CreateTenantsTable extends Migration
             $table->string('id')->primary();
             $table->string('email')->nullable();
             $table->string('name')->nullable();
-            $table->foreignUuid('category')->nullable()
+            $table->foreignUuid('tenant_category_id')->nullable()
                 ->constrained('tenant_categories', 'id')
                 ->nullOnDelete();
             $table->uuid('plan_id')->nullable();

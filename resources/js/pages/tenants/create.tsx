@@ -8,12 +8,22 @@ import { RadioGroup } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { PlanResource } from '@/interfaces/plan';
-import { MOCK_CATEGORIES } from '@/interfaces/tenant';
+import { TenantCategoryResource } from '@/interfaces/tenant-category';
 import { useForm } from '@inertiajs/react';
 import { Building2, Globe, Lock, Mail, ShieldCheck, Tag, User } from 'lucide-react';
 import { useState } from 'react';
 
-export default function TenantsCreate({ plans, plan, billing }: { plans: PlanResource[]; plan: PlanResource; billing: string }) {
+export default function TenantsCreate({
+    plans,
+    plan,
+    billing,
+    tenant_categories,
+}: {
+    plans: PlanResource[];
+    plan: PlanResource;
+    billing: string;
+    tenant_categories: TenantCategoryResource[];
+}) {
     const [currentStep, setCurrentStep] = useState(1);
     const { data, setData, post, errors, processing } = useForm({
         name: 'Fast',
@@ -23,7 +33,7 @@ export default function TenantsCreate({ plans, plan, billing }: { plans: PlanRes
         owner_password: '12345678',
         owner_password_confirmation: '12345678',
         plan_id: plan?.id || plans.find((p) => p.is_popular)?.id,
-        category: 'bar',
+        tenant_category_id: tenant_categories[0]?.id,
         billing: billing,
     });
 
@@ -90,12 +100,15 @@ export default function TenantsCreate({ plans, plan, billing }: { plans: PlanRes
                                             <Tag className="h-3 w-3" />
                                             Categoría del negocio
                                         </Label>
-                                        <Select value={data.category} onValueChange={(value) => setData((prev) => ({ ...prev, category: value }))}>
+                                        <Select
+                                            value={data.tenant_category_id}
+                                            onValueChange={(value) => setData((prev) => ({ ...prev, tenant_category_id: value }))}
+                                        >
                                             <SelectTrigger className="h-12">
                                                 <SelectValue placeholder="Selecciona tu rubro" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {MOCK_CATEGORIES.map((category) => (
+                                                {tenant_categories.map((category) => (
                                                     <SelectItem key={category.id} value={category.id}>
                                                         {category.name}
                                                     </SelectItem>
@@ -133,7 +146,7 @@ export default function TenantsCreate({ plans, plan, billing }: { plans: PlanRes
                                         type="button"
                                         onClick={() => setCurrentStep(2)}
                                         className="h-12 px-8"
-                                        disabled={!data.name || !data.category || !data.subdomain}
+                                        disabled={!data.name || !data.tenant_category_id || !data.subdomain}
                                     >
                                         Continuar
                                     </Button>

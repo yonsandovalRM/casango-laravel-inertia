@@ -14,7 +14,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     protected $fillable = [
         'id',
         'name',
-        'category',
+        'tenant_category_id',
         'email',
         'plan_id',
         'data',
@@ -24,10 +24,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'data' => 'array',
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(TenantCategory::class, 'category', 'id');
-    }
 
     public static function getCustomColumns(): array
     {
@@ -35,7 +31,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             'id',
             'name',
             'email',
-            'category',
+            'tenant_category_id',
             'plan_id',
         ];
     }
@@ -48,5 +44,10 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     public function subscriptions()
     {
         return $this->hasMany(Subscription::class);
+    }
+
+    public function tenantCategory()
+    {
+        return $this->belongsTo(TenantCategory::class);
     }
 }

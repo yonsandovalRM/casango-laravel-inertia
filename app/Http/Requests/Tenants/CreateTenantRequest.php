@@ -36,7 +36,7 @@ class CreateTenantRequest extends FormRequest
             'owner_password' => ['required', 'string', 'min:8', 'confirmed'],
             'owner_password_confirmation' => ['required', 'string'],
             'plan_id' => ['required', 'exists:plans,id'],
-            'category' => ['required', 'string', 'max:100'],
+            'tenant_category_id' => ['required', 'string', 'max:100', Rule::exists('tenant_categories', 'id')],
             'billing' => ['required', 'in:monthly,annual'],
         ];
     }

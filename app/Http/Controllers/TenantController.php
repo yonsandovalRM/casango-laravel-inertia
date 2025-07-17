@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Enums\SubscriptionStatus;
 use App\Http\Requests\Tenants\CreateTenantRequest;
 use App\Http\Resources\PlanResource;
+use App\Http\Resources\TenantCategoryResource;
 use App\Http\Resources\TenantResource;
 use App\Jobs\SetupTenantJob;
 use App\Models\Company;
 use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\Tenant;
+use App\Models\TenantCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
@@ -37,6 +39,7 @@ class TenantController extends Controller
     public function create(Request $request)
     {
         $plans = Plan::where('active', true)->get();
+        $tenant_categories = TenantCategory::where('is_active', true)->get();
         if ($request->plan) {
             $plan = $plans->findOrFail($request->plan);
         } else {
@@ -47,13 +50,14 @@ class TenantController extends Controller
         return Inertia::render('tenants/create', [
             'plans' => PlanResource::collection($plans)->toArray(request()),
             'plan' => $plan ? PlanResource::make($plan)->toArray(request()) : null,
+            'tenant_categories' => TenantCategoryResource::collection($tenant_categories)->toArray(request()),
             'billing' => $billing,
         ]);
     }
 
     public function created(Request $request)
     {
-        $tenant = Tenant::with(['subscriptions' => function ($query) {
+        $tenant = Tenant::with(['tenantCategory', 'subscriptions' => function ($query) {
             $query->where('is_active', true)->with('plan');
         }])->findOrFail($request->tenant);
 
@@ -76,6 +80,7 @@ class TenantController extends Controller
         $tenant_id = $request->subdomain;
         $domain = $request->subdomain . '.' . config('tenancy.central_domains')[0];
         $plan = Plan::findOrFail($request->plan_id);
+        $tenant_category = TenantCategory::findOrFail($request->tenant_category_id);
 
         if ($this->validateDomainExists($domain)) {
             return redirect()->route('tenants.create')->with('error', __('tenant.subdomain_already_in_use'));
@@ -91,7 +96,7 @@ class TenantController extends Controller
                 'name' => $request->name,
                 'email' => $request->owner_email,
                 'plan_id' => $plan->id,
-                'category' => $request->category,
+                'tenant_category_id' => $tenant_category->id,
             ]);
 
             $tenant->domains()->create([
