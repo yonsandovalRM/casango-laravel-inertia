@@ -12,6 +12,11 @@ class TimezoneService
 
     public function __construct()
     {
+        if (!function_exists('tenant') || !tenant()) {
+            // Si no hay tenant, usamos la configuración por defecto
+            $this->timezone = config('app.timezone', 'UTC');
+            return;
+        }
         $this->company = Company::first();
         $this->timezone = $this->company?->timezone ?? config('app.timezone', 'UTC');
     }
