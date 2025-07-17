@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use App\Services\TimezoneService;
+use App\Traits\HasCompanyTimezone;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory, HasUuid, HasCompanyTimezone;
 
     protected $fillable = [
         'client_id',
@@ -24,7 +26,7 @@ class Booking extends Model
         'payment_status',
         'payment_method',
         'payment_id',
-        'phone',
+        'phone'
     ];
 
     public function client()
@@ -100,6 +102,72 @@ class Booking extends Model
                 'has_data' => (bool) $formData
             ];
         });
+    }
+
+    /**
+     * Mutar fecha al guardar (convertir a UTC)
+     */
+    public function setDateAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['date'] = $this->fromCompanyTimezone($value)->format('Y-m-d');
+        }
+    }
+
+    /**
+     * Mutar datetime al guardar (convertir a UTC)
+     */
+    public function setCreatedAtAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['created_at'] = $this->fromCompanyTimezone($value);
+        }
+    }
+
+    /**
+     * Accessor para obtener fecha en timezone de compañía
+     */
+    public function getCompanyDateAttribute()
+    {
+        return $this->toCompanyTimezone('date')?->format('Y-m-d');
+    }
+
+    /**
+     * Accessor para obtener datetime completo en timezone de compañía
+     */
+    public function getCompanyDateTimeAttribute()
+    {
+        if (!$this->date || !$this->time) {
+            return null;
+        }
+
+        $dateTime = $this->date . ' ' . $this->time;
+        return $this->toCompanyTimezone('created_at');
+    }
+
+    /**
+     * Scope para obtener reservas de hoy (timezone compañía)
+     */
+    public function scopeToday($query)
+    {
+        $today = app(TimezoneService::class)->today()->format('Y-m-d');
+        return $query->whereCompanyDate('date', '=', $today);
+    }
+
+    /**
+     * Scope para obtener reservas de una fecha específica
+     */
+    public function scopeForDate($query, $date)
+    {
+        return $query->whereCompanyDate('date', '=', $date);
+    }
+
+    /**
+     * Scope para obtener reservas en un rango de fechas
+     */
+    public function scopeBetweenDates($query, $startDate, $endDate)
+    {
+        return $query->whereBetweenCompanyDates('date', $startDate, $endDate);
     }
 
     /**

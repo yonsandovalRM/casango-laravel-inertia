@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge';
+import { useDateFormatter } from '@/hooks/use-date-formatter';
 import { BookingResource, bookingStatusMap, paymentStatusMap } from '@/interfaces/booking';
 import { formatCurrency, formatTimeAMPM } from '@/lib/utils';
 import { AlertCircle, Calendar, CheckCircle, Clock, CreditCard, DollarSign, FileText, Phone, User, XCircle } from 'lucide-react';
@@ -42,6 +43,7 @@ const getPaymentStatusColor = (status: string) => {
 };
 
 export default function EventCard({ booking }: { booking: BookingResource }) {
+    const { formatDate } = useDateFormatter();
     return (
         <ScrollArea className="max-h-96">
             <div className="pb-4">
@@ -83,13 +85,7 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
                 <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        <span>
-                            {new Date(booking.date).toLocaleDateString('es-CL', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric',
-                            })}
-                        </span>
+                        <span>{formatDate(booking.date, { preset: 'medium' })}</span>
                     </div>
                     <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />

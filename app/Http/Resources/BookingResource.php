@@ -2,12 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Services\TimezoneService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookingResource extends JsonResource
 {
     public function toArray($request)
     {
+        $timezoneService = app(TimezoneService::class);
         return [
             'id' => $this->id,
             'client' => UserResource::make($this->client)->toArray(request()),
@@ -22,6 +24,8 @@ class BookingResource extends JsonResource
             'status' => $this->status,
             'phone' => $this->phone,
             'payment_status' => $this->payment_status,
+            'created_at' => $timezoneService->formatForFrontend($this->created_at),
+            'updated_at' => $timezoneService->formatForFrontend($this->updated_at),
         ];
     }
 }
