@@ -31,8 +31,60 @@ class TenantController extends Controller
             $query->where('is_active', true)->with('plan');
         }])->get();
 
+        // Estadísticas generales
+        $stats = [
+            'total_tenants' => Tenant::count(),
+            'active_tenants' => Tenant::whereHas('subscriptions', function ($query) {
+                $query->where('is_active', true)
+                    ->whereIn('status', [SubscriptionStatus::ACTIVE, SubscriptionStatus::TRIAL]);
+            })->count(),
+            'trial_tenants' => Tenant::whereHas('subscriptions', function ($query) {
+                $query->where('is_active', true)
+                    ->where('status', SubscriptionStatus::TRIAL);
+            })->count(),
+            'suspended_tenants' => Tenant::whereHas('subscriptions', function ($query) {
+                $query->where('status', SubscriptionStatus::SUSPENDED);
+            })->count(),
+            'monthly_revenue' => Subscription::where('is_active', true)
+                ->where('billing_cycle', 'monthly')
+                ->sum('price'),
+            'annual_revenue' => Subscription::where('is_active', true)
+                ->where('billing_cycle', 'annual')
+                ->sum('price'),
+            'grace_period_tenants' => Tenant::whereHas('subscriptions', function ($query) {
+                $query->where('status', SubscriptionStatus::ON_GRACE_PERIOD);
+            })->count(),
+            'new_tenants_this_month' => Tenant::whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count(),
+        ];
+
+        // Estadísticas por plan
+        $plan_stats = Plan::withCount(['subscriptions' => function ($query) {
+            $query->where('is_active', true);
+        }])->get()->map(function ($plan) {
+            return [
+                'name' => $plan->name,
+                'count' => $plan->subscriptions_count,
+                'revenue' => Subscription::where('plan_id', $plan->id)
+                    ->where('is_active', true)
+                    ->sum('price'),
+            ];
+        });
+
+        // Estadísticas por categoría
+        $category_stats = TenantCategory::withCount('tenants')->get()->map(function ($category) {
+            return [
+                'name' => $category->name,
+                'count' => $category->tenants_count,
+            ];
+        });
+
         return Inertia::render('tenants/index', [
             'tenants' => TenantResource::collection($tenants)->toArray(request()),
+            'stats' => $stats,
+            'plan_stats' => $plan_stats,
+            'category_stats' => $category_stats,
         ]);
     }
 
