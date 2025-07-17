@@ -82,6 +82,12 @@ export const PERMISSIONS = {
         delete: 'delete form templates',
         view: 'view form templates',
     },
+    tenantCategories: {
+        create: 'create tenant categories',
+        edit: 'edit tenant categories',
+        delete: 'delete tenant categories',
+        view: 'view tenant categories',
+    },
 };
 
 export const ROLES = {

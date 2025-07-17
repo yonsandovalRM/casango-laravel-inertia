@@ -9,6 +9,7 @@ import { plans } from './plans';
 import { professionals } from './professionals';
 import { profile } from './profile';
 import { services } from './services';
+import { tenantCategories } from './tenant-categories';
 import { ui } from './ui';
 import { users } from './users';
 // the translations
@@ -28,6 +29,7 @@ const resources = {
             ...professionals.en,
             ...bookings.en,
             ...formTemplates.en,
+            ...tenantCategories.en,
         },
     },
     es: {
@@ -43,6 +45,7 @@ const resources = {
             ...professionals.es,
             ...bookings.es,
             ...formTemplates.es,
+            ...tenantCategories.es,
         },
     },
 };

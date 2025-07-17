@@ -24,6 +24,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         'data' => 'array',
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(TenantCategory::class, 'category', 'id');
+    }
+
     public static function getCustomColumns(): array
     {
         return [

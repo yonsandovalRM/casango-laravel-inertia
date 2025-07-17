@@ -84,7 +84,6 @@ function AppSidebar({ t }: { t: any }) {
             icon: Users,
             permission: PERMISSIONS.users.view,
         },
-
         {
             title: t('ui.menu.services'),
             href: route('services.index'),
@@ -102,6 +101,12 @@ function AppSidebar({ t }: { t: any }) {
             href: route('form-templates.index'),
             icon: LayoutTemplate,
             permission: PERMISSIONS.formTemplates.view,
+        },
+        {
+            title: t('ui.menu.tenant_categories'),
+            href: route('tenant-categories.index'),
+            icon: Tags,
+            permission: PERMISSIONS.tenantCategories.view,
         },
     ];
     const footerNavItems: NavItem[] = [

@@ -5,12 +5,12 @@ import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import { withTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { PlanResource } from '../../interfaces/plan';
 
-export default withTranslation()(PlansIndex);
-function PlansIndex({ plans, t }: { plans: PlanResource[]; t: any }) {
+export default function PlansIndex({ plans }: { plans: PlanResource[] }) {
     const { hasPermission } = usePermissions();
+    const { t } = useTranslation();
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -19,7 +19,7 @@ function PlansIndex({ plans, t }: { plans: PlanResource[]; t: any }) {
         },
         {
             title: t('plans.title'),
-            href: '/plans',
+            href: route('plans.index'),
         },
     ];
 

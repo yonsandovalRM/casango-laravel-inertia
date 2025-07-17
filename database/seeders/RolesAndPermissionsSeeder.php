@@ -31,11 +31,18 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'create invitations']);
         Permission::create(['name' => 'view invitations']);
 
+        Permission::create(['name' => 'view tenant categories']);
+        Permission::create(['name' => 'edit tenant categories']);
+        Permission::create(['name' => 'delete tenant categories']);
+        Permission::create(['name' => 'create tenant categories']);
+
+
+
         // update cache to know about the newly created permissions (required if using WithoutModelEvents in seeders)
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
 
- 
+
         // or may be done by chaining
         $role = Role::create(['name' => 'owner'])
             ->givePermissionTo(Permission::all());

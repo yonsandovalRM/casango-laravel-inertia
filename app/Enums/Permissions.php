@@ -13,6 +13,12 @@ class Permissions
     public const TENANTS_DELETE = 'delete tenants';
     public const TENANTS_VIEW = 'view tenants';
 
+    public const TENANT_CATEGORIES_CREATE = 'create tenant categories';
+    public const TENANT_CATEGORIES_EDIT = 'edit tenant categories';
+    public const TENANT_CATEGORIES_DELETE = 'delete tenant categories';
+    public const TENANT_CATEGORIES_VIEW = 'view tenant categories';
+
+
     public const USERS_CREATE = 'create users';
     public const USERS_EDIT = 'edit users';
     public const USERS_DELETE = 'delete users';
@@ -72,6 +78,17 @@ class Permissions
             self::TENANTS_VIEW,
         ];
     }
+
+    public static function tenantCategories(): array
+    {
+        return [
+            self::TENANT_CATEGORIES_CREATE,
+            self::TENANT_CATEGORIES_EDIT,
+            self::TENANT_CATEGORIES_DELETE,
+            self::TENANT_CATEGORIES_VIEW,
+        ];
+    }
+
 
     public static function users(): array
     {

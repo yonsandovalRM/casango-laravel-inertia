@@ -44,6 +44,7 @@ foreach (config('tenancy.central_domains') as $domain) {
         Route::middleware('auth')->group(function () {
             require __DIR__ . '/settings.php';
             require __DIR__ . '/main/plans.php';
+            require __DIR__ . '/main/tenant-categories.php';
 
             require __DIR__ . '/common/invitations.php';
             require __DIR__ . '/common/users.php';
