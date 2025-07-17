@@ -1,10 +1,11 @@
+import { CategoryResource } from './category';
 import { SubscriptionResource } from './subscription';
 
 export interface TenantResource {
     id: string;
     name: string;
     email: string;
-    category: string;
+    category: CategoryResource;
     subscription: SubscriptionResource;
     domain: string;
     url: string;

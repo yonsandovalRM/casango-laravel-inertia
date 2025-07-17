@@ -21,7 +21,7 @@ class SubscriptionResource extends JsonResource
             'plan_id' => $this->plan_id,
             'price' => $this->price,
             'currency' => $this->currency,
-            'is_monthly' => $this->is_monthly,
+            'is_monthly' => $this->billing_cycle === 'monthly',
             'is_active' => $this->is_active,
             'payment_status' => $this->payment_status,
 

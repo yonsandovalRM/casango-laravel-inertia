@@ -225,7 +225,7 @@ class DashboardDataService
      */
     public function getRecentTenants(int $limit = 10): array
     {
-        return Tenant::with(['plan', 'subscriptions' => function ($query) {
+        return Tenant::with(['plan', 'tenantCategory', 'subscriptions' => function ($query) {
             $query->latest()->first();
         }])
             ->latest()
@@ -235,7 +235,7 @@ class DashboardDataService
                 return [
                     'id' => $tenant->id,
                     'name' => $tenant->name,
-                    'category' => $tenant->category,
+                    'category' => $tenant->tenantCategory,
                     'created_at' => $tenant->created_at,
                     'plan' => $tenant->plan,
                     'status' => $this->getTenantStatus($tenant),
@@ -245,17 +245,25 @@ class DashboardDataService
             ->toArray();
     }
 
+
     /**
      * Obtiene distribución de tenants por categoría
      */
     public function getTenantsByCategory(): array
     {
-        return Tenant::select('category', DB::raw('count(*) as count'))
-            ->whereNotNull('category')
-            ->groupBy('category')
+        return Tenant::with('tenantCategory')
+            ->select('tenant_category_id', DB::raw('count(*) as count'))
+            ->whereNotNull('tenant_category_id')
+            ->groupBy('tenant_category_id')
             ->orderBy('count', 'desc')
             ->limit(5)
             ->get()
+            ->map(function ($item) {
+                return [
+                    'count' => $item->count,
+                    'category' => $item->tenantCategory
+                ];
+            })
             ->toArray();
     }
 

@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { TenantCategoryResource } from '@/interfaces/tenant-category';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import {
@@ -60,7 +61,7 @@ interface MainDashboardProps {
     recentTenants: Array<{
         id: string;
         name: string;
-        category: string;
+        category: TenantCategoryResource;
         created_at: string;
         plan: {
             name: string;
@@ -68,7 +69,7 @@ interface MainDashboardProps {
         };
     }>;
     tenantsByCategory: Array<{
-        category: string;
+        category: TenantCategoryResource;
         count: number;
     }>;
     subscriptionStats: Record<string, number>;
@@ -335,12 +336,13 @@ export default function MainDashboard({ stats, chartData, topPlans, recentTenant
                                 Negocios por Categoría
                             </CardTitle>
                         </CardHeader>
+
                         <CardContent>
                             <div className="space-y-4">
                                 {tenantsByCategory.map((category, index) => (
-                                    <div key={category.category} className="space-y-2">
+                                    <div key={category.category.id} className="space-y-2">
                                         <div className="flex items-center justify-between">
-                                            <span className="font-medium capitalize">{category.category}</span>
+                                            <span className="font-medium capitalize">{category.category.name}</span>
                                             <span className="text-sm text-muted-foreground">{category.count}</span>
                                         </div>
                                         <Progress value={(category.count / stats.totalTenants) * 100} className="h-2" />
@@ -372,7 +374,7 @@ export default function MainDashboard({ stats, chartData, topPlans, recentTenant
                                         <div className="flex items-start justify-between">
                                             <div>
                                                 <p className="font-medium">{tenant.name}</p>
-                                                <p className="text-sm text-muted-foreground capitalize">{tenant.category || 'Sin categoría'}</p>
+                                                <p className="text-sm text-muted-foreground capitalize">{tenant.category.name || 'Sin categoría'}</p>
                                                 <p className="text-xs text-muted-foreground">{new Date(tenant.created_at).toLocaleDateString()}</p>
                                             </div>
                                             <div className="text-right">
