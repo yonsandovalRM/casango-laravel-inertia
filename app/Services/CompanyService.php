@@ -123,7 +123,6 @@ class CompanyService
         if (!$company) {
             return $this->getDefaultConfiguration();
         }
-
         return [
             'basic_info' => [
                 'name' => $company->name,

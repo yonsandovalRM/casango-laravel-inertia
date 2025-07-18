@@ -26,7 +26,6 @@ class CompanySchedule extends Model
         'has_break' => 'boolean',
     ];
 
-    protected $appends = ['formatted_schedule'];
 
     public function company()
     {
