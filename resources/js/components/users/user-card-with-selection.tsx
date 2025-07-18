@@ -85,19 +85,13 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                         </div>
 
                         {(hasPermission(PERMISSIONS.users.edit) || hasPermission(PERMISSIONS.users.delete)) && (
-                            <DropdownMenu>
+                            <DropdownMenu modal>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                                         <MoreVertical className="h-4 w-4" />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    {hasPermission(PERMISSIONS.users.edit) && (
-                                        <DropdownMenuItem onSelect={() => setShowEditUser(true)}>
-                                            <Edit className="mr-2 h-4 w-4" />
-                                            Editar
-                                        </DropdownMenuItem>
-                                    )}
                                     {hasPermission(PERMISSIONS.users.delete) && (
                                         <>
                                             <DropdownMenuSeparator />
@@ -114,6 +108,12 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                 </CardHeader>
 
                 <CardContent className="pt-0">
+                    {hasPermission(PERMISSIONS.users.edit) && (
+                        <Button onClick={() => setShowEditUser(true)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Editar
+                        </Button>
+                    )}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <Badge className={getRoleBadgeColor(user.role)}>

@@ -42,7 +42,7 @@ export const FormUser = ({ data, setData, errors, roles }: FormUserProps) => {
                                 Rol
                             </Label>
                             <Select name="role" value={data.role} onValueChange={(value) => setData('role', value)}>
-                                <SelectTrigger>
+                                <SelectTrigger autoFocus>
                                     <SelectValue placeholder="Selecciona un rol" />
                                 </SelectTrigger>
                                 <SelectContent>

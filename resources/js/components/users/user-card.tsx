@@ -74,8 +74,13 @@ export const UserCard = ({ user }: UserCardProps) => {
                                     {user.email}
                                 </div>
                             </div>
-                        </div>
-
+                        </div>{' '}
+                        {hasPermission(PERMISSIONS.users.edit) && (
+                            <Button onClick={() => setShowEditUser(true)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Editar
+                            </Button>
+                        )}
                         {(hasPermission(PERMISSIONS.users.edit) || hasPermission(PERMISSIONS.users.delete)) && (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
