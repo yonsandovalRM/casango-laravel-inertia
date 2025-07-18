@@ -42,6 +42,7 @@ return [
         ],
     ],
 
+
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
@@ -54,6 +55,30 @@ return [
         'redirect' => env('APP_URL') . '/auth/microsoft/callback', // Dominio central
     ],
 
+    /* 
+        VIDEO CONFERENCIA
+    */
+    'jitsi' => [
+        'base_url' => env('JITSI_BASE_URL', 'https://meet.jit.si'),
+        'app_id' => env('JITSI_APP_ID'),
+        'api_key' => env('JITSI_API_KEY'),
+    ],
 
+    'zoom' => [
+        'api_key' => env('ZOOM_API_KEY'),
+        'api_secret' => env('ZOOM_API_SECRET'),
+        'base_url' => env('ZOOM_BASE_URL', 'https://api.zoom.us/v2'),
+    ],
+
+    'daily' => [
+        'api_key' => env('DAILY_API_KEY'),
+        'base_url' => env('DAILY_BASE_URL', 'https://api.daily.co/v1'),
+    ],
+
+    'google_meet' => [
+        'client_id' => env('GOOGLE_MEET_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_MEET_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_MEET_REDIRECT_URI'),
+    ],
 
 ];

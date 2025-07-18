@@ -21,10 +21,12 @@ return new class extends Migration
             $table->integer('duration')->nullable();
             $table->integer('preparation_time')->nullable();
             $table->integer('post_service_time')->nullable();
+            $table->string('service_type')->default('in_person');
             $table->boolean('is_active')->default(true);
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             $table->softDeletes();
             $table->timestamps();
+            $table->index('service_type');
         });
     }
 

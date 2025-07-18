@@ -31,6 +31,7 @@ class UpdateCompanyRequest extends FormRequest
             'currency' => 'nullable|string|max:255',
             'timezone' => 'nullable|string|max:255',
             'locale' => 'nullable|string|max:255',
+            'allows_video_calls' => 'nullable|boolean',
             'schedules' => 'nullable|array',
             'schedules.*.day_of_week' => 'required|string|in:monday,tuesday,wednesday,thursday,friday,saturday,sunday',
             'schedules.*.open_time' => [
@@ -105,6 +106,11 @@ class UpdateCompanyRequest extends FormRequest
                         );
                     }
                 }
+            }
+
+            if ($this->input('allows_video_calls') === true) {
+                // Opcional: agregar validaciones adicionales si se habilitan videollamadas
+                // Por ejemplo, verificar que hay al menos un método de videollamada configurado
             }
         });
     }

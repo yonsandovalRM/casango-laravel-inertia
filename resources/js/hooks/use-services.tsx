@@ -13,7 +13,7 @@ export const useServices = (searchTerm: string, category: string, sortBy: string
 
     const getServices = async () => {
         const response = await axios.get(route('services.get-services'));
-        setServices(response.data);
+        setServices(response.data.services);
         setHighlightedServices(response.data.slice(0, 4));
     };
 

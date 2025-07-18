@@ -2,23 +2,17 @@
 
 namespace App\Http\Requests\Services;
 
+use App\Enums\ServiceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreServicesRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
@@ -26,11 +20,26 @@ class StoreServicesRequest extends FormRequest
             'description' => 'nullable|string|max:255',
             'notes' => 'nullable|string|max:255',
             'category_id' => 'required|uuid|exists:categories,id',
-            'price' => 'nullable|numeric',
-            'duration' => 'required|integer',
-            'preparation_time' => 'nullable|integer',
-            'post_service_time' => 'nullable|integer',
+            'price' => 'nullable|numeric|min:0',
+            'duration' => 'required|integer|min:1',
+            'preparation_time' => 'nullable|integer|min:0',
+            'post_service_time' => 'nullable|integer|min:0',
+            'service_type' => [
+                'required',
+                'string',
+                Rule::in(array_column(ServiceType::cases(), 'value'))
+            ],
             'is_active' => 'required|boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'service_type.required' => 'El tipo de servicio es obligatorio',
+            'service_type.in' => 'El tipo de servicio seleccionado no es válido',
+            'duration.min' => 'La duración debe ser al menos 1 minuto',
+            'price.min' => 'El precio no puede ser negativo',
         ];
     }
 }

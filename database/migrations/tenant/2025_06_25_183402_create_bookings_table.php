@@ -30,7 +30,12 @@ return new class extends Migration
             $table->string('payment_method')->nullable();
             $table->string('payment_id')->nullable();
             $table->string('phone')->nullable();
+            $table->string('delivery_type')->default('in_person');
+            $table->string('video_call_link')->nullable();
+            $table->json('video_call_metadata')->nullable();
+
             $table->timestamps();
+            $table->index('delivery_type');
         });
     }
 

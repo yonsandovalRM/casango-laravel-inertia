@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('currency')->default('CLP');
             $table->string('timezone')->default('America/Santiago');
             $table->string('locale')->default('es-CL');
+            $table->boolean('allows_video_calls')->default(false);
             $table->timestamps();
         });
     }

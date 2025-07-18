@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-
     use HasFactory, HasUuid;
 
     protected $fillable = [
@@ -21,19 +20,38 @@ class Company extends Model
         'currency',
         'timezone',
         'locale',
+        'allows_video_calls',
     ];
 
-
+    protected $casts = [
+        'allows_video_calls' => 'boolean',
+    ];
 
     public function schedules()
     {
         return $this->hasMany(CompanySchedule::class);
     }
 
-    // En el modelo Company
+    // Métodos helper para videollamadas
+    public function supportsVideoCalls(): bool
+    {
+        return $this->allows_video_calls ?? false;
+    }
+
+    public function enableVideoCalls(): void
+    {
+        $this->update(['allows_video_calls' => true]);
+    }
+
+    public function disableVideoCalls(): void
+    {
+        $this->update(['allows_video_calls' => false]);
+    }
+
+    // Métodos existentes de horarios...
     public function getDailySchedulesArray(): array
     {
-        // Mapeo de días en inglés a español (abreviados)
+        // Código existente...
         $dayMap = [
             'monday'    => 'Lun.',
             'tuesday'   => 'Mar.',
@@ -44,7 +62,6 @@ class Company extends Model
             'sunday'    => 'Dom.'
         ];
 
-        // Orden de días de la semana
         $weekDaysOrder = [
             'monday',
             'tuesday',
@@ -55,12 +72,9 @@ class Company extends Model
             'sunday'
         ];
 
-        // Preparamos el array de resultados
         $dailySchedules = [];
 
-        // Recorremos todos los días de la semana en orden
         foreach ($weekDaysOrder as $day) {
-            // Buscamos el horario para este día
             $schedule = $this->schedules->firstWhere('day_of_week', $day);
 
             if ($schedule) {
@@ -69,13 +83,10 @@ class Company extends Model
                     continue;
                 }
 
-                // Formatear horas
                 $openTime = date('H:i', strtotime($schedule->open_time));
                 $closeTime = date('H:i', strtotime($schedule->close_time));
-
                 $scheduleString = "{$openTime} a {$closeTime}";
 
-                // Agregar break si existe
                 if ($schedule->has_break && $schedule->break_start_time && $schedule->break_end_time) {
                     $breakStart = date('H:i', strtotime($schedule->break_start_time));
                     $breakEnd = date('H:i', strtotime($schedule->break_end_time));
@@ -84,7 +95,6 @@ class Company extends Model
 
                 $dailySchedules[$dayMap[$day]] = $scheduleString;
             } else {
-                // Si no existe registro para este día, marcamos como no disponible
                 $dailySchedules[$dayMap[$day]] = 'Horario no definido';
             }
         }
@@ -94,19 +104,15 @@ class Company extends Model
 
     public function getGroupedSchedule(): array
     {
-        // Agrupar días por tipo
+        // Código existente...
         $weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-        $saturday = 'saturday';
-        $sunday = 'sunday';
 
-        // Obtener horarios de lunes a viernes
         $weekdaySchedules = collect($this->schedules)
             ->whereIn('day_of_week', $weekdays)
             ->filter(fn($s) => $s->is_open);
 
         $firstWeekday = $weekdaySchedules->first();
 
-        // Determinar si todos los días de semana tienen el mismo horario
         $allSameWeekday = $weekdaySchedules->every(function ($s) use ($firstWeekday) {
             return $s->open_time === $firstWeekday->open_time &&
                 $s->close_time === $firstWeekday->close_time &&
@@ -131,23 +137,20 @@ class Company extends Model
 
         $schedule = [];
 
-        // Weekdays
         if ($allSameWeekday && $firstWeekday) {
             $schedule['weekdays'] = 'Lunes a Viernes: ' . $formatSchedule($firstWeekday);
         } else {
             $schedule['weekdays'] = 'Lunes a Viernes: Horario variable';
         }
 
-        // Saturday
-        $sat = $this->schedules->firstWhere('day_of_week', $saturday);
+        $sat = $this->schedules->firstWhere('day_of_week', 'saturday');
         if ($sat && $sat->is_open) {
             $schedule['saturday'] = 'Sábados: ' . $formatSchedule($sat);
         } else {
             $schedule['saturday'] = 'Sábados: Cerrado';
         }
 
-        // Sunday
-        $sun = $this->schedules->firstWhere('day_of_week', $sunday);
+        $sun = $this->schedules->firstWhere('day_of_week', 'sunday');
         if ($sun && $sun->is_open) {
             $schedule['sunday'] = 'Domingos: ' . $formatSchedule($sun);
         } else {

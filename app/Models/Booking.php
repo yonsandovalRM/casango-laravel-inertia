@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\BookingDeliveryType;
 use App\Services\TimezoneService;
 use App\Traits\HasCompanyTimezone;
 use App\Traits\HasUuid;
@@ -26,7 +27,15 @@ class Booking extends Model
         'payment_status',
         'payment_method',
         'payment_id',
-        'phone'
+        'phone',
+        'delivery_type',
+        'video_call_link',
+        'video_call_metadata',
+    ];
+
+    protected $casts = [
+        'delivery_type' => BookingDeliveryType::class,
+        'video_call_metadata' => 'array',
     ];
 
     public function client()
@@ -44,35 +53,73 @@ class Booking extends Model
         return $this->belongsTo(Service::class, 'service_id');
     }
 
-    public function getTotalAttribute()
-    {
-        return $this->price - $this->discount;
-    }
-
     public function userProfileData()
     {
         return $this->hasOne(UserProfileData::class);
     }
 
-    /**
-     * Relación con múltiples formularios de reserva
-     */
     public function bookingFormData()
     {
         return $this->hasMany(BookingFormData::class);
     }
 
-    /**
-     * Obtener datos de formulario específico por template
-     */
+    // Métodos helper para videollamadas
+    public function isVideoCall(): bool
+    {
+        return $this->delivery_type === BookingDeliveryType::VIDEO_CALL;
+    }
+
+    public function isInPerson(): bool
+    {
+        return $this->delivery_type === BookingDeliveryType::IN_PERSON;
+    }
+
+    public function hasVideoCallLink(): bool
+    {
+        return !empty($this->video_call_link);
+    }
+
+    public function getVideoCallPlatform(): ?string
+    {
+        if (!$this->hasVideoCallLink()) {
+            return null;
+        }
+
+        if (str_contains($this->video_call_link, 'meet.jit.si')) return 'jitsi';
+        if (str_contains($this->video_call_link, 'zoom.us')) return 'zoom';
+        if (str_contains($this->video_call_link, 'meet.google.com')) return 'google_meet';
+        if (str_contains($this->video_call_link, 'teams.microsoft.com')) return 'teams';
+
+        return 'other';
+    }
+
+    // Scopes
+    public function scopeVideoCall($query)
+    {
+        return $query->where('delivery_type', BookingDeliveryType::VIDEO_CALL->value);
+    }
+
+    public function scopeInPerson($query)
+    {
+        return $query->where('delivery_type', BookingDeliveryType::IN_PERSON->value);
+    }
+
+    public function scopeWithVideoCallLink($query)
+    {
+        return $query->whereNotNull('video_call_link');
+    }
+
+    // Accessors y Mutators existentes...
+    public function getTotalAttribute()
+    {
+        return $this->price - $this->discount;
+    }
+
     public function getBookingFormDataByTemplate($templateId)
     {
         return $this->bookingFormData()->where('form_template_id', $templateId)->first();
     }
 
-    /**
-     * Verificar si tiene datos para un template específico
-     */
     public function hasDataForTemplate($templateId): bool
     {
         return $this->bookingFormData()
@@ -81,9 +128,6 @@ class Booking extends Model
             ->exists();
     }
 
-    /**
-     * Obtener templates activos con sus datos correspondientes
-     */
     public function getActiveBookingFormsWithData()
     {
         $activeTemplates = FormTemplate::bookingForm()
@@ -104,9 +148,7 @@ class Booking extends Model
         });
     }
 
-    /**
-     * Mutar fecha al guardar (convertir a UTC)
-     */
+    // Timezone methods...
     public function setDateAttribute($value)
     {
         if ($value) {
@@ -114,9 +156,6 @@ class Booking extends Model
         }
     }
 
-    /**
-     * Mutar datetime al guardar (convertir a UTC)
-     */
     public function setCreatedAtAttribute($value)
     {
         if ($value) {
@@ -124,17 +163,11 @@ class Booking extends Model
         }
     }
 
-    /**
-     * Accessor para obtener fecha en timezone de compañía
-     */
     public function getCompanyDateAttribute()
     {
         return $this->toCompanyTimezone('date')?->format('Y-m-d');
     }
 
-    /**
-     * Accessor para obtener datetime completo en timezone de compañía
-     */
     public function getCompanyDateTimeAttribute()
     {
         if (!$this->date || !$this->time) {
@@ -145,34 +178,22 @@ class Booking extends Model
         return $this->toCompanyTimezone('created_at');
     }
 
-    /**
-     * Scope para obtener reservas de hoy (timezone compañía)
-     */
     public function scopeToday($query)
     {
         $today = app(TimezoneService::class)->today()->format('Y-m-d');
         return $query->whereCompanyDate('date', '=', $today);
     }
 
-    /**
-     * Scope para obtener reservas de una fecha específica
-     */
     public function scopeForDate($query, $date)
     {
         return $query->whereCompanyDate('date', '=', $date);
     }
 
-    /**
-     * Scope para obtener reservas en un rango de fechas
-     */
     public function scopeBetweenDates($query, $startDate, $endDate)
     {
         return $query->whereBetweenCompanyDates('date', $startDate, $endDate);
     }
 
-    /**
-     * Scope para incluir todos los datos de formularios
-     */
     public function scopeWithAllFormData($query)
     {
         return $query->with([
@@ -182,9 +203,6 @@ class Booking extends Model
         ]);
     }
 
-    /**
-     * Scope para incluir solo formularios activos
-     */
     public function scopeWithActiveFormData($query)
     {
         return $query->with([
