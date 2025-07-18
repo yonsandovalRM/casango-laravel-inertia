@@ -202,7 +202,9 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
                                 {subscription.trial_ends_at && subscription.on_trial && (
                                     <div>
                                         <p className="text-sm text-muted-foreground">Prueba expira</p>
-                                        <p className="text-lg font-semibold text-blue-600">{subscription.days_until_expiry} días restantes</p>
+                                        <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                                            {subscription.days_until_expiry} días restantes
+                                        </p>
                                     </div>
                                 )}
 

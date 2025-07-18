@@ -1,15 +1,19 @@
 import { Role } from '@/interfaces/role';
 import { UserFormData, UserResource } from '@/interfaces/user';
 import { useForm, usePage } from '@inertiajs/react';
-import { PencilIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
-import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '../ui/sheet';
 import { FormUser } from './form-user';
 
-export const EditUser = ({ user }: { user: UserResource }) => {
-    const [open, setOpen] = useState(false);
+interface EditUserProps {
+    user: UserResource;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+}
+
+export const EditUser = ({ user, open, onOpenChange }: EditUserProps) => {
     const { roles } = usePage<{ roles: Role[] }>().props;
 
     const { data, setData, put, processing, errors, clearErrors, reset } = useForm<UserFormData>({
@@ -19,10 +23,12 @@ export const EditUser = ({ user }: { user: UserResource }) => {
     });
 
     useEffect(() => {
-        setData('name', user.name);
-        setData('email', user.email);
-        setData('role', user.role);
-    }, [user]);
+        if (open) {
+            setData('name', user.name);
+            setData('email', user.email);
+            setData('role', user.role);
+        }
+    }, [user, open]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,22 +38,19 @@ export const EditUser = ({ user }: { user: UserResource }) => {
             },
         });
     };
+
     const handleCancel = () => {
-        setOpen(false);
+        onOpenChange(false);
         reset();
         clearErrors();
     };
+
     return (
-        <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={() => setOpen(true)}>
-                    <PencilIcon className="size-4" />
-                </Button>
-            </SheetTrigger>
+        <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent>
                 <SheetHeader>
                     <SheetTitle>Editar usuario</SheetTitle>
-                    <SheetDescription>Edita el usuario para tu aplicación</SheetDescription>
+                    <SheetDescription>Edita la información del usuario {user.name}</SheetDescription>
                 </SheetHeader>
                 <ScrollArea className="h-[calc(100vh-200px)]">
                     <form id="user-form" onSubmit={handleSubmit}>
