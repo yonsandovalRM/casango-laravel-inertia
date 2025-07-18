@@ -31,10 +31,25 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
     const { hasPermission } = usePermissions();
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [showEditUser, setShowEditUser] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const handleDelete = () => {
         router.delete(route('users.destroy', { user: user.id }));
         setShowDeleteDialog(false);
+    };
+
+    const handleEditClick = () => {
+        setDropdownOpen(false); // Close dropdown first
+        setTimeout(() => {
+            setShowEditUser(true); // Then open edit dialog
+        }, 100);
+    };
+
+    const handleDeleteClick = () => {
+        setDropdownOpen(false); // Close dropdown first
+        setTimeout(() => {
+            setShowDeleteDialog(true); // Then open delete dialog
+        }, 100);
     };
 
     const getInitials = (name: string) => {
@@ -69,6 +84,7 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                                 checked={isSelected}
                                 onCheckedChange={(checked) => onSelectionChange(user.id, checked as boolean)}
                                 className="mt-1"
+                                aria-label={`Seleccionar usuario ${user.name}`}
                             />
                             <Avatar className="h-12 w-12">
                                 <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 font-semibold text-white">
@@ -85,15 +101,16 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                         </div>
 
                         {(hasPermission(PERMISSIONS.users.edit) || hasPermission(PERMISSIONS.users.delete)) && (
-                            <DropdownMenu>
+                            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                                         <MoreVertical className="h-4 w-4" />
+                                        <span className="sr-only">Abrir menú</span>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent align="end" className="w-48">
                                     {hasPermission(PERMISSIONS.users.edit) && (
-                                        <DropdownMenuItem onSelect={() => setShowEditUser(true)}>
+                                        <DropdownMenuItem onSelect={handleEditClick}>
                                             <Edit className="mr-2 h-4 w-4" />
                                             Editar
                                         </DropdownMenuItem>
@@ -101,7 +118,7 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                                     {hasPermission(PERMISSIONS.users.delete) && (
                                         <>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-600" onSelect={() => setShowDeleteDialog(true)}>
+                                            <DropdownMenuItem className="text-red-600 focus:text-red-600" onSelect={handleDeleteClick}>
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 Eliminar
                                             </DropdownMenuItem>
