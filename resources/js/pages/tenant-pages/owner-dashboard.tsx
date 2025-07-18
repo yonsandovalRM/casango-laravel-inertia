@@ -21,7 +21,6 @@ import {
     Clock,
     DollarSign,
     Eye,
-    Shield,
     Star,
     Target,
     TrendingUp,
@@ -167,28 +166,25 @@ export default function CompleteOwnerDashboard({
 
             <div className="flex flex-col gap-6 p-6">
                 {/* Header ejecutivo */}
-                <div className="rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+                <div className="pattern rounded-lg p-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="flex items-center gap-2 text-2xl font-bold">
-                                <Shield className="h-8 w-8" />
-                                ¡Bienvenido, {owner.name}!
-                            </h1>
-                            <p className="mt-2 text-blue-100">
+                            <h1 className="flex items-center gap-2 font-outfit text-2xl font-bold text-foreground">¡Bienvenido, {owner.name}!</h1>
+                            <p className="mt-2 text-muted-foreground">
                                 Tu negocio ha generado <span className="font-bold">${formatCurrency(stats.totalRevenue)}</span> en total con una tasa
                                 de éxito del <span className="font-bold">{stats.completionRate}%</span>
                             </p>
                         </div>
                         <div className="text-center">
-                            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                                <TrendingUp className="h-8 w-8 text-white" />
+                            <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-background backdrop-blur-sm">
+                                <TrendingUp className="h-8 w-8 text-foreground" />
                             </div>
                             <div className="mt-2 text-sm">
                                 <div className="font-bold">
                                     {stats.revenueGrowth >= 0 ? '+' : ''}
                                     {stats.revenueGrowth}%
                                 </div>
-                                <div className="text-blue-200">Crecimiento</div>
+                                <div className="text-muted-foreground">Crecimiento</div>
                             </div>
                         </div>
                     </div>
@@ -209,10 +205,10 @@ export default function CompleteOwnerDashboard({
                                     key={index}
                                     className={`flex items-center justify-between rounded-lg border p-3 ${
                                         alert.type === 'success'
-                                            ? 'border-green-200 bg-green-50'
+                                            ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900'
                                             : alert.type === 'warning'
-                                              ? 'border-yellow-200 bg-yellow-50'
-                                              : 'border-blue-200 bg-blue-50'
+                                              ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900'
+                                              : 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900'
                                     }`}
                                 >
                                     <div className="flex items-center gap-3">
