@@ -1,6 +1,7 @@
 import { CompanyFormData, CompanyResource } from '@/interfaces/company';
 import { useForm } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export const DAYS_OF_WEEK = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -95,7 +96,12 @@ export const useCompanyForm = (company?: CompanyResource) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        form.post(route('company.update', { _method: 'PUT' }));
+        form.post(route('company.update', { _method: 'PUT' }), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success('Empresa actualizada exitosamente');
+            },
+        });
     };
 
     return {

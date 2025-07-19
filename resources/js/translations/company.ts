@@ -10,6 +10,7 @@ export const company = {
             saving: 'Saving...',
             not_specified: 'Not specified',
             name_placeholder: 'Company Name',
+            last_updated: 'Last Updated',
 
             // Video Call Settings
             video_calls: 'Video Calls',
@@ -20,6 +21,8 @@ export const company = {
             video_calls_warning: 'Disabling video calls will affect existing video call services and future bookings',
             video_calls_enabled: 'Video calls have been enabled',
             video_calls_disabled: 'Video calls have been disabled',
+            video_call_platforms: 'Video Call Platforms',
+            video_call_platforms_description: 'Select the platforms where video calls are available',
 
             // Status Checker
             check_open_status: 'Check Business Status',
@@ -89,6 +92,7 @@ export const company = {
             saving: 'Guardando...',
             not_specified: 'No especificado',
             name_placeholder: 'Nombre de la Empresa',
+            last_updated: 'Ultima Actualización',
 
             // Video Call Settings
             video_calls: 'Videollamadas',
@@ -99,6 +103,8 @@ export const company = {
             video_calls_warning: 'Deshabilitar videollamadas afectará los servicios existentes de videollamada y futuras reservas',
             video_calls_enabled: 'Las videollamadas han sido habilitadas',
             video_calls_disabled: 'Las videollamadas han sido deshabilitadas',
+            video_call_platforms: 'Plataformas de Videollamadas',
+            video_call_platforms_description: 'Configurar las plataformas de videollamadas para sus servicios',
 
             // Status Checker
             check_open_status: 'Verificar Estado del Negocio',

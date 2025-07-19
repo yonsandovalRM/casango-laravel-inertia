@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 import { auth } from './auth';
 import { bookings } from './bookings';
 import { categories } from './categories';
+import { common } from './common';
 import { company } from './company';
 import { formTemplates } from './form-templates';
 import { plans } from './plans';
@@ -30,6 +31,7 @@ const resources = {
             ...bookings.en,
             ...formTemplates.en,
             ...tenantCategories.en,
+            ...common.en,
         },
     },
     es: {
@@ -46,6 +48,7 @@ const resources = {
             ...bookings.es,
             ...formTemplates.es,
             ...tenantCategories.es,
+            ...common.es,
         },
     },
 };

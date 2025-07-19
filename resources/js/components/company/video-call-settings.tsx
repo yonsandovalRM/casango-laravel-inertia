@@ -5,6 +5,7 @@ import { CompanyResource } from '@/interfaces/company';
 import { router } from '@inertiajs/react';
 import { AlertTriangle, Video, VideoOff } from 'lucide-react';
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface VideoCallSettingsProps {
     company?: CompanyResource;
@@ -16,7 +17,20 @@ export const VideoCallSettings: React.FC<VideoCallSettingsProps> = ({ company, c
     const [localValue, setLocalValue] = useState(company?.allows_video_calls ?? false);
 
     const handleToggle = async (enabled: boolean) => {
-        router.put(route('company.video-calls.update'), { allows_video_calls: enabled });
+        router.put(
+            route('company.video-calls.update'),
+            { allows_video_calls: enabled },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    if (enabled) {
+                        toast.success(t('company.video_calls_enabled'));
+                    } else {
+                        toast.success(t('company.video_calls_disabled'));
+                    }
+                },
+            },
+        );
 
         setLocalValue(enabled);
     };
