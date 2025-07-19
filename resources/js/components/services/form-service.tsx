@@ -42,7 +42,7 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
     return (
         <>
             <Sheet open={open} onOpenChange={handleCancel}>
-                <SheetContent className="w-[600px] sm:max-w-[600px]">
+                <SheetContent className="w-full sm:max-w-[600px]">
                     <SheetHeader>
                         <SheetTitle>{service?.id ? t('services.form.edit') : t('services.form.create')}</SheetTitle>
                         <SheetDescription>
@@ -166,8 +166,9 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
                                         <div className="space-y-4">
                                             <h3 className="text-lg font-medium">{t('services.form.pricing_duration')}</h3>
 
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {/* Price */}
+                                                <div className="flex flex-col">
                                                     <TooltipProvider>
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
@@ -188,11 +189,13 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
                                                         value={data.price}
                                                         onChange={(e) => setData({ ...data, price: Number(e.target.value) })}
                                                         placeholder="0.00"
+                                                        className="h-10"
                                                     />
                                                     <InputError message={errors.price} />
                                                 </div>
 
-                                                <div>
+                                                {/* Duration */}
+                                                <div className="flex flex-col">
                                                     <Label required>{t('services.form.duration')}</Label>
                                                     <div className="relative">
                                                         <Input
@@ -202,6 +205,7 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
                                                             value={data.duration}
                                                             onChange={(e) => setData({ ...data, duration: Number(e.target.value) })}
                                                             placeholder="30"
+                                                            className="h-10"
                                                         />
                                                         <span className="absolute top-2.5 right-3 text-sm text-muted-foreground">min</span>
                                                     </div>
@@ -210,11 +214,12 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
-                                                <div>
+                                                {/* Preparation Time */}
+                                                <div className="flex flex-col">
                                                     <TooltipProvider>
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
-                                                                <Label className="flex items-center gap-1">
+                                                                <Label className="flex h-5 items-center gap-1">
                                                                     {t('services.form.preparation_time')}
                                                                     <Info className="h-3 w-3" />
                                                                 </Label>
@@ -232,17 +237,19 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
                                                             value={data.preparation_time}
                                                             onChange={(e) => setData({ ...data, preparation_time: Number(e.target.value) })}
                                                             placeholder="0"
+                                                            className="h-10"
                                                         />
                                                         <span className="absolute top-2.5 right-3 text-sm text-muted-foreground">min</span>
                                                     </div>
                                                     <InputError message={errors.preparation_time} />
                                                 </div>
 
-                                                <div>
+                                                {/* Post Service Time */}
+                                                <div className="flex flex-col">
                                                     <TooltipProvider>
                                                         <Tooltip>
                                                             <TooltipTrigger asChild>
-                                                                <Label className="flex items-center gap-1">
+                                                                <Label className="flex h-5 items-center gap-1">
                                                                     {t('services.form.post_service_time')}
                                                                     <Info className="h-3 w-3" />
                                                                 </Label>
@@ -260,6 +267,7 @@ export function FormService({ categories, companyAllowsVideoCalls = false }: For
                                                             value={data.post_service_time}
                                                             onChange={(e) => setData({ ...data, post_service_time: Number(e.target.value) })}
                                                             placeholder="0"
+                                                            className="h-10"
                                                         />
                                                         <span className="absolute top-2.5 right-3 text-sm text-muted-foreground">min</span>
                                                     </div>
