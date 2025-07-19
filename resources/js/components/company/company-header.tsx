@@ -45,7 +45,7 @@ export const CompanyHeader: React.FC<CompanyHeaderProps> = ({
                             type="button"
                             onClick={onCoverUpload}
                             size="sm"
-                            variant="secondary"
+                            variant="muted"
                             className="bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-lg"
                         >
                             <Camera className="h-5 w-5" />
@@ -55,7 +55,7 @@ export const CompanyHeader: React.FC<CompanyHeaderProps> = ({
                                 type="button"
                                 onClick={onRemoveCover}
                                 size="sm"
-                                variant="secondary"
+                                variant="muted"
                                 className="bg-opacity-90 hover:bg-opacity-100 rounded-full p-3 shadow-lg"
                             >
                                 <X className="h-5 w-5" />
@@ -80,11 +80,11 @@ export const CompanyHeader: React.FC<CompanyHeaderProps> = ({
                         {/* Logo Upload Controls - Solo en modo edición */}
                         {isEditing && (
                             <div className="absolute -right-2 -bottom-2 flex gap-1">
-                                <Button type="button" onClick={onLogoUpload} size="sm" variant="secondary" className="rounded-full p-2 shadow-lg">
+                                <Button type="button" onClick={onLogoUpload} size="sm" variant="muted" className="rounded-full p-2 shadow-lg">
                                     <Camera className="h-4 w-4" />
                                 </Button>
                                 {displayLogoUrl && (
-                                    <Button type="button" onClick={onRemoveLogo} size="sm" variant="secondary" className="rounded-full p-2 shadow-lg">
+                                    <Button type="button" onClick={onRemoveLogo} size="sm" variant="muted" className="rounded-full p-2 shadow-lg">
                                         <X className="h-4 w-4" />
                                     </Button>
                                 )}

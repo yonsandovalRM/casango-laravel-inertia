@@ -7,14 +7,14 @@ export const LogoIcon = ({ className }: { className?: string }) => {
                     <stop offset="100%" stopColor="#1fcff4" />
                 </linearGradient>
 
-                <linearGradient id="gradient-secondary" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="gradient-muted" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#fcde20" />
                     <stop offset="100%" stopColor="#ff9418" />
                 </linearGradient>
             </defs>
 
             <g>
-                <circle className="cls-1" cx="309.2" cy="277.23" r="22.58" fill="url(#gradient-secondary)" />
+                <circle className="cls-1" cx="309.2" cy="277.23" r="22.58" fill="url(#gradient-muted)" />
                 <path
                     className="cls-5"
                     d="M107.7,105.72c-6.64,3.58-12.7,8.1-17.99,13.37-5.36,5.36-9.94,11.48-13.57,18.19-5.89,10.94-9.24,23.44-9.24,36.73v-54.93c0-12.48,10.11-22.59,22.59-22.59,7.48,0,14.1,3.63,18.21,9.22Z"

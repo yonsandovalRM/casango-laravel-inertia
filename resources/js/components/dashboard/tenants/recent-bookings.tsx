@@ -27,13 +27,13 @@ export const RecentBookings: React.FC<RecentBookingsProps> = ({
     const getStatusBadgeVariant = (status: string) => {
         const variants = {
             confirmed: 'default',
-            pending: 'secondary',
+            pending: 'muted',
             cancelled: 'destructive',
             completed: 'outline',
             no_show: 'destructive',
         } as const;
 
-        return variants[status as keyof typeof variants] || 'secondary';
+        return variants[status as keyof typeof variants] || 'muted';
     };
 
     const getStatusText = (status: string) => {
@@ -161,7 +161,7 @@ export const RecentBookings: React.FC<RecentBookingsProps> = ({
                 <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5 text-blue-500" />
                     {title}
-                    <Badge variant="secondary">{bookings.length}</Badge>
+                    <Badge variant="muted">{bookings.length}</Badge>
                 </CardTitle>
                 <div className="flex gap-2">
                     {showFilters && (

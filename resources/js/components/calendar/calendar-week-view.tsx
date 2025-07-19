@@ -45,7 +45,7 @@ export const CalendarWeekView: React.FC<CalendarWeekViewProps> = ({
                             <div
                                 className={`text-xl font-bold ${
                                     isToday
-                                        ? 'mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-secondary-foreground'
+                                        ? 'mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground'
                                         : 'text-foreground'
                                 }`}
                             >

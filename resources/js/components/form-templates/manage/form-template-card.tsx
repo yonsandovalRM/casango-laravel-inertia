@@ -108,7 +108,7 @@ export const FormTemplateCard: React.FC<FormTemplateCardProps> = ({
 
                 <div className="mt-3 flex items-center justify-between">
                     <div className="flex gap-2">
-                        <Badge variant={template.type === 'user_profile' ? 'default' : 'secondary'}>
+                        <Badge variant={template.type === 'user_profile' ? 'default' : 'muted'}>
                             {template.type === 'user_profile' ? 'Perfil Usuario' : 'Formulario Reserva'}
                         </Badge>
                         <Badge variant="outline" className="text-xs">

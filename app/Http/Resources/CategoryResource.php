@@ -35,7 +35,7 @@ class CategoryResource extends JsonResource
 
             // Metadatos útiles
             'status_label' => $this->is_active ? 'Activa' : 'Inactiva',
-            'status_color' => $this->is_active ? 'success' : 'secondary',
+            'status_color' => $this->is_active ? 'success' : 'muted',
 
             // URLs relacionadas
             'urls' => [

@@ -96,7 +96,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                                             ? 'bg-primary text-primary-foreground'
                                                             : isCompleted
                                                               ? 'bg-green-600 text-white'
-                                                              : 'bg-secondary text-secondary-foreground'
+                                                              : 'bg-muted text-muted-foreground'
                                                     } `}
                                                 >
                                                     <Icon className="h-5 w-5" />
@@ -110,9 +110,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                                 </span>
                                             </div>
                                             {index < steps.length - 1 && (
-                                                <div
-                                                    className={`mx-4 h-0.5 flex-1 transition-all ${isCompleted ? 'bg-green-600' : 'bg-secondary'} `}
-                                                />
+                                                <div className={`mx-4 h-0.5 flex-1 transition-all ${isCompleted ? 'bg-green-600' : 'bg-muted'} `} />
                                             )}
                                         </React.Fragment>
                                     );

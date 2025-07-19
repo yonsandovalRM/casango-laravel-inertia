@@ -70,7 +70,7 @@ export function PricingSection({ plans }: { plans: PlanResource[] }) {
                         </span>
                         {isAnnual && (
                             <Badge
-                                variant="secondary"
+                                variant="muted"
                                 className="ml-2 border-green-200 bg-green-100 text-green-800 dark:border-green-700 dark:bg-green-900 dark:text-green-200"
                             >
                                 Ahorra hasta 25%

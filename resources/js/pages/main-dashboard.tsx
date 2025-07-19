@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { TenantCategoryResource } from '@/interfaces/tenant-category';
 import AppLayout from '@/layouts/app-layout';
+import { formatCurrency } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import {
     Activity,
@@ -115,14 +116,6 @@ const StatsCard = ({
         </CardContent>
     </Card>
 );
-
-const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CL', {
-        style: 'currency',
-        currency: 'CLP',
-        minimumFractionDigits: 0,
-    }).format(value);
-};
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -310,7 +303,7 @@ export default function MainDashboard({ stats, chartData, topPlans, recentTenant
                                             <div>
                                                 <span className="font-medium">{plan.name}</span>
                                                 {plan.is_free && (
-                                                    <Badge variant="secondary" className="ml-2">
+                                                    <Badge variant="muted" className="ml-2">
                                                         Gratis
                                                     </Badge>
                                                 )}
@@ -378,7 +371,7 @@ export default function MainDashboard({ stats, chartData, topPlans, recentTenant
                                                 <p className="text-xs text-muted-foreground">{new Date(tenant.created_at).toLocaleDateString()}</p>
                                             </div>
                                             <div className="text-right">
-                                                <Badge variant={tenant.plan.is_free ? 'secondary' : 'default'}>{tenant.plan.name}</Badge>
+                                                <Badge variant={tenant.plan.is_free ? 'muted' : 'default'}>{tenant.plan.name}</Badge>
                                             </div>
                                         </div>
                                     </div>

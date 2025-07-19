@@ -205,7 +205,7 @@ export function ManageService({ services, categories, statistics, companyAllowsV
                                         <div className="space-y-4">
                                             {/* Badges Row */}
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <Badge variant={service.is_active ? 'default' : 'secondary'} className="text-xs">
+                                                <Badge variant={service.is_active ? 'default' : 'muted'} className="text-xs">
                                                     {service.category.name}
                                                 </Badge>
                                                 <Badge variant="outline" className={`text-xs ${getServiceTypeColor(service.service_type)}`}>

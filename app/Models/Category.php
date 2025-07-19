@@ -132,7 +132,7 @@ class Category extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return $this->is_active ? 'success' : 'secondary';
+        return $this->is_active ? 'success' : 'muted';
     }
 
     public function getHasServicesAttribute(): bool

@@ -244,7 +244,7 @@ export default function EnhancedAdminDashboard({
                                 </div>
                                 <div className="text-3xl font-bold text-blue-600">{stats.monthlyStats.bookings}</div>
                                 <div className="text-sm text-muted-foreground">Reservas del Mes</div>
-                                <Badge variant="secondary" className="mt-2">
+                                <Badge variant="muted" className="mt-2">
                                     {trends.bookingTrend >= 0 ? '+' : ''}
                                     {trends.bookingTrend}% vs mes anterior
                                 </Badge>
@@ -256,7 +256,7 @@ export default function EnhancedAdminDashboard({
                                 </div>
                                 <div className="text-3xl font-bold text-green-600">${formatCurrency(stats.monthlyStats.revenue)}</div>
                                 <div className="text-sm text-muted-foreground">Ingresos del Mes</div>
-                                <Badge variant="secondary" className="mt-2">
+                                <Badge variant="muted" className="mt-2">
                                     Proyección: +{trends.predictedGrowth}%
                                 </Badge>
                             </div>
@@ -267,7 +267,7 @@ export default function EnhancedAdminDashboard({
                                 </div>
                                 <div className="text-3xl font-bold text-purple-600">{stats.monthlyStats.newClients}</div>
                                 <div className="text-sm text-muted-foreground">Nuevos Clientes</div>
-                                <Badge variant="secondary" className="mt-2">
+                                <Badge variant="muted" className="mt-2">
                                     Adquisición activa
                                 </Badge>
                             </div>

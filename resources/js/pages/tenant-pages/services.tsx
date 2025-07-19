@@ -93,7 +93,7 @@ const Services = ({ company }: { company: CompanyResource }) => {
                             >
                                 <CardHeader className="pb-4">
                                     <div className="mb-2 flex items-start justify-between">
-                                        <Badge variant="secondary" className="text-xs">
+                                        <Badge variant="muted" className="text-xs">
                                             {service.category.name}
                                         </Badge>
                                         <div className="text-right">

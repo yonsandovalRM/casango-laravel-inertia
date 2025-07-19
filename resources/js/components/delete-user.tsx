@@ -70,7 +70,7 @@ function DeleteUser({ t }: { t: any }) {
 
                             <DialogFooter className="gap-2">
                                 <DialogClose asChild>
-                                    <Button variant="secondary" onClick={closeModal}>
+                                    <Button variant="muted" onClick={closeModal}>
                                         {t('profile.delete_account.cancel')}
                                     </Button>
                                 </DialogClose>

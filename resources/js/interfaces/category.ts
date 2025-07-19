@@ -18,7 +18,7 @@ export interface CategoryResource {
     has_services?: boolean;
     performance_score?: number;
     status_label?: string;
-    status_color?: 'success' | 'secondary' | 'destructive';
+    status_color?: 'success' | 'muted' | 'destructive';
 
     // URLs para acciones
     urls?: {

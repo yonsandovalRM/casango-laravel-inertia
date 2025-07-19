@@ -118,7 +118,7 @@ export function FAQSection() {
                                             <div>
                                                 <h3 className="mb-2 font-outfit text-lg font-semibold">{faq.question}</h3>
                                                 <div className="flex items-center gap-2">
-                                                    <Badge variant="secondary" className="text-xs">
+                                                    <Badge variant="muted" className="text-xs">
                                                         {faq.category}
                                                     </Badge>
                                                     {faq.helpfulness && (

@@ -276,7 +276,7 @@ export default function SubscriptionIndex({ subscription, plans, canManage }: Pr
                     />
                     <span className={billingCycle === 'annual' ? 'font-semibold' : 'text-muted-foreground'}>Anual</span>
                     {billingCycle === 'annual' && (
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        <Badge variant="muted" className="bg-green-100 text-green-800">
                             Ahorra hasta 20%
                         </Badge>
                     )}

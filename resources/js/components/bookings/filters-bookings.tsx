@@ -149,7 +149,7 @@ export default function FiltersBookings({ bookings, filters, services }: Filters
                         <div className="flex items-center gap-3">
                             {activeFiltersCount > 0 && (
                                 <div className="flex items-center gap-2">
-                                    <Badge variant="secondary" className="flex items-center gap-1">
+                                    <Badge variant="muted" className="flex items-center gap-1">
                                         <Filter className="h-3 w-3" />
                                         {activeFiltersCount} filtro{activeFiltersCount !== 1 ? 's' : ''}
                                     </Badge>

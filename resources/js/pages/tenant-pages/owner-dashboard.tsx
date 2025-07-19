@@ -119,7 +119,7 @@ export default function CompleteOwnerDashboard({
     const getStatusBadge = (status: string) => {
         const variants = {
             completed: 'default',
-            confirmed: 'secondary',
+            confirmed: 'muted',
             cancelled: 'destructive',
             pending: 'outline',
         } as const;
@@ -520,7 +520,7 @@ export default function CompleteOwnerDashboard({
                                                                 <span className="font-medium">{service.name}</span>
                                                             </div>
                                                             <div className="text-right">
-                                                                <Badge variant="secondary">{service.bookings_count} reservas</Badge>
+                                                                <Badge variant="muted">{service.bookings_count} reservas</Badge>
                                                                 <p className="mt-1 text-xs text-muted-foreground">
                                                                     {percentage.toFixed(1)}% del total
                                                                 </p>

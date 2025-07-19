@@ -30,7 +30,7 @@ export const UserRoleTabs = ({ users, roles, searchQuery }: UserRoleTabsProps) =
                     return (
                         <TabsTrigger key={role.id} value={role.name} className="flex items-center gap-2">
                             {role.display_name}
-                            <Badge variant="secondary" className="ml-1 text-xs">
+                            <Badge variant="muted" className="ml-1 text-xs">
                                 {userCount}
                             </Badge>
                         </TabsTrigger>

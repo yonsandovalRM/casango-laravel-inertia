@@ -99,7 +99,7 @@ export function ManageProfile({ professional }: { professional: ProfessionalReso
                                             <Button
                                                 type="button"
                                                 size="sm"
-                                                variant="secondary"
+                                                variant="muted"
                                                 className="h-10 w-10 rounded-full p-0 shadow-lg"
                                                 onClick={() => photoInputRef.current?.click()}
                                             >

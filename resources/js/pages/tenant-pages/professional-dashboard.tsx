@@ -54,7 +54,7 @@ export default function EnhancedProfessionalDashboard({
     const getStatusBadge = (status: string) => {
         const variants = {
             completed: { variant: 'default' as const, label: 'Completada', color: 'bg-green-100 text-green-800' },
-            confirmed: { variant: 'secondary' as const, label: 'Confirmada', color: 'bg-blue-100 text-blue-800' },
+            confirmed: { variant: 'muted' as const, label: 'Confirmada', color: 'bg-blue-100 text-blue-800' },
             cancelled: { variant: 'destructive' as const, label: 'Cancelada', color: 'bg-red-100 text-red-800' },
             pending: { variant: 'outline' as const, label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800' },
         };
@@ -199,7 +199,7 @@ export default function EnhancedProfessionalDashboard({
                                 <Coffee className="h-5 w-5 text-orange-500" />
                                 Agenda de Hoy
                             </CardTitle>
-                            <Badge variant="secondary">{todaySchedule.length} citas</Badge>
+                            <Badge variant="muted">{todaySchedule.length} citas</Badge>
                         </CardHeader>
                         <CardContent>
                             {todaySchedule.length === 0 ? (

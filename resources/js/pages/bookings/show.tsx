@@ -277,7 +277,7 @@ export default function BookingShow({
                         <div className="mb-3 flex items-center gap-2">
                             <FileText className="h-4 w-4 text-muted-foreground" />
                             <h4 className="text-sm font-medium">{formGroup.template.name}</h4>
-                            <Badge variant={formGroup.has_data ? 'default' : 'secondary'} className="text-xs">
+                            <Badge variant={formGroup.has_data ? 'default' : 'muted'} className="text-xs">
                                 {formGroup.has_data ? 'Completado' : 'Sin datos'}
                             </Badge>
                         </div>
@@ -412,7 +412,7 @@ export default function BookingShow({
                                                         <div className="flex-1 space-y-1">
                                                             <div className="flex items-center gap-2">
                                                                 <p className="text-sm font-medium">{formatDate(pastBooking.date)}</p>
-                                                                <Badge variant="secondary" className="text-xs">
+                                                                <Badge variant="muted" className="text-xs">
                                                                     {pastBooking.status}
                                                                 </Badge>
                                                             </div>
@@ -423,7 +423,7 @@ export default function BookingShow({
                                                                 {pastBooking.forms_data?.map((formGroup) => (
                                                                     <Badge
                                                                         key={formGroup.template.id}
-                                                                        variant={formGroup.has_data ? 'outline' : 'secondary'}
+                                                                        variant={formGroup.has_data ? 'outline' : 'muted'}
                                                                         className="text-xs"
                                                                     >
                                                                         {formGroup.template.name}
@@ -515,7 +515,7 @@ export default function BookingShow({
                                     </div>
                                     <div>
                                         <span className="text-sm font-medium text-muted-foreground">Estado:</span>
-                                        <Badge variant="secondary">{selectedBookingHistory.status}</Badge>
+                                        <Badge variant="muted">{selectedBookingHistory.status}</Badge>
                                     </div>
                                     <div>
                                         <span className="text-sm font-medium text-muted-foreground">Fecha:</span>

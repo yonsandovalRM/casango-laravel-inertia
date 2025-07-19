@@ -22,7 +22,7 @@ import {
 // Colores para los gráficos
 const CHART_COLORS = {
     primary: '#3B82F6',
-    secondary: '#10B981',
+    muted: '#10B981',
     tertiary: '#F59E0B',
     danger: '#EF4444',
     purple: '#8B5CF6',
@@ -67,8 +67,8 @@ export const RevenueAreaChart: React.FC<RevenueAreaChartProps> = ({ data, title 
                                 <stop offset="95%" stopColor={CHART_COLORS.primary} stopOpacity={0.1} />
                             </linearGradient>
                             <linearGradient id="bookingsGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={CHART_COLORS.secondary} stopOpacity={0.8} />
-                                <stop offset="95%" stopColor={CHART_COLORS.secondary} stopOpacity={0.1} />
+                                <stop offset="5%" stopColor={CHART_COLORS.muted} stopOpacity={0.8} />
+                                <stop offset="95%" stopColor={CHART_COLORS.muted} stopOpacity={0.1} />
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -97,7 +97,7 @@ export const RevenueAreaChart: React.FC<RevenueAreaChartProps> = ({ data, title 
                         <Area
                             type="monotone"
                             dataKey="bookings"
-                            stroke={CHART_COLORS.secondary}
+                            stroke={CHART_COLORS.muted}
                             fillOpacity={1}
                             fill="url(#bookingsGradient)"
                             strokeWidth={2}
@@ -266,7 +266,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ data }) => {
                             ]}
                         />
                         <Legend />
-                        <Bar yAxisId="left" dataKey="bookings" fill={CHART_COLORS.secondary} name="Reservas" />
+                        <Bar yAxisId="left" dataKey="bookings" fill={CHART_COLORS.muted} name="Reservas" />
                         <Line yAxisId="right" type="monotone" dataKey="revenue" stroke={CHART_COLORS.primary} strokeWidth={3} name="Ingresos" />
                     </LineChart>
                 </ResponsiveContainer>

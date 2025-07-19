@@ -167,7 +167,7 @@ export function CategoryStats({ stats }: CategoryStatsProps) {
                             <>
                                 <div className="text-center">
                                     <p className="text-lg font-semibold">{stats.most_used_category.name}</p>
-                                    <Badge variant="secondary" className="mt-1">
+                                    <Badge variant="muted" className="mt-1">
                                         {stats.most_used_category.services_count} servicios
                                     </Badge>
                                 </div>

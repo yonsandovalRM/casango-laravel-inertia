@@ -24,7 +24,7 @@ export const ProfessionalHeader = ({ professional }: ProfessionalHeaderProps) =>
                     <span>{professional.user.email}</span>
                 </div>
                 {professional.specialty && (
-                    <Badge variant="secondary" className="mt-2">
+                    <Badge variant="muted" className="mt-2">
                         {professional.specialty}
                     </Badge>
                 )}

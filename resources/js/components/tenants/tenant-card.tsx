@@ -40,7 +40,7 @@ export const TenantCard = ({ tenant, actions }: { tenant: TenantResource; action
                         </CardDescription>
                     </div>
 
-                    <Badge variant={subscription?.is_active ? 'default' : 'secondary'} className="flex items-center gap-1">
+                    <Badge variant={subscription?.is_active ? 'default' : 'muted'} className="flex items-center gap-1">
                         <CreditCardIcon className="h-4 w-4" />
                         {getTenantStatus()}
                     </Badge>

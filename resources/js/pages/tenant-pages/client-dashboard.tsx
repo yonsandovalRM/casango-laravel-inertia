@@ -62,9 +62,9 @@ export default function EnhancedClientDashboard({ client, bookings, stats, chart
     type StatusKey = (typeof statusKeys)[number];
 
     const getStatusBadge = (status: string) => {
-        const variants: Record<StatusKey, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+        const variants: Record<StatusKey, 'default' | 'muted' | 'destructive' | 'outline'> = {
             completed: 'default',
-            confirmed: 'secondary',
+            confirmed: 'muted',
             cancelled: 'destructive',
             pending: 'outline',
         };

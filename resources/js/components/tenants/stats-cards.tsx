@@ -43,7 +43,7 @@ export function StatsCard({ title, value, description, icon: Icon, change, class
                 {change && (
                     <div className="mt-2 flex items-center">
                         <Badge
-                            variant={change.type === 'increase' ? 'default' : change.type === 'decrease' ? 'destructive' : 'secondary'}
+                            variant={change.type === 'increase' ? 'default' : change.type === 'decrease' ? 'destructive' : 'muted'}
                             className="text-xs"
                         >
                             {change.type === 'increase' ? '+' : change.type === 'decrease' ? '-' : ''}

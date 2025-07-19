@@ -56,7 +56,7 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
                     <h3 className="mb-3 font-semibold text-foreground">{period}</h3>
                     <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="h-12 animate-pulse rounded-lg bg-secondary" />
+                            <div key={i} className="h-12 animate-pulse rounded-lg bg-muted" />
                         ))}
                     </div>
                 </div>
@@ -149,7 +149,7 @@ export const TimeSelection: React.FC<TimeSelectionProps> = ({ service, professio
 
                             <div className="text-right">
                                 <div className="mb-2 text-3xl font-bold text-primary">${Number(finalPrice).toLocaleString()}</div>
-                                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                                <Badge variant="muted" className="bg-primary/10 text-primary">
                                     {company.currency}
                                 </Badge>
                                 {finalPrice !== service.price && (

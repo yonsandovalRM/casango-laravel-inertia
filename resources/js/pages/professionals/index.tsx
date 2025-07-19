@@ -83,7 +83,7 @@ export default function ProfessionalsIndex({ professionals }: { professionals: P
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <Badge variant={service.is_active ? 'default' : 'secondary'} className="ml-2">
+                                                        <Badge variant={service.is_active ? 'default' : 'muted'} className="ml-2">
                                                             {service.is_active ? 'Activo' : 'Inactivo'}
                                                         </Badge>
                                                     </div>
@@ -113,7 +113,7 @@ export default function ProfessionalsIndex({ professionals }: { professionals: P
                                         <Settings className="h-4 w-4" />
                                         Editar
                                     </Button>
-                                    <Button variant="secondary" size="sm" onClick={() => handleManageSchedule(professional.id)} className="flex-1">
+                                    <Button variant="muted" size="sm" onClick={() => handleManageSchedule(professional.id)} className="flex-1">
                                         <Calendar className="h-4 w-4" />
                                         Horario
                                     </Button>

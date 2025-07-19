@@ -338,7 +338,7 @@ export function ManageCategory({ categories, stats, chartData, t }: ManageCatego
                                 <CardContent className="pt-0">
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <Badge variant={category.is_active ? 'default' : 'secondary'} className="flex items-center gap-1 text-xs">
+                                            <Badge variant={category.is_active ? 'default' : 'muted'} className="flex items-center gap-1 text-xs">
                                                 {category.is_active ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
                                                 {category.status_label}
                                             </Badge>
@@ -453,7 +453,7 @@ export function ManageCategory({ categories, stats, chartData, t }: ManageCatego
                                                 </td>
                                                 <td className="p-4">
                                                     <Badge
-                                                        variant={category.is_active ? 'default' : 'secondary'}
+                                                        variant={category.is_active ? 'default' : 'muted'}
                                                         className="flex w-fit items-center gap-1 text-xs"
                                                     >
                                                         {category.is_active ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}

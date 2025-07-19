@@ -39,7 +39,7 @@ export default function PopularServices() {
             <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 p-12 text-center text-white">
                 <h2 className="mb-4 font-outfit text-4xl font-bold">¡Comienza a Reservar Hoy!</h2>
                 <p className="mb-8 text-xl opacity-90">Únete a miles de clientes satisfechos que confían en nuestros profesionales</p>
-                <Button size="lg" variant="secondary" className="px-8 py-6 text-lg" onClick={() => router.visit(route('home.bookings'))}>
+                <Button size="lg" variant="muted" className="px-8 py-6 text-lg" onClick={() => router.visit(route('home.bookings'))}>
                     <Calendar className="mr-2 h-5 w-5" />
                     Explorar Servicios
                 </Button>
