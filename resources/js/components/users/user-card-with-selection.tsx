@@ -1,7 +1,8 @@
 import { PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { UserResource } from '@/interfaces/user';
+import { getInitials } from '@/lib/utils';
 import { router } from '@inertiajs/react';
-import { Calendar, Edit, Mail, MoreVertical, Shield, Trash2 } from 'lucide-react';
+import { Calendar, Edit2, Mail, Shield, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import {
     AlertDialog,
@@ -18,8 +19,8 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import { Checkbox } from '../ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { EditUser } from './edit-user';
+import { getRoleBadgeColor } from './enhanced-user-list';
 
 interface UserCardWithSelectionProps {
     user: UserResource;
@@ -37,28 +38,6 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
         setShowDeleteDialog(false);
     };
 
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map((word) => word.charAt(0))
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    };
-
-    const getRoleBadgeColor = (role: string) => {
-        switch (role) {
-            case 'admin':
-                return 'bg-purple-100 text-purple-800';
-            case 'manager':
-                return 'bg-blue-100 text-blue-800';
-            case 'employee':
-                return 'bg-green-100 text-green-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
-
     return (
         <>
             <Card className={`transition-all duration-200 hover:shadow-md ${isSelected ? 'ring-2 ring-primary' : ''}`}>
@@ -70,50 +49,34 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                                 onCheckedChange={(checked) => onSelectionChange(user.id, checked as boolean)}
                                 className="mt-1"
                             />
-                            <Avatar className="h-12 w-12">
-                                <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 font-semibold text-white">
-                                    {getInitials(user.name)}
-                                </AvatarFallback>
+                            <Avatar className="hidden h-14 w-14 border-2 border-primary/20 lg:block">
+                                <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">{getInitials(user.name)}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-                                <div className="mt-1 flex items-center text-sm text-gray-500">
+                                <h3 className="text-lg font-semibold text-foreground">{user.name}</h3>
+                                <div className="mt-1 flex items-center text-sm text-muted-foreground">
                                     <Mail className="mr-1 h-4 w-4" />
                                     {user.email}
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            {hasPermission(PERMISSIONS.users.edit) && (
+                                <Button variant="ghost" size="sm" onClick={() => setShowEditUser(true)}>
+                                    <Edit2 className="h-4 w-4" />
+                                </Button>
+                            )}
 
-                        {(hasPermission(PERMISSIONS.users.edit) || hasPermission(PERMISSIONS.users.delete)) && (
-                            <DropdownMenu modal>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                        <MoreVertical className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    {hasPermission(PERMISSIONS.users.delete) && (
-                                        <>
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-600" onSelect={() => setShowDeleteDialog(true)}>
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                Eliminar
-                                            </DropdownMenuItem>
-                                        </>
-                                    )}
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
+                            {hasPermission(PERMISSIONS.users.delete) && (
+                                <Button variant="ghost" size="sm" onClick={() => setShowDeleteDialog(true)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                    {hasPermission(PERMISSIONS.users.edit) && (
-                        <Button onClick={() => setShowEditUser(true)}>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Editar
-                        </Button>
-                    )}
                     <div className="space-y-3">
                         <div className="flex items-center justify-between">
                             <Badge className={getRoleBadgeColor(user.role)}>
@@ -122,12 +85,14 @@ export const UserCardWithSelection = ({ user, isSelected, onSelectionChange }: U
                             </Badge>
                         </div>
 
-                        <div className="flex items-center text-sm text-gray-500">
+                        <div className="flex items-center text-sm text-muted-foreground">
                             <Calendar className="mr-2 h-4 w-4" />
                             <span>Creado el {user.created_at}</span>
                         </div>
 
-                        {user.updated_at !== user.created_at && <div className="text-xs text-gray-400">Última actualización: {user.updated_at}</div>}
+                        {user.updated_at !== user.created_at && (
+                            <div className="text-xs text-muted-foreground">Última actualización: {user.updated_at}</div>
+                        )}
                     </div>
                 </CardContent>
             </Card>

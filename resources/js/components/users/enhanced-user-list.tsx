@@ -15,6 +15,21 @@ interface EnhancedUserListProps {
     roles: Role[];
 }
 
+export const getRoleBadgeColor = (role: string) => {
+    switch (role) {
+        case 'admin':
+            return 'bg-purple-100 text-purple-800';
+        case 'manager':
+            return 'bg-blue-100 text-blue-800';
+        case 'employee':
+            return 'bg-green-100 text-green-800';
+        case 'owner':
+            return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
+        default:
+            return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100';
+    }
+};
+
 export const EnhancedUserList = ({ users, roles }: EnhancedUserListProps) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRole, setSelectedRole] = useState('all');
@@ -100,7 +115,7 @@ export const EnhancedUserList = ({ users, roles }: EnhancedUserListProps) => {
             {viewMode === 'tabs' ? (
                 <UserRoleTabs users={users} roles={roles} searchQuery={searchQuery} />
             ) : viewMode === 'selection' ? (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {filteredUsers.map((user) => (
                         <UserCardWithSelection
                             key={user.id}
@@ -111,7 +126,7 @@ export const EnhancedUserList = ({ users, roles }: EnhancedUserListProps) => {
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filteredUsers.map((user) => (
                         <UserCard key={user.id} user={user} />
                     ))}

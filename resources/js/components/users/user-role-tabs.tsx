@@ -24,7 +24,7 @@ export const UserRoleTabs = ({ users, roles, searchQuery }: UserRoleTabsProps) =
 
     return (
         <Tabs defaultValue="all" className="w-full">
-            <TabsList className="mb-6 grid w-full grid-cols-2 lg:grid-cols-4">
+            <TabsList className="mb-6 grid h-full w-full grid-cols-2 lg:grid-cols-5">
                 {allRoles.map((role) => {
                     const userCount = getUsersByRole(role.name).length;
                     return (
@@ -43,7 +43,7 @@ export const UserRoleTabs = ({ users, roles, searchQuery }: UserRoleTabsProps) =
                 return (
                     <TabsContent key={role.id} value={role.name} className="mt-0">
                         {roleUsers.length > 0 ? (
-                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
                                 {roleUsers.map((user) => (
                                     <UserCard key={user.id} user={user} />
                                 ))}

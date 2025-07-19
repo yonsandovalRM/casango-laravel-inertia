@@ -81,7 +81,7 @@ export const UserBulkActions = ({ users, selectedUsers, onSelectionChange }: Use
 
     return (
         <>
-            <div className="flex items-center justify-between rounded-lg border bg-white p-4">
+            <div className="flex items-center justify-between rounded-lg border bg-card p-4">
                 <div className="flex items-center space-x-4">
                     <Checkbox
                         checked={isAllSelected}
@@ -89,7 +89,7 @@ export const UserBulkActions = ({ users, selectedUsers, onSelectionChange }: Use
                         aria-label="Seleccionar todos los usuarios"
                         className={isIndeterminate ? 'data-[state=checked]:bg-primary' : ''}
                     />
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-muted-foreground">
                         <Users className="mr-2 h-4 w-4" />
                         {selectedUsers.length > 0 ? (
                             <span>{selectedUsers.length} usuario(s) seleccionado(s)</span>
