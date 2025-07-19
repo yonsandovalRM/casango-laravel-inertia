@@ -19,16 +19,16 @@ interface StatsCardProps {
 export function StatsCard({ title, value, description, icon: Icon, change, className, variant = 'default' }: StatsCardProps) {
     const variantStyles = {
         default: 'border-border',
-        success: 'border-green-200 bg-green-50',
-        warning: 'border-yellow-200 bg-yellow-50',
-        destructive: 'border-red-200 bg-red-50',
+        success: 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/50',
+        warning: 'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-950/50',
+        destructive: 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/50',
     };
 
     const iconStyles = {
         default: 'text-muted-foreground',
-        success: 'text-green-600',
-        warning: 'text-yellow-600',
-        destructive: 'text-red-600',
+        success: 'text-green-600 dark:text-green-400',
+        warning: 'text-yellow-600 dark:text-yellow-400',
+        destructive: 'text-red-600 dark:text-red-400',
     };
 
     return (

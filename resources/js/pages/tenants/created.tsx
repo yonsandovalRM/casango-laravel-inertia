@@ -57,7 +57,7 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
         };
     }, [tenant.name, tenant.email]);
     return (
-        <>
+        <div className="bg-content">
             <Head title="Cuenta creada" />
             <div className="min-h-screen py-16">
                 <div className="mx-auto max-w-2xl px-4">
@@ -65,7 +65,7 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                         <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
                             <Check className="h-8 w-8 text-green-600 dark:text-green-400" />
                         </div>
-                        <h1 className="mb-2 text-3xl font-bold">¡Bienvenido a CasanGo!</h1>
+                        <h1 className="mb-2 text-3xl font-bold">¡Bienvenido a Micita!</h1>
                         <p className="text-lg">Tu cuenta ha sido creada exitosamente</p>
                     </div>
 
@@ -153,6 +153,6 @@ export default function TenantCreated({ tenant }: { tenant: TenantResource }) {
                     </Card>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
