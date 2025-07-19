@@ -5,7 +5,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
-import { Toaster } from 'sonner';
+import { ToastContainer } from 'react-toastify';
 import './translations/i18n';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -20,7 +20,7 @@ createInertiaApp({
         root.render(
             <>
                 <App {...props} />
-                <Toaster richColors position="top-center" duration={3000} />
+                <ToastContainer />
             </>,
         );
     },

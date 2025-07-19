@@ -15,6 +15,9 @@ export interface CompanyResource {
         saturday: string;
         sunday: string;
     };
+    allows_video_calls: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 export type CompanyFormData = {
@@ -49,4 +52,19 @@ export interface Schedule {
     break_end_time: string;
     is_open: boolean;
     has_break: boolean;
+}
+
+export interface CompanyApiResponse {
+    company: CompanyResource;
+    allows_video_calls: boolean;
+    schedules: Schedule[];
+}
+
+export interface OpenStatusResponse {
+    is_open: boolean;
+    datetime: string;
+}
+
+export interface ScheduleForDayResponse extends Schedule {
+    // Extending base schedule with any additional properties
 }

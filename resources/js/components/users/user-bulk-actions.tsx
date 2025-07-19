@@ -4,7 +4,7 @@ import { router } from '@inertiajs/react';
 import { AlertDialog } from '@radix-ui/react-alert-dialog';
 import { Download, Mail, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import {
     AlertDialogAction,
     AlertDialogCancel,
@@ -43,7 +43,7 @@ export const UserBulkActions = ({ users, selectedUsers, onSelectionChange }: Use
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {
-                    toast.success('Usuarios eliminados correctamente');
+                    toast('Usuarios eliminados correctamente');
                 },
             });
         });

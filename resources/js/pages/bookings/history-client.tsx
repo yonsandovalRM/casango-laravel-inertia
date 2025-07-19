@@ -7,7 +7,7 @@ import { BookingFilters, BookingResource, ServiceOption } from '@/interfaces/boo
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 interface HistoryClientBookingsProps {
     bookings: BookingResource[];
@@ -19,17 +19,13 @@ export default function HistoryClientBookings({ bookings, filters, services }: H
     const { t } = useTranslation();
 
     const handleSyncGoogle = () => {
-        toast.info('Sincronización con Google Calendar', {
-            description: 'Redirigiendo a Google Calendar para sincronizar todas tus reservas...',
-        });
+        toast.info('Redirigiendo a Google Calendar para sincronizar todas tus reservas...');
 
         console.log('Sincronizando con Google Calendar...');
     };
 
     const handleSyncOutlook = () => {
-        toast.info('Sincronización con Outlook', {
-            description: 'Redirigiendo a Outlook para sincronizar todas tus reservas...',
-        });
+        toast.info('Redirigiendo a Outlook para sincronizar todas tus reservas...');
 
         console.log('Sincronizando con Outlook...');
     };

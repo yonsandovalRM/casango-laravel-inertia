@@ -8,7 +8,7 @@ import { Head, router } from '@inertiajs/react';
 import { Calendar, CheckCircle, FileText, Plus, User } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 export default function TemplatesIndex({ templates }: { templates: FormTemplate[] }) {
     const { t } = useTranslation();

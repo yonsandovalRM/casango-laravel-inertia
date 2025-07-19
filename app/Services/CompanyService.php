@@ -120,59 +120,25 @@ class CompanyService
     {
         $company = $this->getCompanyWithSchedules();
 
-        if (!$company) {
-            return $this->getDefaultConfiguration();
-        }
+
         return [
-            'basic_info' => [
-                'name' => $company->name,
-                'email' => $company->email,
-                'tagline' => $company->tagline,
-                'description' => $company->description,
-                'logo' => $company->logo,
-                'cover_image' => $company->cover_image,
-            ],
-            'localization' => [
-                'currency' => $company->currency,
-                'timezone' => $company->timezone,
-                'locale' => $company->locale,
-            ],
-            'features' => [
-                'allows_video_calls' => $company->allows_video_calls ?? false,
-            ],
+            'name' => $company->name,
+            'email' => $company->email,
+            'tagline' => $company->tagline,
+            'description' => $company->description,
+            'logo' => $company->logo,
+            'cover_image' => $company->cover_image,
+            'currency' => $company->currency,
+            'timezone' => $company->timezone,
+            'locale' => $company->locale,
+            'allows_video_calls' => $company->allows_video_calls ?? false,
             'schedules' => $company->schedules,
             'formatted_schedules' => $company->getDailySchedulesArray(),
             'grouped_schedule' => $company->getGroupedSchedule(),
         ];
     }
 
-    /**
-     * Obtener configuración por defecto
-     */
-    private function getDefaultConfiguration(): array
-    {
-        return [
-            'basic_info' => [
-                'name' => config('app.name'),
-                'email' => null,
-                'tagline' => null,
-                'description' => null,
-                'logo' => null,
-                'cover_image' => null,
-            ],
-            'localization' => [
-                'currency' => 'CLP',
-                'timezone' => 'America/Santiago',
-                'locale' => 'es-CL',
-            ],
-            'features' => [
-                'allows_video_calls' => false,
-            ],
-            'schedules' => [],
-            'formatted_schedules' => [],
-            'grouped_schedule' => [],
-        ];
-    }
+
 
     /**
      * Verificar si la empresa permite videollamadas

@@ -10,7 +10,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Head, router } from '@inertiajs/react';
 import { Briefcase, Calendar, Clock, DollarSign, Plus, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 
 export default function ProfessionalsIndex({ professionals }: { professionals: ProfessionalResource[] }) {
     const { t } = useTranslation();

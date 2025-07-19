@@ -10,7 +10,7 @@ import { formatCurrency, formatTimeAMPM } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { ArrowLeft, Calendar, Check, CheckCircle, Clock, DollarSign, LogIn, Mail, Phone, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import InputError from '../input-error';
 import { ProfessionalHeader } from '../professionals/ui/professional-header';
 import { Alert, AlertDescription } from '../ui/alert';
@@ -84,14 +84,10 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
         loginForm.post(route('auth.login-inline'), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('¡Bienvenido!', {
-                    description: 'Has iniciado sesión correctamente',
-                });
+                toast.success('Has iniciado sesión correctamente');
             },
             onError: (errors) => {
-                toast.error('Error', {
-                    description: errors.email || errors.password || 'Credenciales incorrectas',
-                });
+                toast.error('Credenciales incorrectas');
             },
         });
     };
@@ -100,9 +96,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
         registerForm.post(route('auth.register-inline'), {
             preserveScroll: true,
             onSuccess: () => {
-                toast.success('¡Cuenta creada!', {
-                    description: 'Tu cuenta ha sido creada exitosamente',
-                });
+                toast.success('Tu cuenta ha sido creada exitosamente');
                 setBookingData({
                     name: registerForm.data.name,
                     email: registerForm.data.email,
@@ -111,18 +105,14 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                 });
             },
             onError: (errors) => {
-                toast.error('Error', {
-                    description: Object.values(errors).join(', ') || 'Error al crear la cuenta',
-                });
+                toast.error('Error al crear la cuenta');
             },
         });
     };
 
     const handleConfirmBooking = async () => {
         if (!bookingData.phone) {
-            toast.error('Error', {
-                description: 'Por favor ingresa tu número de teléfono',
-            });
+            toast.error('Por favor ingresa tu número de teléfono');
             return;
         }
 
@@ -141,14 +131,10 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                 preserveScroll: true,
                 onSuccess: () => {
                     setIsConfirmed(true);
-                    toast.success('¡Reserva confirmada!', {
-                        description: 'Tu cita ha sido agendada exitosamente',
-                    });
+                    toast.success('Tu cita ha sido agendada exitosamente');
                 },
                 onError: (errors) => {
-                    toast.error('Error', {
-                        description: errors.message || 'Hubo un problema al confirmar tu reserva. Inténtalo de nuevo.',
-                    });
+                    toast.error('Hubo un problema al confirmar tu reserva. Inténtalo de nuevo.');
                 },
                 onFinish: () => {
                     setIsSubmitting(false);

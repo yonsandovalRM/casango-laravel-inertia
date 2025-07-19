@@ -8,6 +8,30 @@ export const company = {
             contact_information: 'Contact Information',
             save_changes: 'Save Changes',
             saving: 'Saving...',
+            not_specified: 'Not specified',
+            name_placeholder: 'Company Name',
+
+            // Video Call Settings
+            video_calls: 'Video Calls',
+            video_calls_description: 'Configure video call availability for your services',
+            allow_video_calls: 'Allow Video Calls',
+            video_calls_enabled_description: 'Clients can book video call appointments',
+            video_calls_disabled_description: 'Video call appointments are not available',
+            video_calls_warning: 'Disabling video calls will affect existing video call services and future bookings',
+            video_calls_enabled: 'Video calls have been enabled',
+            video_calls_disabled: 'Video calls have been disabled',
+
+            // Status Checker
+            check_open_status: 'Check Business Status',
+            select_datetime: 'Select Date & Time',
+            open_at_time: 'Open at this time',
+            closed_at_time: 'Closed at this time',
+
+            // Edit/View modes
+            edit_mode: 'Edit',
+            view_mode: 'View',
+            no_edit_permission: 'You do not have permission to edit company information',
+
             days: {
                 monday: 'Monday',
                 tuesday: 'Tuesday',
@@ -30,15 +54,28 @@ export const company = {
                 currency_placeholder: 'CLP, USD, EUR, etc.',
                 timezone: 'Timezone',
                 timezone_placeholder: 'America/Santiago',
+                locale: 'Language',
+                locale_placeholder: 'Select language',
                 open: 'Open',
                 open_time: 'Open Time',
                 close_time: 'Close Time',
                 break_start: 'Break Start',
                 break_end: 'Break End',
                 has_break: 'Has Break',
-                locale: 'Locale',
                 closed: 'Closed',
+                break: 'Break',
             },
+        },
+        common: {
+            enabled: 'Enabled',
+            disabled: 'Disabled',
+            checking: 'Checking...',
+            check: 'Check',
+            save: 'Save',
+            cancel: 'Cancel',
+            edit: 'Edit',
+            view: 'View',
+            loading: 'Loading...',
         },
     },
     es: {
@@ -50,6 +87,30 @@ export const company = {
             contact_information: 'Información de Contacto',
             save_changes: 'Guardar Cambios',
             saving: 'Guardando...',
+            not_specified: 'No especificado',
+            name_placeholder: 'Nombre de la Empresa',
+
+            // Video Call Settings
+            video_calls: 'Videollamadas',
+            video_calls_description: 'Configurar disponibilidad de videollamadas para sus servicios',
+            allow_video_calls: 'Permitir Videollamadas',
+            video_calls_enabled_description: 'Los clientes pueden reservar citas por videollamada',
+            video_calls_disabled_description: 'Las citas por videollamada no están disponibles',
+            video_calls_warning: 'Deshabilitar videollamadas afectará los servicios existentes de videollamada y futuras reservas',
+            video_calls_enabled: 'Las videollamadas han sido habilitadas',
+            video_calls_disabled: 'Las videollamadas han sido deshabilitadas',
+
+            // Status Checker
+            check_open_status: 'Verificar Estado del Negocio',
+            select_datetime: 'Seleccionar Fecha y Hora',
+            open_at_time: 'Abierto en este horario',
+            closed_at_time: 'Cerrado en este horario',
+
+            // Edit/View modes
+            edit_mode: 'Editar',
+            view_mode: 'Ver',
+            no_edit_permission: 'No tienes permisos para editar la información de la empresa',
+
             days: {
                 monday: 'Lunes',
                 tuesday: 'Martes',
@@ -72,15 +133,28 @@ export const company = {
                 currency_placeholder: 'CLP, USD, EUR, etc.',
                 timezone: 'Zona horaria',
                 timezone_placeholder: 'America/Santiago',
+                locale: 'Idioma',
+                locale_placeholder: 'Seleccionar idioma',
                 open: 'Abierto',
                 open_time: 'Hora de Apertura',
                 close_time: 'Hora de Cierre',
                 break_start: 'Inicio de Pausa',
                 break_end: 'Fin de Pausa',
                 has_break: 'Tiene Pausa',
-                locale: 'Idioma',
                 closed: 'Cerrado',
+                break: 'Pausa',
             },
+        },
+        common: {
+            enabled: 'Habilitado',
+            disabled: 'Deshabilitado',
+            checking: 'Verificando...',
+            check: 'Verificar',
+            save: 'Guardar',
+            cancel: 'Cancelar',
+            edit: 'Editar',
+            view: 'Ver',
+            loading: 'Cargando...',
         },
     },
 };
