@@ -10,7 +10,7 @@ class ServiceResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $serviceType = ServiceType::from($this->service_type);
+        $serviceType = ServiceType::from($this->service_type->value);
 
         return [
             'id' => $this->id,

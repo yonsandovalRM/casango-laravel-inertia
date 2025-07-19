@@ -2,22 +2,28 @@ export interface CompanyResource {
     id: string;
     name: string;
     email: string;
-    tagline: string;
-    description: string;
-    logo: string | File | null;
-    cover_image: string | File | null;
+    tagline: string | null;
+    description: string | null;
+    logo: string | null;
+    cover_image: string | null;
     currency: string;
     timezone: string;
     locale: string;
-    schedules: Schedule[];
-    schedule: {
-        weekdays: string;
-        saturday: string;
-        sunday: string;
-    };
     allows_video_calls: boolean;
-    created_at: string;
-    updated_at: string;
+    schedules: CompanyScheduleResource[];
+    schedule: Record<string, any>;
+    grouped_schedule: Record<string, any>;
+}
+
+export interface CompanyScheduleResource {
+    id: string;
+    day_of_week: number;
+    open_time: string;
+    close_time: string;
+    break_start_time: string | null;
+    break_end_time: string | null;
+    is_open: boolean;
+    has_break: boolean;
 }
 
 export type CompanyFormData = {
@@ -52,19 +58,4 @@ export interface Schedule {
     break_end_time: string;
     is_open: boolean;
     has_break: boolean;
-}
-
-export interface CompanyApiResponse {
-    company: CompanyResource;
-    allows_video_calls: boolean;
-    schedules: Schedule[];
-}
-
-export interface OpenStatusResponse {
-    is_open: boolean;
-    datetime: string;
-}
-
-export interface ScheduleForDayResponse extends Schedule {
-    // Extending base schedule with any additional properties
 }

@@ -17,7 +17,18 @@ class ServiceService
     public function getActiveServices(): Collection
     {
         return Service::where('is_active', true)
-            ->with('category')
+            ->with(['category', 'professionals'])
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Obtener todos los servicios (activos e inactivos) para el dashboard
+     */
+    public function getAllServices(): Collection
+    {
+        return Service::with(['category', 'professionals'])
+            ->orderBy('is_active', 'desc')
             ->orderBy('name')
             ->get();
     }
@@ -73,7 +84,7 @@ class ServiceService
 
         return DB::transaction(function () use ($service, $data) {
             $service->update(array_filter($data, fn($value) => $value !== null));
-            return $service->fresh();
+            return $service->fresh(['category', 'professionals']);
         });
     }
 
@@ -102,7 +113,7 @@ class ServiceService
      */
     public function getServicesByCategory(?string $categoryId = null): Collection
     {
-        $query = Service::where('is_active', true)->with('category');
+        $query = Service::where('is_active', true)->with(['category', 'professionals']);
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
@@ -118,7 +129,7 @@ class ServiceService
     {
         return Service::where('is_active', true)
             ->whereIn('service_type', [ServiceType::VIDEO_CALL->value, ServiceType::HYBRID->value])
-            ->with('category')
+            ->with(['category', 'professionals'])
             ->orderBy('name')
             ->get();
     }
@@ -130,9 +141,64 @@ class ServiceService
     {
         return Service::where('is_active', true)
             ->whereIn('service_type', [ServiceType::IN_PERSON->value, ServiceType::HYBRID->value])
-            ->with('category')
+            ->with(['category', 'professionals'])
             ->orderBy('name')
             ->get();
+    }
+
+    /**
+     * Obtener servicios con filtros avanzados
+     */
+    public function getFilteredServices(array $filters): Collection
+    {
+        $query = Service::with(['category', 'professionals']);
+
+        // Filtro de búsqueda
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($categoryQuery) use ($search) {
+                        $categoryQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // Filtro por categoría
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        // Filtro por tipo de servicio
+        if (!empty($filters['service_type'])) {
+            $query->where('service_type', $filters['service_type']);
+        }
+
+        // Filtro por estado activo
+        if (isset($filters['is_active']) && $filters['is_active'] !== null) {
+            $query->where('is_active', $filters['is_active']);
+        }
+
+        // Filtro por rango de precios
+        if (!empty($filters['min_price'])) {
+            $query->where('price', '>=', $filters['min_price']);
+        }
+
+        if (!empty($filters['max_price'])) {
+            $query->where('price', '<=', $filters['max_price']);
+        }
+
+        // Filtro por duración
+        if (!empty($filters['min_duration'])) {
+            $query->where('duration', '>=', $filters['min_duration']);
+        }
+
+        if (!empty($filters['max_duration'])) {
+            $query->where('duration', '<=', $filters['max_duration']);
+        }
+
+        return $query->orderBy('name')->get();
     }
 
     /**
@@ -185,6 +251,25 @@ class ServiceService
                 'hybrid' => $hybrid,
             ],
             'categories_count' => Category::whereHas('services')->count(),
+            'avg_duration' => Service::avg('duration') ?? 0,
+            'avg_price' => Service::whereNotNull('price')->avg('price') ?? 0,
+            'total_professionals' => Service::withCount('professionals')->get()->sum('professionals_count'),
+        ];
+    }
+
+    /**
+     * Obtener estadísticas filtradas
+     */
+    public function getFilteredStatistics(array $filters): array
+    {
+        $services = $this->getFilteredServices($filters);
+
+        return [
+            'total_filtered' => $services->count(),
+            'active_filtered' => $services->where('is_active', true)->count(),
+            'avg_duration_filtered' => $services->avg('duration') ?? 0,
+            'avg_price_filtered' => $services->whereNotNull('price')->avg('price') ?? 0,
+            'categories_filtered' => $services->pluck('category.id')->unique()->count(),
         ];
     }
 
@@ -201,7 +286,7 @@ class ServiceService
                         $categoryQuery->where('name', 'like', "%{$term}%");
                     });
             })
-            ->with('category')
+            ->with(['category', 'professionals'])
             ->orderBy('name')
             ->get();
     }
@@ -224,5 +309,35 @@ class ServiceService
     {
         $serviceType = ServiceType::from($service->service_type);
         return $serviceType->allowsInPerson();
+    }
+
+    /**
+     * Obtener servicios más populares
+     */
+    public function getPopularServices(int $limit = 5): Collection
+    {
+        return Service::where('is_active', true)
+            ->withCount(['bookings' => function ($query) {
+                $query->where('status', 'confirmed')
+                    ->where('created_at', '>=', now()->subMonths(3));
+            }])
+            ->orderBy('bookings_count', 'desc')
+            ->limit($limit)
+            ->with(['category', 'professionals'])
+            ->get();
+    }
+
+    /**
+     * Obtener servicios por profesional
+     */
+    public function getServicesByProfessional(string $professionalId): Collection
+    {
+        return Service::whereHas('professionals', function ($query) use ($professionalId) {
+            $query->where('professional_id', $professionalId);
+        })
+            ->where('is_active', true)
+            ->with(['category'])
+            ->orderBy('name')
+            ->get();
     }
 }

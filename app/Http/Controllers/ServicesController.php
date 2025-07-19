@@ -6,7 +6,9 @@ use App\Http\Requests\Services\StoreServicesRequest;
 use App\Http\Requests\Services\UpdateServicesRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ServiceResource;
+use App\Http\Resources\CompanyResource;
 use App\Models\Category;
+use App\Models\Company;
 use App\Models\Service;
 use App\Services\ServiceService;
 use Illuminate\Http\JsonResponse;
@@ -44,13 +46,15 @@ class ServicesController extends Controller
     {
         try {
             $categories = Category::where('is_active', true)->get();
-            $services = $this->serviceService->getActiveServices();
+            $services = $this->serviceService->getAllServices(); // Updated to show all services
             $statistics = $this->serviceService->getServiceStatistics();
+            $company = Company::first();
 
             return Inertia::render('services/index', [
                 'services' => ServiceResource::collection($services)->toArray(request()),
                 'categories' => CategoryResource::collection($categories)->toArray(request()),
                 'statistics' => $statistics,
+                'company' => $company ? CompanyResource::make($company)->toArray(request()) : null,
             ]);
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
@@ -163,6 +167,70 @@ class ServicesController extends Controller
 
             return response()->json([
                 'services' => ServiceResource::collection($services)->toArray(request()),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Obtener servicios con filtros avanzados
+     */
+    public function filtered(Request $request): JsonResponse
+    {
+        $request->validate([
+            'search' => 'nullable|string|max:100',
+            'category_id' => 'nullable|uuid|exists:categories,id',
+            'service_type' => 'nullable|string|in:in_person,video_call,hybrid',
+            'is_active' => 'nullable|boolean',
+            'min_price' => 'nullable|numeric|min:0',
+            'max_price' => 'nullable|numeric|min:0',
+            'min_duration' => 'nullable|integer|min:5',
+            'max_duration' => 'nullable|integer|max:480',
+        ]);
+
+        try {
+            $services = $this->serviceService->getFilteredServices($request->all());
+            $statistics = $this->serviceService->getFilteredStatistics($request->all());
+
+            return response()->json([
+                'services' => ServiceResource::collection($services)->toArray(request()),
+                'statistics' => $statistics,
+                'count' => $services->count(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Obtener servicios populares
+     */
+    public function popular(): JsonResponse
+    {
+        try {
+            $services = $this->serviceService->getPopularServices();
+
+            return response()->json([
+                'services' => ServiceResource::collection($services)->toArray(request()),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Obtener estadísticas detalladas
+     */
+    public function statistics(): JsonResponse
+    {
+        try {
+            $statistics = $this->serviceService->getServiceStatistics();
+            $company = Company::first();
+
+            return response()->json([
+                'statistics' => $statistics,
+                'company_allows_video_calls' => $company?->allows_video_calls ?? false,
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
