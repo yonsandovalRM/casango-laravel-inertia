@@ -58,70 +58,12 @@
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 
-    /* CM: custom  violet */
-    --color-cm-violet-50: #f5f3ff;
-    --color-cm-violet-100: #ebe8ff;
-    --color-cm-violet-200: #dbd4ff;
-    --color-cm-violet-300: #c0b2ff;
-    --color-cm-violet-400: #a187fe;
-    --color-cm-violet-500: #8456fc;
-    --color-cm-violet-600: #8247f5;
-    --color-cm-violet-700: #6521e0;
-    --color-cm-violet-800: #551bbc;
-    --color-cm-violet-900: #47189a;
-    --color-cm-violet-950: #2a0d68;
 
-    /* CM: custom green */
-    --color-cm-green-50: #f0fdf4;
-    --color-cm-green-100: #dcfce8;
-    --color-cm-green-200: #bbf7d2;
-    --color-cm-green-300: #86efaf;
-    --color-cm-green-400: #4ade84;
-    --color-cm-green-500: #22c562;
-    --color-cm-green-600: #17aa51;
-    --color-cm-green-700: #158040;
-    --color-cm-green-800: #166536;
-    --color-cm-green-900: #14532f;
-    --color-cm-green-950: #052e17;
 
-    /* CM: custom pink */
-    --color-cm-pink-50: #fcf4ff;
-    --color-cm-pink-100: #f9e9fe;
-    --color-cm-pink-200: #f2d1fd;
-    --color-cm-pink-300: #ebadfa;
-    --color-cm-pink-400: #e07cf6;
-    --color-cm-pink-500: #ce4aeb;
-    --color-cm-pink-600: #bb31d5;
-    --color-cm-pink-700: #9820ab;
-    --color-cm-pink-800: #7f1c8c;
-    --color-cm-pink-900: #6a1c73;
-    --color-cm-pink-950: #45064c;
 
-    /* CM: custom orange */
-    --color-cm-orange-50: #fffcea;
-    --color-cm-orange-100: #fff5c5;
-    --color-cm-orange-200: #ffeb85;
-    --color-cm-orange-300: #ffdb46;
-    --color-cm-orange-400: #ffc81b;
-    --color-cm-orange-500: #ffa602;
-    --color-cm-orange-600: #e27d00;
-    --color-cm-orange-700: #bb5602;
-    --color-cm-orange-800: #984208;
-    --color-cm-orange-900: #7c360b;
-    --color-cm-orange-950: #481a00;
 
-    /* CM: custom blue */
-    --color-cm-blue-50: #edf9ff;
-    --color-cm-blue-100: #d6efff;
-    --color-cm-blue-200: #b5e5ff;
-    --color-cm-blue-300: #83d7ff;
-    --color-cm-blue-400: #48bfff;
-    --color-cm-blue-500: #1e9eff;
-    --color-cm-blue-600: #067fff;
-    --color-cm-blue-700: #016bff;
-    --color-cm-blue-800: #0851c5;
-    --color-cm-blue-900: #0d489b;
-    --color-cm-blue-950: #0e2c5d;
+
+
 
     --color-navbar-bg: var(--navbar-bg);
     --color-navbar-hover: var(--navbar-hover);
@@ -157,10 +99,10 @@
     --card-foreground: oklch(0.32 0.08 248.49);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.32 0.08 248.49);
-    --primary: var(--color-cm-blue-600);
+    --primary: var(--color-blue-600);
     --primary-foreground: oklch(1 0 0);
-    --secondary: var(--color-cm-violet-100);
-    --secondary-foreground: var(--color-cm-violet-900);
+    --secondary: var(--color-violet-100);
+    --secondary-foreground: var(--color-violet-900);
     --muted: #e8ecee;
     --muted-foreground: oklch(0.5 0.06 249.98);
     --accent: #f0f4f8;
@@ -168,7 +110,7 @@
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.9 0.02 250.31);
     --input: oklch(0.9 0.02 250.31);
-    --ring: var(--color-cm-blue-600);
+    --ring: var(--color-blue-600);
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);
@@ -176,12 +118,12 @@
     --chart-5: oklch(0.769 0.188 70.08);
     --sidebar: oklch(1 0 0);
     --sidebar-foreground: oklch(0.32 0.08 248.49);
-    --sidebar-primary: var(--color-cm-blue-600);
+    --sidebar-primary: var(--color-blue-600);
     --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
     --sidebar-accent: #f0f4f8;
     --sidebar-accent-foreground: oklch(0.55 0.2 258.09);
     --sidebar-border: oklch(0.9 0.02 250.31);
-    --sidebar-ring: var(--color-cm-blue-600);
+    --sidebar-ring: var(--color-blue-600);
 
     --navbar-bg: oklch(1 0 0);
     --navbar-hover: oklch(0.98 0 0);
@@ -198,10 +140,10 @@
     --card-foreground: oklch(0.98 0 0);
     --popover: oklch(0.24 0.01 269);
     --popover-foreground: oklch(0.98 0 0);
-    --primary: var(--color-cm-blue-500);
+    --primary: var(--color-blue-500);
     --primary-foreground: oklch(0.99 0.01 0);
-    --secondary: var(--color-cm-violet-900);
-    --secondary-foreground: var(--color-cm-violet-100);
+    --secondary: var(--color-violet-900);
+    --secondary-foreground: var(--color-violet-100);
     --muted: oklch(0.274 0.006 286.033);
     --muted-foreground: oklch(0.705 0.015 286.067);
     --accent: oklch(0.274 0.006 286.033);
@@ -217,7 +159,7 @@
     --chart-5: oklch(0.645 0.246 16.439);
     --sidebar: #1b1c20;
     --sidebar-foreground: oklch(0.98 0 0);
-    --sidebar-primary: var(--color-cm-blue-500);
+    --sidebar-primary: var(--color-blue-500);
     --sidebar-primary-foreground: oklch(0.379 0.146 265.522);
     --sidebar-accent: oklch(0.274 0.006 286.033);
     --sidebar-accent-foreground: oklch(0.98 0 0);
@@ -305,13 +247,13 @@
     border-color: var(--color-border) !important;
 }
 .fc .fc-today-button {
-    background-color: var(--color-cm-blue-600) !important;
-    border-color: var(--color-cm-blue-600) !important;
+    background-color: var(--color-blue-600) !important;
+    border-color: var(--color-blue-600) !important;
     color: white !important;
 }
 .fc .fc-button-primary {
-    background-color: var(--color-cm-blue-600);
-    border-color: var(--color-cm-blue-600);
+    background-color: var(--color-blue-600);
+    border-color: var(--color-blue-600);
     font-family: var(--font-outfit);
     font-size: 0.85rem;
     font-weight: 600;
@@ -320,16 +262,16 @@
 }
 
 .fc .fc-button-primary:hover {
-    background-color: var(--color-cm-blue-600);
-    border-color: var(--color-cm-blue-600);
-    color: var(--color-cm-blue-100);
+    background-color: var(--color-blue-600);
+    border-color: var(--color-blue-600);
+    color: var(--color-blue-100);
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active {
-    background-color: var(--color-cm-blue-700);
-    border-color: var(--color-cm-blue-600);
-    color: var(--color-cm-blue-100);
+    background-color: var(--color-blue-700);
+    border-color: var(--color-blue-600);
+    color: var(--color-blue-100);
 }
 
 .fc {

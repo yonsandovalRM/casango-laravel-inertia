@@ -15,7 +15,7 @@ export function PlanCard({ plan, isSelected, billing }: PlanCardProps) {
     return (
         <Label
             className={`relative flex cursor-pointer flex-col rounded-xl border-2 p-6 transition-all duration-200 hover:shadow-lg ${
-                isSelected ? 'border-cm-violet-500 shadow-lg' : 'border-border bg-accent hover:border-cm-violet-500'
+                isSelected ? 'border-violet-500 shadow-lg' : 'border-border bg-accent hover:border-violet-500'
             } `}
         >
             <RadioGroupItem value={plan.id} className="absolute top-4 right-4" />
@@ -39,7 +39,7 @@ export function PlanCard({ plan, isSelected, billing }: PlanCardProps) {
                 <ul className="space-y-2">
                     {plan.features.map((feature: string, index: number) => (
                         <li key={index} className="flex items-start gap-2 text-sm">
-                            <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-cm-green-600" />
+                            <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
                             <span className="text-muted-foreground">{feature}</span>
                         </li>
                     ))}

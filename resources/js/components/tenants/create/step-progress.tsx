@@ -18,7 +18,7 @@ export function StepProgress({ steps, currentStep }: StepProgressProps) {
                         <div className="flex flex-col items-center">
                             <div
                                 className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
-                                    step.number <= currentStep ? 'bg-cm-violet-500 text-white shadow-lg' : 'bg-accent text-muted-foreground'
+                                    step.number <= currentStep ? 'bg-violet-500 text-white shadow-lg' : 'bg-accent text-muted-foreground'
                                 }`}
                             >
                                 {step.number}
@@ -26,7 +26,7 @@ export function StepProgress({ steps, currentStep }: StepProgressProps) {
                             <div className="mt-2 text-center">
                                 <p
                                     className={`text-xs font-medium transition-colors duration-300 ${
-                                        step.number <= currentStep ? 'text-cm-violet-500' : 'text-foreground'
+                                        step.number <= currentStep ? 'text-violet-500' : 'text-foreground'
                                     }`}
                                 >
                                     {step.title}
@@ -36,7 +36,7 @@ export function StepProgress({ steps, currentStep }: StepProgressProps) {
                         </div>
                         {index < steps.length - 1 && (
                             <div
-                                className={`mx-4 h-0.5 w-16 transition-colors duration-300 ${step.number < currentStep ? 'bg-cm-violet-500' : 'bg-muted'}`}
+                                className={`mx-4 h-0.5 w-16 transition-colors duration-300 ${step.number < currentStep ? 'bg-violet-500' : 'bg-muted'}`}
                             />
                         )}
                     </div>

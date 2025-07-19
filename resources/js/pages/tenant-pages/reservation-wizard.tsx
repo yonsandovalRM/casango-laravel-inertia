@@ -95,7 +95,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                                         isActive
                                                             ? 'bg-primary text-primary-foreground'
                                                             : isCompleted
-                                                              ? 'bg-cm-green-600 text-white'
+                                                              ? 'bg-green-600 text-white'
                                                               : 'bg-secondary text-secondary-foreground'
                                                     } `}
                                                 >
@@ -103,7 +103,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                                 </div>
                                                 <span
                                                     className={`text-sm font-medium ${
-                                                        isActive ? 'text-blue-600' : isCompleted ? 'text-cm-green-600' : 'text-muted-foreground'
+                                                        isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-muted-foreground'
                                                     }`}
                                                 >
                                                     {step.title}
@@ -111,7 +111,7 @@ export default function ReservationWizard({ service }: ReservationWizardProps) {
                                             </div>
                                             {index < steps.length - 1 && (
                                                 <div
-                                                    className={`mx-4 h-0.5 flex-1 transition-all ${isCompleted ? 'bg-cm-green-600' : 'bg-secondary'} `}
+                                                    className={`mx-4 h-0.5 flex-1 transition-all ${isCompleted ? 'bg-green-600' : 'bg-secondary'} `}
                                                 />
                                             )}
                                         </React.Fragment>

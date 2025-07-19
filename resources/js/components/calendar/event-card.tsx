@@ -71,12 +71,12 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
             <div className="space-y-4">
                 {/* Client Information */}
                 <div className="mb-2 flex items-center space-x-3">
-                    <User className="h-4 w-4 text-cm-blue-500" />
+                    <User className="h-4 w-4 text-blue-500" />
                     <span className="font-medium text-foreground">{booking.client.name}</span>
                 </div>
                 {booking.phone && (
                     <div className="flex items-center space-x-3">
-                        <Phone className="h-4 w-4 text-cm-blue-500" />
+                        <Phone className="h-4 w-4 text-blue-500" />
                         <span className="text-sm text-foreground">{booking.phone}</span>
                     </div>
                 )}
@@ -97,21 +97,21 @@ export default function EventCard({ booking }: { booking: BookingResource }) {
                 <Separator className="my-4" />
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                        <DollarSign className="h-4 w-4 text-cm-green-500" />
-                        <span className="font-medium text-cm-green-500">Total</span>
+                        <DollarSign className="h-4 w-4 text-green-500" />
+                        <span className="font-medium text-green-500">Total</span>
                     </div>
                     <div className="text-right">
                         {booking.discount > 0 && <p className="text-sm text-muted-foreground line-through">${formatCurrency(booking.price)}</p>}
-                        <p className="text-lg font-bold text-cm-green-500">${formatCurrency(booking.total)}</p>
-                        {booking.discount > 0 && <p className="text-xs text-cm-green-500">Descuento: ${formatCurrency(booking.discount)}</p>}
+                        <p className="text-lg font-bold text-green-500">${formatCurrency(booking.total)}</p>
+                        {booking.discount > 0 && <p className="text-xs text-green-500">Descuento: ${formatCurrency(booking.discount)}</p>}
                     </div>
                 </div>
 
                 {/* Notes */}
                 {booking.notes && (
-                    <div className="border-l-4 border-l-cm-blue-600/50 bg-cm-blue-600/10 p-4 pl-4">
+                    <div className="border-l-4 border-l-blue-600/50 bg-blue-600/10 p-4 pl-4">
                         <div className="flex items-start space-x-2">
-                            <FileText className="mt-0.5 h-4 w-4 text-cm-blue-500" />
+                            <FileText className="mt-0.5 h-4 w-4 text-blue-500" />
                             <div>
                                 <p className="text-sm text-muted-foreground">Notas</p>
                                 <p className="text-sm text-foreground">{booking.notes}</p>
